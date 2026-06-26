@@ -1,0 +1,8 @@
+{
+  "name": "domovoy",
+  "private": true,
+  "license": "MIT",
+  "author": "Andrey Sitnik <andrey@sitnik.es>",
+  "type": "module",
+  "scripts": {}
+}

@@ -32,6 +32,8 @@ function toggleLight() {
   }
 }
 
+let longPressed = false
+
 Shelly.addEventHandler(function (e) {
   if (e.component !== 'input:0') {
     return
@@ -41,8 +43,13 @@ Shelly.addEventHandler(function (e) {
     print('event:', e.info.event, 'on', e.component)
   }
 
-  if (e.info.event === 'btn_up') {
-    toggleLight()
+  if (e.info.event === 'long_push') {
+    longPressed = true
+  } else if (e.info.event === 'btn_up') {
+    if (!longPressed) {
+      toggleLight()
+    }
+    longPressed = false
   }
 })
 

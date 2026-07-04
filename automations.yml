@@ -2,80 +2,75 @@
   alias: Уведомить о разряде батареи
   description: ''
   triggers:
-  - trigger: time
-    at: '10:00:00'
+    - trigger: time
+      at: '10:00:00'
   conditions:
-  - '{{ sensors != '''' }}'
+    - "{{ sensors != '' }}"
   actions:
-  - action: notify.mobile_app_phone_bedoll
-    data:
-      title: Дом
-      message: 'Садиться батарея: {{ sensors }}'
+    - action: notify.mobile_app_phone_bedoll
+      data:
+        title: Дом
+        message: 'Садиться батарея: {{ sensors }}'
   mode: single
   variables:
     threshold: 30
-    sensors: "{% set result = namespace(sensors=[]) %} {% for state in states.sensor\
-      \ | selectattr('attributes.device_class', '==', 'battery') %}\n  {% if 0 <=\
-      \ state.state | int(-1) < threshold | int %}\n    {% set result.sensors = result.sensors\
-      \ + [state.name ~ ' (' ~ state.state ~ ' %)'] %}\n  {% endif %}\n{% endfor %}\
-      \ {{result.sensors|join(', ')}}"
+    sensors: "{% set result = namespace(sensors=[]) %} {% for state in states.sensor | selectattr('attributes.device_class', '==', 'battery') %}\n  {% if 0 <= state.state | int(-1) < threshold | int %}\n    {% set result.sensors = result.sensors + [state.name ~ ' (' ~ state.state ~ ' %)'] %}\n  {% endif %}\n{% endfor %} {{result.sensors|join(', ')}}"
 - id: '1782207304968'
   alias: Протечка воды в ванной
   description: ''
   triggers:
-  - trigger: state
-    entity_id: binary_sensor.water_bathroom_water_leak
-    from: 'off'
-    to: 'on'
+    - trigger: state
+      entity_id: binary_sensor.water_bathroom_water_leak
+      from: 'off'
+      to: 'on'
   actions:
-  - action: notify.notify
-    data:
-      title: Ванная
-      message: Протечка воды
+    - action: notify.notify
+      data:
+        title: Ванная
+        message: Протечка воды
   mode: single
 - id: '1782207350404'
   alias: Протечка воды на кухне
   description: ''
   triggers:
-  - trigger: state
-    entity_id: binary_sensor.water_kitchen_water_leak
-    from: 'off'
-    to: 'on'
+    - trigger: state
+      entity_id: binary_sensor.water_kitchen_water_leak
+      from: 'off'
+      to: 'on'
   actions:
-  - action: notify.notify
-    data:
-      title: Кухня
-      message: Протечка воды
+    - action: notify.notify
+      data:
+        title: Кухня
+        message: Протечка воды
   mode: single
 - id: '1782207404419'
   alias: Протечка воды в туалете
   description: ''
   triggers:
-  - trigger: state
-    entity_id: binary_sensor.water_toilet_water_leak
-    from: 'off'
-    to: 'on'
+    - trigger: state
+      entity_id: binary_sensor.water_toilet_water_leak
+      from: 'off'
+      to: 'on'
   actions:
-  - action: notify.notify
-    data:
-      title: Туалет
-      message: Протечка воды
+    - action: notify.notify
+      data:
+        title: Туалет
+        message: Протечка воды
   mode: single
 - id: '1782222831316'
   alias: Уведомить Андрея о высоком уровне CO²
   description: ''
   triggers:
-  - trigger: numeric_state
-    entity_id: sensor.presence_apollo_msr_2_co2
-    above: 1000
+    - trigger: numeric_state
+      entity_id: sensor.presence_apollo_msr_2_co2
+      above: 1000
   conditions:
-  - condition: state
-    entity_id: person.andrey
-    state: home
+    - condition: state
+      entity_id: person.andrey
+      state: home
   actions:
-  - action: notify.mobile_app_phone_bedoll
-    data:
-      title: Кабинет Андрея
-      message: 'Высокий уровень CO²: {{ states(''sensor.presence_apollo_msr_2_co2'')
-        }}'
+    - action: notify.mobile_app_phone_bedoll
+      data:
+        title: Кабинет Андрея
+        message: "Высокий уровень CO²: {{ states('sensor.presence_apollo_msr_2_co2') }}"
   mode: single

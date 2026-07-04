@@ -2,7 +2,8 @@
   "image": "ghcr.io/ai/devcontainer:latest",
   "runArgs": [
     "--network=host",
-    "--add-host=domovoy.local:192.168.50.180"
+    "--add-host=domovoy.local:192.168.50.180",
+    "--env-file=${localWorkspaceFolder}/.env"
   ],
   "mounts": [
     "source=/etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem,target=/etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem,type=bind,readonly"

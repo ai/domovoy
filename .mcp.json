@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "Home Assistant": {
+      "type": "http",
+      "url": "https://domovoy.local/api/mcp",
+      "headers": {
+        "Authorization": "Bearer ${HOMEASSISTANT_TOKEN}"
+      }
+    }
+  }
+}

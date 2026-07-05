@@ -1,12 +1,6 @@
-- alias: Выключатель в кабинете Андрея
+- alias: Выключатель света в кабинете Андрея
   use_blueprint:
-    path: ai/night-light-on-hold.yaml
+    path: domovoy/wall-switch.yaml
     input:
-      light_group: light.light_group_andrey
       wall_switch: a9b348fb91b46bd69b18a04ad670c375
-- alias: Выключатель на кухне
-  use_blueprint:
-    path: ai/night-light-on-hold.yaml
-    input:
-      wall_switch: 4b34d9fa3c4662fa3cad315e73d89607
-      light_group: light.light_group_kitchen
+      light_group: light.light_group_andrey

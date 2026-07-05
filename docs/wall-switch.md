@@ -13,6 +13,6 @@
 11. Open Zigbee2MQTT and press `Permit join`.
 12. Wait until you will see new wall switch. Set the same `Wall Switch / ROOM` name.
 13. Create a Zigbee2MQTT group with the room lights if it does not exist yet and add the group entity to the Adaptive Lighting lights list.
-14. Add automation from the [`wall-switch`](../blueprints/automation/domovoy/wall-switch.yaml) blueprint: pick the switch device and the light group. Press turns the group on (Adaptive Lighting fills in brightness/color via intercept) or off, hold enables the night mode; the Shelly script kicks in only when HA does not react. Check in the switch device page in HA that a short press arrives as the `input_1_single` action (the blueprint trigger expects this subtype).
+14. Keep WiFi enabled and add the switch to the HA `Shelly` integration (it is auto-discovered). Add automation from the [`wall-switch`](../blueprints/automation/domovoy/wall-switch.yaml) blueprint: pick the WiFi switch device and the light group. Press turns the group on (Adaptive Lighting fills in brightness/color via intercept) or off, hold enables the night mode; the Shelly script kicks in only when HA does not react. Button events go over WiFi because Zigbee actions arrive noticeably later; the Zigbee pairing is only used by the script to reach the bulbs directly when HA is down.
 
 TODO: in some cases strange bugs can be fixed by reconfigure. Check that you light have reporting.

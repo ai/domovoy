@@ -9,8 +9,7 @@ blueprint:
       selector:
         device:
           filter:
-            - integration: mqtt
-              manufacturer: Shelly
+            - integration: shelly
     light_group:
       name: Группа ламп
       selector:
@@ -31,19 +30,22 @@ variables:
 
 mode: single
 
+# WiFi events from the Shelly integration react much faster than Zigbee
+# actions, which are delayed by the single/double press detection window
+# and the Z2M -> MQTT hop
 triggers:
   - trigger: device
     id: single
-    domain: mqtt
+    domain: shelly
     device_id: !input wall_switch
-    type: action
-    subtype: input_1_single
+    type: single_push
+    subtype: button1
   - trigger: device
     id: hold
-    domain: mqtt
+    domain: shelly
     device_id: !input wall_switch
-    type: action
-    subtype: input_1_hold
+    type: long_push
+    subtype: button1
 
 conditions: []
 

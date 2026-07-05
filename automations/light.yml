@@ -7,7 +7,7 @@
       to: 'on'
   conditions:
     - condition: template
-      value_template: '{{ trigger.to_state.context.parent_id == none }}'
+      value_template: "{{ trigger.to_state.context.parent_id == none and\n   trigger.to_state.context.id not in\n   states.automation | map(attribute='context.id') | list }}"
   actions:
     - action: light.turn_on
       target:

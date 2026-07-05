@@ -74,4 +74,6 @@ actions:
               data:
                 brightness: 1
                 color_temp_kelvin: "{{ state_attr(repeat.item, 'min_color_temp_kelvin') | int(2202) }}"
-                transition: 1
+                # Transition from "off" makes bulbs flash at the previous
+                # brightness before dimming down
+                transition: "{{ 1 if is_state(repeat.item, 'on') else 0 }}"

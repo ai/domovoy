@@ -2,7 +2,7 @@ blueprint:
   name: Ночной режим по удержанию выключателя
   domain: automation
   author: Andrey Sitnik
-  source_url: https://github.com/ai/domovoy/blob/main/blueprints/automation/domovoy/warm-min-on-hold.yaml
+  source_url: https://github.com/ai/domovoy/blob/main/blueprints/automation/domovoy/night-light-on-hold.yaml
   input:
     wall_switch:
       name: Выключатель

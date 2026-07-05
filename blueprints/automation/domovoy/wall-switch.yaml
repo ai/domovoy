@@ -18,7 +18,7 @@ blueprint:
             - domain: light
     adaptive_switch:
       name: Адаптивное освещение
-      default: switch.daylight_adaptive_lighting_daylight
+      default: ''
       selector:
         entity:
           filter:

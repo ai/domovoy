@@ -50,7 +50,7 @@ actions:
               {% for light in lights %}
                 {% if is_state(light, 'on') %}
                   {% set ns.any_on = true %}
-                  {% if state_attr(light, 'brightness') | int(0) != 1 %}
+                  {% if state_attr(light, 'brightness') | int(0) > 2 %}
                     {% set ns.dimmed = false %}
                   {% endif %}
                 {% endif %}

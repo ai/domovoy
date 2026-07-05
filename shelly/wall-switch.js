@@ -4,14 +4,31 @@
 let DEBUG = true // Print debug output to the script console
 
 // Z2M: Devices -> bulb ->"Network address" (e.g. 0x1A2B)
-let LIGHTS = [{ addr: 0xa753, ep: 1 }]
+let LIGHTS = [{ addr: 0x911c, ep: 1 }]
+
+// The Zigbee RPC callback fires unreliably, so throttle repeat presses with a
+// self-clearing timer. Counting in-flight calls could deadlock if a callback
+// is never delivered.
+let busy = false
+
+function debug(message) {
+  if (DEBUG) {
+    print(message)
+  }
+}
 
 function toggleLight() {
+  if (busy) {
+    debug('Send in progress, skipping')
+    return
+  }
+  busy = true
+  Timer.set(1000, false, function () {
+    busy = false
+  })
   for (let i = 0; i < LIGHTS.length; i++) {
     let t = LIGHTS[i]
-    if (DEBUG) {
-      print('toggleLight: toggling bulb addr', t.addr, 'ep', t.ep)
-    }
+    debug('Toggling bulb addr ' + t.addr + ' ep ' + t.ep)
     Shelly.call(
       'Zigbee.SendCommand',
       {
@@ -24,8 +41,8 @@ function toggleLight() {
       function (res, err, msg) {
         if (err) {
           print('ZCL err:', err, msg)
-        } else if (DEBUG) {
-          print('toggleLight: toggle sent OK')
+        } else {
+          debug('Toggle sent OK')
         }
       }
     )
@@ -39,9 +56,7 @@ Shelly.addEventHandler(function (e) {
     return
   }
 
-  if (DEBUG) {
-    print('event:', e.info.event, 'on', e.component)
-  }
+  debug('event: ' + e.info.event + ' on ' + e.component)
 
   if (e.info.event === 'long_push') {
     longPressed = true

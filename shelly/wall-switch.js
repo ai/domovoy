@@ -4,7 +4,7 @@
 let DEBUG = true // Print debug output to the script console
 
 // Z2M: Devices -> bulb ->"Network address" (e.g. 0x1A2B)
-let LIGHTS = [{ addr: 0x911c, ep: 1 }]
+let LIGHTS = [0x911c]
 
 // The Zigbee RPC callback fires unreliably, so throttle repeat presses with a
 // self-clearing timer. Counting in-flight calls could deadlock if a callback
@@ -28,12 +28,12 @@ function toggleLight() {
   })
   for (let i = 0; i < LIGHTS.length; i++) {
     let t = LIGHTS[i]
-    debug('Toggling bulb addr ' + t.addr + ' ep ' + t.ep)
+    debug('Toggling bulb addr ' + t + ' ep 1')
     Shelly.call(
       'Zigbee.SendCommand',
       {
-        dst_addr: t.addr,
-        dst_ep: t.ep,
+        dst_addr: t,
+        dst_ep: 1, // endpoint 1
         cluster: 6, // On/Off
         cmd: 2, // toggle
         timeout_ms: 1000 // ZCL answer response

@@ -27,6 +27,7 @@ blueprint:
 
 variables:
   light_group: !input light_group
+  adaptive_switch: !input adaptive_switch
 
 mode: single
 
@@ -60,13 +61,13 @@ actions:
             target:
               entity_id: !input light_group
             data:
-              transition: 1
+              transition: 0
         else:
           - action: light.turn_off
             target:
               entity_id: !input light_group
             data:
-              transition: 1
+              transition: 0
     else:
       - if:
           - condition: template
@@ -74,27 +75,37 @@ actions:
               {{ is_state(light_group, 'on') and
                  state_attr(light_group, 'brightness') | int(0) <= 2 }}
         then:
-          # Leaving night mode: give the lamps back to Adaptive Lighting
-          - action: adaptive_lighting.set_manual_control
-            data:
-              entity_id: !input adaptive_switch
-              lights:
-                - !input light_group
-              manual_control: false
-          - action: adaptive_lighting.apply
-            data:
-              entity_id: !input adaptive_switch
-              lights:
-                - !input light_group
-              transition: 1
+          - if:
+              - condition: template
+                value_template: "{{ adaptive_switch != '' }}"
+            then:
+              # Leaving night mode with Adaptive Lighting
+              - action: adaptive_lighting.set_manual_control
+                data:
+                  entity_id: !input adaptive_switch
+                  lights:
+                    - !input light_group
+                  manual_control: false
+              - action: adaptive_lighting.apply
+                data:
+                  entity_id: !input adaptive_switch
+                  lights:
+                    - !input light_group
+                  transition: 0
+            else:
+              # No Adaptive Lighting: leave night mode at full brightness
+              - action: light.turn_on
+                target:
+                  entity_id: !input light_group
+                data:
+                  brightness: 255
+                  transition: 0
         else:
-          # Night mode: the explicit brightness marks disable Adaptive Lighting
+          # Night mode: the explicit brightness disable Adaptive Lighting
           - action: light.turn_on
             target:
               entity_id: !input light_group
             data:
               brightness: 1
               color_temp_kelvin: "{{ state_attr(light_group, 'min_color_temp_kelvin') | int(2202) }}"
-              # Transition from "off" makes bulbs flash at the previous
-              # brightness before dimming down
-              transition: "{{ 1 if is_state(light_group, 'on') else 0 }}"
+              transition: 0

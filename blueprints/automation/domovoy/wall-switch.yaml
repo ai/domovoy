@@ -61,13 +61,13 @@ actions:
             target:
               entity_id: !input light_group
             data:
-              transition: 0
+              transition: 1
         else:
           - action: light.turn_off
             target:
               entity_id: !input light_group
             data:
-              transition: 0
+              transition: 1
     else:
       - if:
           - condition: template
@@ -88,6 +88,7 @@ actions:
                   brightness_pct: "{{ state_attr(adaptive_switch, 'brightness_pct') | int(100) }}"
                   color_temp_kelvin: "{{ state_attr(adaptive_switch, 'color_temp_kelvin') | int(4000) }}"
                   transition: 1
+              - delay: 1
               - action: adaptive_lighting.set_manual_control
                 data:
                   entity_id: !input adaptive_switch
@@ -110,4 +111,6 @@ actions:
             data:
               brightness: 1
               color_temp_kelvin: "{{ state_attr(light_group, 'min_color_temp_kelvin') | int(2202) }}"
-              transition: 0
+              # Transition from "off" makes bulbs flash at the previous
+              # brightness before dimming down
+              transition: "{{ 1 if is_state(light_group, 'on') else 0 }}"

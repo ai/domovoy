@@ -64,14 +64,24 @@ actions:
               brightness_pct: "{{ state_attr(daylight_switch, 'brightness_pct') | round(0) }}"
               color_temp_kelvin: "{{ state_attr(daylight_switch, 'color_temp_kelvin') | int }}"
               transition: 1
-    default:
-      - repeat:
-          for_each: !input light_target
-          sequence:
-            - action: light.turn_on
-              target:
-                entity_id: "{{ repeat.item }}"
-              data:
-                brightness_pct: 1
-                color_temp_kelvin: "{{ state_attr(repeat.item, 'min_color_temp_kelvin') | int(2202) }}"
-                transition: 1
+      - conditions:
+          - condition: template
+            value_template: >-
+              {% set ns = namespace(all_off=true) %}
+              {% for light in lights %}
+                {% if is_state(light, 'on') %}
+                  {% set ns.all_off = false %}
+                {% endif %}
+              {% endfor %}
+              {{ ns.all_off }}
+        sequence:
+          - repeat:
+              for_each: !input light_target
+              sequence:
+                - action: light.turn_on
+                  target:
+                    entity_id: "{{ repeat.item }}"
+                  data:
+                    brightness_pct: 1
+                    color_temp_kelvin: "{{ state_attr(repeat.item, 'min_color_temp_kelvin') | int(2202) }}"
+                    transition: 1

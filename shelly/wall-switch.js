@@ -9,7 +9,7 @@ let LIGHTS = [0x911c]
 // The Zigbee RPC callback fires unreliably, so throttle repeat presses with a
 // self-clearing timer. Counting in-flight calls could deadlock if a callback
 // is never delivered.
-let busy = false
+let busy = 0
 
 function debug(message) {
   if (DEBUG) {
@@ -18,14 +18,15 @@ function debug(message) {
 }
 
 function toggleLight() {
-  if (busy) {
+  if (busy > 2) {
     debug('Send in progress, skipping')
     return
   }
-  busy = true
+  busy += 1
   Timer.set(1000, false, function () {
-    busy = false
+    busy -= 1
   })
+
   for (let i = 0; i < LIGHTS.length; i++) {
     let t = LIGHTS[i]
     debug('Toggling bulb addr ' + t + ' ep 1')

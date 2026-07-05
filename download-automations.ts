@@ -1,54 +1,142 @@
-#!/usr/bin/env node
+#!/usr/bin/env -S node --use-system-ca --experimental-strip-types
 
-import { execSync } from 'node:child_process'
-import { writeFileSync } from 'node:fs'
+import { mkdirSync, readdirSync, rmSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 
-const OUTPUT = 'automations.yml'
+const OUTPUT_DIR = 'automations'
 const HOST = 'https://domovoy.local'
+const WS = 'wss://domovoy.local/api/websocket'
+const UNCATEGORIZED = 'Прочее'
 
-// HTTP goes through `curl` so it trusts the custom CA of domovoy.local
-function api(path) {
-  return execSync(
-    `curl -fsS -m 30 ` +
-      `-H "Authorization: Bearer $HOMEASSISTANT_TOKEN" ` +
-      `-H "Content-Type: application/json" ` +
-      JSON.stringify(`${HOST}/api/${path}`),
-    {
-      env: {
-        ...process.env,
-        HOMEASSISTANT_TOKEN: process.env.HOMEASSISTANT_TOKEN
-      },
-      encoding: 'utf8',
-      maxBuffer: 64 * 1024 * 1024
-    }
-  )
+const SLUGS: Record<string, string> = {
+  Прочее: 'other',
+  Свет: 'light',
+  Уведомления: 'notifications'
 }
 
-// Non-"plain-safe" strings are quoted (single by default, double when they hold a
-// single quote or need escapes). YAML 1.1 footguns (bools, null, numbers,
-// sexagesimal times like "10:00:00", ISO dates) are quoted so they stay strings.
+interface HassState {
+  entity_id: string
+  attributes: { id?: string }
+}
 
-let NUM =
+interface Category {
+  category_id: string
+  name: string
+}
+
+interface EntityEntry {
+  entity_id: string
+  categories?: { automation?: string }
+}
+
+async function api<T>(path: string): Promise<T> {
+  let res = await fetch(`${HOST}/api/${path}`, {
+    headers: {
+      'Authorization': `Bearer ${process.env.HOMEASSISTANT_TOKEN}`,
+      'Content-Type': 'application/json'
+    },
+    signal: AbortSignal.timeout(30000)
+  })
+  if (!res.ok) {
+    throw new Error(`GET /api/${path} failed: ${res.status} ${res.statusText}`)
+  }
+  return res.json() as Promise<T>
+}
+
+function fetchCategories(): Promise<Record<string, string>> {
+  return new Promise((resolve, reject) => {
+    let ws = new WebSocket(WS)
+    let seq = 0
+    let pending: Record<number, string> = {}
+    let categories: Record<string, string> = {}
+    let entityCategory: Record<string, string> = {}
+    let got = 0
+
+    let send = (type: string) => {
+      let id = ++seq
+      pending[id] = type
+      ws.send(
+        JSON.stringify({
+          id,
+          type,
+          ...(type.includes('category') && { scope: 'automation' })
+        })
+      )
+    }
+
+    ws.onmessage = (ev: MessageEvent) => {
+      let msg = JSON.parse(ev.data)
+      if (msg.type === 'auth_required') {
+        ws.send(
+          JSON.stringify({
+            type: 'auth',
+            access_token: process.env.HOMEASSISTANT_TOKEN
+          })
+        )
+      } else if (msg.type === 'auth_invalid') {
+        reject(new Error('WebSocket auth failed: check HOMEASSISTANT_TOKEN'))
+      } else if (msg.type === 'auth_ok') {
+        send('config/category_registry/list')
+        send('config/entity_registry/list')
+      } else if (msg.type === 'result') {
+        if (!msg.success) {
+          reject(new Error(`WebSocket request ${pending[msg.id]} failed`))
+          return
+        }
+        if (pending[msg.id] === 'config/category_registry/list') {
+          for (let c of msg.result as Category[]) {
+            categories[c.category_id] = c.name
+          }
+        } else {
+          for (let e of msg.result as EntityEntry[]) {
+            if (e.categories && e.categories.automation) {
+              entityCategory[e.entity_id] = e.categories.automation
+            }
+          }
+        }
+        if (++got === 2) {
+          ws.close()
+          let byEntity: Record<string, string> = {}
+          for (let [entity, id] of Object.entries(entityCategory)) {
+            if (categories[id]) byEntity[entity] = categories[id]
+          }
+          resolve(byEntity)
+        }
+      }
+    }
+    ws.onerror = () => reject(new Error(`Cannot connect to ${WS}`))
+  })
+}
+
+const NUM =
   /^[-+]?(\.inf|\.nan|0x[0-9a-fA-F]+|0o[0-7]+|\d[\d_]*(\.\d*)?([eE][-+]?\d+)?|\.\d+([eE][-+]?\d+)?)$/
-let SEXA = /^[-+]?\d[\d_]*(:[0-5]?\d)+(\.\d*)?$/
-let TS =
+const SEXA = /^[-+]?\d[\d_]*(:[0-5]?\d)+(\.\d*)?$/
+const TS =
   /^\d{4}-\d\d?-\d\d?(([Tt]|[ \t]+)\d\d?:\d\d?:\d\d?(\.\d*)?([ \t]*(Z|[-+]\d\d?(:\d\d)?))?)?$/
-let CTRL = /[\u0000-\u001f\u007f]/
-let RESERVED = new Set(['null', '~', 'true', 'false', 'yes', 'no', 'on', 'off'])
+const CTRL = /[\u0000-\u001f\u007f]/
+const RESERVED = new Set([
+  'null',
+  '~',
+  'true',
+  'false',
+  'yes',
+  'no',
+  'on',
+  'off'
+])
 
-function plainOk(s) {
+function plainOk(s: string): boolean {
   if (s === '' || s !== s.trim()) return false
   if (RESERVED.has(s.toLowerCase())) return false
   if (NUM.test(s) || SEXA.test(s) || TS.test(s)) return false
   if (CTRL.test(s) || s.includes('\t')) return false
-  if ('!&*?|>@`"\'%#,[]{}'.includes(s[0])) return false
-  if ('-:'.includes(s[0]) && (s.length === 1 || s[1] === ' ')) return false
+  if ('!&*?|>@`"\'%#,[]{}'.includes(s[0]!)) return false
+  if ('-:'.includes(s[0]!) && (s.length === 1 || s[1] === ' ')) return false
   if (s.includes(': ') || s.endsWith(':') || s.includes(' #')) return false
   return true
 }
 
-function scalar(v) {
+function scalar(v: unknown): string {
   if (v === null) return 'null'
   if (v === true) return 'true'
   if (v === false) return 'false'
@@ -62,10 +150,15 @@ function scalar(v) {
   return `'${s}'`
 }
 
-let isMap = v => v !== null && typeof v === 'object' && !Array.isArray(v)
-let lines = []
+let isMap = (v: unknown): v is Record<string, unknown> =>
+  v !== null && typeof v === 'object' && !Array.isArray(v)
+let lines: string[] = []
 
-function renderDict(node, indent, first) {
+function renderDict(
+  node: Record<string, unknown>,
+  indent: number,
+  first?: string
+) {
   let pad = '  '.repeat(indent)
   Object.entries(node).forEach(([k, val], i) => {
     let p = i === 0 && first !== undefined ? first : pad
@@ -90,7 +183,7 @@ function renderDict(node, indent, first) {
   })
 }
 
-function renderList(node, indent) {
+function renderList(node: unknown[], indent: number) {
   let pad = '  '.repeat(indent)
   for (let item of node) {
     if (isMap(item)) {
@@ -109,7 +202,7 @@ function renderList(node, indent) {
   }
 }
 
-function toYaml(data) {
+function toYaml(data: unknown): string {
   lines.length = 0
   if (Array.isArray(data)) renderList(data, 0)
   else if (isMap(data)) renderDict(data, 0)
@@ -117,31 +210,58 @@ function toYaml(data) {
   return lines.join('\n') + (lines.length ? '\n' : '')
 }
 
-try {
-  console.error(`Fetching automation list from ${HOST} ...`)
+function fileName(category: string): string {
+  let base =
+    SLUGS[category] || category.replace(/[/\\\u0000-\u001f]/g, '_').trim()
+  return base + '.yml'
+}
 
-  let ids = JSON.parse(api('states'))
+try {
+  console.info(`Fetching automation list from ${HOST} ...`)
+
+  let automations = (await api<HassState[]>('states'))
     .filter(
       s =>
         typeof s.entity_id === 'string' && s.entity_id.startsWith('automation.')
     )
-    .map(s => s.attributes && s.attributes.id)
-    .filter(Boolean)
+    .map(s => ({ entityId: s.entity_id, id: s.attributes && s.attributes.id }))
+    .filter(a => a.id)
 
-  if (!ids.length) {
-    console.error('No automations found (or none are UI-managed).')
+  if (!automations.length) {
+    console.info('No automations found (or none are UI-managed).')
     process.exit(1)
   }
 
-  let configs = []
-  for (let id of ids) {
-    configs.push(JSON.parse(api(`config/automation/config/${id}`)))
-    console.error(`  - ${id}`)
+  let categoryByEntity = await fetchCategories()
+
+  let groups: Record<string, unknown[]> = {}
+  for (let { entityId, id } of automations) {
+    let category = categoryByEntity[entityId] || UNCATEGORIZED
+    let config = await api<Record<string, unknown>>(
+      `config/automation/config/${id}`
+    )
+    delete config.id
+    ;(groups[category] ||= []).push(config)
+    console.error(`  - [${category}] ${id}`)
   }
 
-  writeFileSync(join(import.meta.dirname, OUTPUT), toYaml(configs))
-  console.log(`Saved ${configs.length} automation(s) to ${OUTPUT}`)
+  let dir = join(import.meta.dirname, OUTPUT_DIR)
+  mkdirSync(dir, { recursive: true })
+  for (let f of readdirSync(dir)) {
+    if (f.endsWith('.yml')) rmSync(join(dir, f))
+  }
+
+  let count = 0
+  for (let [category, configs] of Object.entries(groups)) {
+    writeFileSync(join(dir, fileName(category)), toYaml(configs))
+    count += configs.length
+  }
+
+  let names = Object.keys(groups).length
+  console.log(
+    `Saved ${count} automation(s) to ${names} file(s) in ${OUTPUT_DIR}/`
+  )
 } catch (err) {
-  console.error(err.message || String(err))
+  console.error(err instanceof Error ? err.message : String(err))
   process.exit(1)
 }

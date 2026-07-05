@@ -1,0 +1,15 @@
+{
+  "name": "domovoy",
+  "private": true,
+  "license": "MIT",
+  "author": "Andrey Sitnik <andrey@sitnik.es>",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.0",
+    "typescript": "^6.0.3"
+  }
+}

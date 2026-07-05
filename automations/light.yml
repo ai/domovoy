@@ -2,5 +2,11 @@
   use_blueprint:
     path: domovoy/wall-switch.yaml
     input:
-      wall_switch: a9b348fb91b46bd69b18a04ad670c375
+      wall_switch: 2d30ab78a44cd462ac7d142927c6e6b5
       light_group: light.light_group_andrey
+- alias: Выключатель света на кухне
+  use_blueprint:
+    path: domovoy/wall-switch.yaml
+    input:
+      wall_switch: e97d66acdb3f1b0b4289d5d3afd14b66
+      light_group: light.light_kitchen_group

@@ -83,6 +83,7 @@ function readFirstBulb(cb) {
 }
 
 let longPressed = false
+let haWaitTimer = null
 
 Shelly.addEventHandler(function (e) {
   if (e.component !== 'input:0') {
@@ -95,6 +96,12 @@ Shelly.addEventHandler(function (e) {
     longPressed = true
   } else if (e.info.event === 'btn_up') {
     if (!longPressed) {
+      if (haWaitTimer !== null) {
+        // The pending check compares against a stale bulb state
+        Timer.clear(haWaitTimer)
+        haWaitTimer = null
+        debug('Cancelled previous HA wait')
+      }
       if (busy > 2) {
         debug('Busy, skipping press')
         return
@@ -109,7 +116,8 @@ Shelly.addEventHandler(function (e) {
           debug('State read failed, leaving the press to HA')
           return
         }
-        Timer.set(HA_WAIT_MS, false, function () {
+        haWaitTimer = Timer.set(HA_WAIT_MS, false, function () {
+          haWaitTimer = null
           readFirstBulb(function (after) {
             if (after === null || after !== before) {
               debug('HA handled the press')

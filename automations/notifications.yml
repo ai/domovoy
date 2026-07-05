@@ -1,5 +1,4 @@
 - alias: Уведомить о разряде батареи
-  description: ''
   triggers:
     - trigger: time
       at: '10:00:00'
@@ -15,7 +14,6 @@
     threshold: 30
     sensors: "{% set result = namespace(sensors=[]) %} {% for state in states.sensor | selectattr('attributes.device_class', '==', 'battery') %}\n  {% if 0 <= state.state | int(-1) < threshold | int %}\n    {% set result.sensors = result.sensors + [state.name ~ ' (' ~ state.state ~ ' %)'] %}\n  {% endif %}\n{% endfor %} {{result.sensors|join(', ')}}"
 - alias: Протечка воды в ванной
-  description: ''
   triggers:
     - trigger: state
       entity_id: binary_sensor.water_bathroom_water_leak
@@ -28,7 +26,6 @@
         message: Протечка воды
   mode: single
 - alias: Протечка воды на кухне
-  description: ''
   triggers:
     - trigger: state
       entity_id: binary_sensor.water_kitchen_water_leak
@@ -41,7 +38,6 @@
         message: Протечка воды
   mode: single
 - alias: Протечка воды в туалете
-  description: ''
   triggers:
     - trigger: state
       entity_id: binary_sensor.water_toilet_water_leak
@@ -54,7 +50,6 @@
         message: Протечка воды
   mode: single
 - alias: Уведомить Андрея о высоком уровне CO²
-  description: ''
   triggers:
     - trigger: numeric_state
       entity_id: sensor.presence_apollo_msr_2_co2

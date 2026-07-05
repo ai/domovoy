@@ -241,6 +241,9 @@ try {
       `config/automation/config/${id}`
     )
     delete config.id
+    if (typeof config.description === 'string' && !config.description.trim()) {
+      delete config.description
+    }
     ;(groups[category] ||= []).push(config)
     console.error(`  - [${category}] ${id}`)
   }

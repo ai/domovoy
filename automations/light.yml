@@ -1,38 +1,12 @@
-- alias: Обновление оттенка и яркости ламп при включении
-  triggers:
-    - trigger: state
-      entity_id:
-        - light.light_andrey_desk
-        - light.light_kitchen_worktop_1
-        - light.light_kitchen_worktop_2
-      from:
-        - 'off'
-      to:
-        - 'on'
-  conditions:
-    - condition: template
-      value_template: "{{ trigger.to_state.context.parent_id == none and\n   trigger.to_state.context.id not in\n   states.automation | map(attribute='context.id') | list }}"
-  actions:
-    - action: light.turn_on
-      target:
-        entity_id: '{{ trigger.entity_id }}'
-      data:
-        brightness_pct: "{{ state_attr('switch.daylight_adaptive_lighting_daylight', 'brightness_pct') | round(0) }}\n"
-        color_temp_kelvin: "{{ state_attr('switch.daylight_adaptive_lighting_daylight', 'color_temp_kelvin') | int }}\n"
-        transition: 1
-  mode: parallel
 - alias: Выключатель в кабинете Андрея
   use_blueprint:
     path: ai/night-light-on-hold.yaml
     input:
-      light_target:
-        - light.light_andrey_desk
+      light_group: light.light_group_andrey
       wall_switch: a9b348fb91b46bd69b18a04ad670c375
 - alias: Выключатель на кухне
   use_blueprint:
     path: ai/night-light-on-hold.yaml
     input:
       wall_switch: 4b34d9fa3c4662fa3cad315e73d89607
-      light_target:
-        - light.light_kitchen_worktop_1
-        - light.light_kitchen_worktop_2
+      light_group: light.light_group_kitchen

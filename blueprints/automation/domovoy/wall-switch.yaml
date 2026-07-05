@@ -1,0 +1,108 @@
+blueprint:
+  name: Настенный выключатель
+  domain: automation
+  author: Andrey Sitnik
+  source_url: https://github.com/ai/domovoy/blob/main/blueprints/automation/domovoy/wall-switch.yaml
+  input:
+    wall_switch:
+      name: Выключатель
+      selector:
+        device:
+          filter:
+            - integration: mqtt
+              manufacturer: Shelly
+    light_group:
+      name: Группа ламп
+      selector:
+        entity:
+          filter:
+            - domain: light
+    adaptive_switch:
+      name: Адаптивное освещение
+      default: switch.daylight_adaptive_lighting_daylight
+      selector:
+        entity:
+          filter:
+            - domain: switch
+              integration: adaptive_lighting
+
+variables:
+  light_group: !input light_group
+
+mode: single
+
+triggers:
+  - trigger: device
+    id: single
+    domain: mqtt
+    device_id: !input wall_switch
+    type: action
+    subtype: input_1_single
+  - trigger: device
+    id: hold
+    domain: mqtt
+    device_id: !input wall_switch
+    type: action
+    subtype: input_1_hold
+
+conditions: []
+
+actions:
+  - choose:
+      - conditions:
+          - condition: trigger
+            id: single
+          - condition: state
+            entity_id: !input light_group
+            state: 'off'
+        sequence:
+          # Bare turn_on is intercepted by Adaptive Lighting which fills in
+          # the current brightness and color. light.toggle would bypass the
+          # intercept, so on/off is chosen here explicitly.
+          - action: light.turn_on
+            target:
+              entity_id: !input light_group
+      - conditions:
+          - condition: trigger
+            id: single
+        sequence:
+          - action: light.turn_off
+            target:
+              entity_id: !input light_group
+      - conditions:
+          - condition: trigger
+            id: hold
+          - condition: template
+            value_template: >-
+              {{ is_state(light_group, 'on') and
+                 state_attr(light_group, 'brightness') | int(0) <= 2 }}
+        sequence:
+          # Leaving night mode: give the lamps back to Adaptive Lighting
+          - action: adaptive_lighting.set_manual_control
+            data:
+              entity_id: !input adaptive_switch
+              lights:
+                - !input light_group
+              manual_control: false
+          - action: adaptive_lighting.apply
+            data:
+              entity_id: !input adaptive_switch
+              lights:
+                - !input light_group
+              transition: 1
+      - conditions:
+          - condition: trigger
+            id: hold
+        sequence:
+          # Night mode: the explicit brightness marks the lamp as manually
+          # controlled, so Adaptive Lighting will not re-adapt it until it
+          # is turned off
+          - action: light.turn_on
+            target:
+              entity_id: !input light_group
+            data:
+              brightness: 1
+              color_temp_kelvin: "{{ state_attr(light_group, 'min_color_temp_kelvin') | int(2202) }}"
+              # Transition from "off" makes bulbs flash at the previous
+              # brightness before dimming down
+              transition: "{{ 1 if is_state(light_group, 'on') else 0 }}"

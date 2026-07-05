@@ -50,7 +50,7 @@ actions:
               {% for light in lights %}
                 {% if is_state(light, 'on') %}
                   {% set ns.any_on = true %}
-                  {% if (state_attr(light, 'brightness') | int(0) * 100 / 255) | round(0) != 1 %}
+                  {% if state_attr(light, 'brightness') | int(0) != 1 %}
                     {% set ns.dimmed = false %}
                   {% endif %}
                 {% endif %}
@@ -72,6 +72,6 @@ actions:
               target:
                 entity_id: "{{ repeat.item }}"
               data:
-                brightness_pct: 1
+                brightness: 1
                 color_temp_kelvin: "{{ state_attr(repeat.item, 'min_color_temp_kelvin') | int(2202) }}"
                 transition: 1

@@ -6,6 +6,9 @@
         - light.light_andrey_desk
       from: 'off'
       to: 'on'
+  conditions:
+    - condition: template
+      value_template: '{{ trigger.to_state.context.parent_id == none }}'
   actions:
     - action: light.turn_on
       target:
@@ -15,3 +18,11 @@
         color_temp_kelvin: "{{ state_attr('switch.daylight_adaptive_lighting_daylight', 'color_temp_kelvin') | int }}\n"
         transition: 1
   mode: parallel
+- alias: Выключатель в кабинете Андрея
+  description: ''
+  use_blueprint:
+    path: ai/night-light-on-hold.yaml
+    input:
+      light_target:
+        - light.light_andrey_desk
+      wall_switch: a9b348fb91b46bd69b18a04ad670c375

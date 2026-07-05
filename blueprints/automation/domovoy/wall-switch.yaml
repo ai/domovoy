@@ -64,6 +64,8 @@ actions:
               - action: light.turn_on
                 target:
                   entity_id: !input light_group
+                data:
+                  transition: 1
             else:
               # No Adaptive Lighting: override night mode brightness
               # remembered by bulbs from the previous cycle
@@ -72,10 +74,13 @@ actions:
                   entity_id: !input light_group
                 data:
                   brightness: 255
+                  transition: 1
         else:
           - action: light.turn_off
             target:
               entity_id: !input light_group
+            data:
+              transition: 1
     else:
       - if:
           - condition: template

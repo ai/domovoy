@@ -6,10 +6,10 @@
 
 let DEBUG = true // Print debug output to the script console
 
-// Z2M: Devices -> bulb ->"Network address" (e.g. 0x1A2B)
+// Z2M: Devices -> bulb -> Network address (e.g. 0x1A2B)
 let LIGHTS = [0xcd99, 0x2a4b]
 
-let HA_WAIT_MS = 2000
+let HA_WAIT_MS = 600
 
 // Back-to-back Zigbee.SendCommand calls make the radio drop frames, so
 // per-bulb sends are spaced with timers instead of chaining RPC callbacks

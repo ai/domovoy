@@ -1,18 +1,18 @@
 # Wall Switch
 
-1. Install `Shelly 1PM Mini` in wall switch and replace normal wall switch 2 stages button to push-button.
-2. Connect to Shelly AP WiFi with name like `Shelly…`. On Android click `Use this network` in popup. Open `http://192.168.33.1` and put your home WiFi credentials.
-3. Open you WiFi router UI and find the IP address on new switch in your network. Open this IP address in the browser.
-4. Go `Settings → Firmware` and install `2.0.0-…` alternative firmware with Zigbee. Wait the end of flashing new firmware.
-5. Enable `Enable update to stable version`.
-6. In `Settings` set name to something like `Wall Switch / ROOM`.
-7. Go to `Home` → `Output` → `Input/Output settings` and set Input Mode to `Button` and Output Type to `Detached`.
-8. TODO: Check light ID in Zigbee2MQTT.h in the Zigbee2MQTT. Set name to the same `Wall Switch / ROOM`.
-9. In `Scripts` create new script with [`wall-switch.js`](../shelly/wall-switch.js). Save and Run it. Return back to `Scripts` and enable `Run on startup`. The script is only a fallback for the HA automation: on press it reads the on/off state of the first light in `LIGHTS`, waits 100 ms and reads it again — if the state did not change (HA is down), it sends explicit on/off to all lights itself. Put the closest/most reliable bulb first in `LIGHTS`.
-10. In `Zigbee` click `Start pairing`.
-11. Open Zigbee2MQTT and press `Permit join`.
-12. Wait until you will see new wall switch. Set the same `Wall Switch / ROOM` name.
-13. Create a Zigbee2MQTT group with the room lights if it does not exist yet and add the group entity to the Adaptive Lighting lights list.
-14. Keep WiFi enabled and add the switch to the HA `Shelly` integration (it is auto-discovered). Add automation from the [`wall-switch`](../blueprints/automation/domovoy/wall-switch.yaml) blueprint: pick the WiFi switch device and the light group. Press turns the group on (Adaptive Lighting fills in brightness/color via intercept) or off, hold enables the night mode; the Shelly script kicks in only when HA does not react. Button events go over WiFi because Zigbee actions arrive noticeably later; the Zigbee pairing is only used by the script to reach the bulbs directly when HA is down.
-
-TODO: in some cases strange bugs can be fixed by reconfigure. Check that you light have reporting.
+1. In Zigbee2MQTT create a group for all selected lights in the room. Add them to this group.
+2. In Zigbee2MQTT prepare list of light IDs in `Devices` -> bulb -> `Network address` (something like `0x1A2B`). Change letters to lower case.
+3. Install `Shelly 1PM Mini` in wall switch and replace normal wall switch 2 stages button to push-button.
+4. Connect to Shelly AP WiFi with name like `Shelly…`. On Android click `Use this network` in popup. Open `http://192.168.33.1` and put your home WiFi credentials.
+5. Open you WiFi router UI and find the IP address on new switch in your network. Open this IP address in the browser.
+6. Go `Settings → Firmware` and install `2.0.0-…` alternative firmware with Zigbee. Wait the end of flashing new firmware.
+7. Enable `Enable update to stable version`.
+8. In `Settings` set name to something like `Wall Switch / ROOM`.
+9. Go to `Home` → `Output` → `Input/Output settings` and set Input Mode to `Button` and Output Type to `Detached`.
+10. In `Scripts` create new script with [`wall-switch.js`](../shelly/wall-switch.js). Replace `LIGHTS` with light IDs from step 2. Save and Run it. Return back to `Scripts` and enable `Run on startup`.
+11. In `Zigbee` click `Start pairing`.
+12. Open Zigbee2MQTT and press `Permit join`.
+13. Wait until you will see new wall switch. Set the same `Wall Switch / ROOM` name.
+14. In Home Assistant add your device again via `Shelly` (WiFi) integration.
+15. Go to `Settings` → `Automations` → `Blueprints` and import [`wall-switch`](../blueprints/automation/domovoy/wall-switch.yaml) blueprint via `https://raw.githubusercontent.com/ai/domovoy/refs/heads/main/blueprints/automation/domovoy/wall-switch.yaml` URL.
+16. For every room create an automation using these blueprint.

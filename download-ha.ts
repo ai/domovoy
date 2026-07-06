@@ -2,6 +2,7 @@
 
 import { mkdirSync, readdirSync, rmSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { styleText } from 'node:util'
 
 const HOST = 'https://domovoy.local'
 const WS = 'wss://domovoy.local/api/websocket'
@@ -17,7 +18,6 @@ interface Domain {
   prefix: string
   outputDir: string
   scope: string
-  configId: (state: HassState) => string | undefined
   configPath: (id: string) => string
 }
 
@@ -26,14 +26,12 @@ const DOMAINS: Domain[] = [
     prefix: 'automation.',
     outputDir: 'automations',
     scope: 'automation',
-    configId: s => s.attributes?.id,
     configPath: id => `config/automation/config/${id}`
   },
   {
     prefix: 'script.',
     outputDir: 'scripts',
     scope: 'script',
-    configId: s => s.entity_id.slice('script.'.length),
     configPath: id => `config/script/config/${id}`
   }
 ]
@@ -50,6 +48,7 @@ interface Category {
 
 interface EntityEntry {
   entity_id: string
+  unique_id?: string
   categories?: Record<string, string>
 }
 
@@ -67,13 +66,19 @@ async function api<T>(path: string): Promise<T> {
   return res.json() as Promise<T>
 }
 
-function fetchCategories(scopes: string[]): Promise<Record<string, string>> {
+interface Registry {
+  categoryByEntity: Record<string, string>
+  uniqueIdByEntity: Record<string, string>
+}
+
+function fetchRegistry(scopes: string[]): Promise<Registry> {
   return new Promise((resolve, reject) => {
     let ws = new WebSocket(WS)
     let seq = 0
     let pending: Record<number, { type: string; scope?: string }> = {}
     let byScope: Record<string, Record<string, string>> = {}
     let entityCategory: Record<string, { scope: string; id: string }> = {}
+    let uniqueIdByEntity: Record<string, string> = {}
     let got = 0
     let expected = scopes.length + 1
 
@@ -108,6 +113,7 @@ function fetchCategories(scopes: string[]): Promise<Record<string, string>> {
           for (let c of msg.result as Category[]) map[c.category_id] = c.name
         } else {
           for (let e of msg.result as EntityEntry[]) {
+            if (e.unique_id) uniqueIdByEntity[e.entity_id] = e.unique_id
             for (let [scope, id] of Object.entries(e.categories ?? {})) {
               if (id) entityCategory[e.entity_id] = { scope, id }
             }
@@ -115,12 +121,12 @@ function fetchCategories(scopes: string[]): Promise<Record<string, string>> {
         }
         if (++got === expected) {
           ws.close()
-          let byEntity: Record<string, string> = {}
+          let categoryByEntity: Record<string, string> = {}
           for (let [entity, { scope, id }] of Object.entries(entityCategory)) {
             let name = byScope[scope]?.[id]
-            if (name) byEntity[entity] = name
+            if (name) categoryByEntity[entity] = name
           }
-          resolve(byEntity)
+          resolve({ categoryByEntity, uniqueIdByEntity })
         }
       }
     }
@@ -239,11 +245,14 @@ function fileName(category: string): string {
 async function download(
   domain: Domain,
   states: HassState[],
-  categoryByEntity: Record<string, string>
+  registry: Registry
 ): Promise<void> {
   let items = states
     .filter(s => s.entity_id.startsWith(domain.prefix))
-    .map(s => ({ entityId: s.entity_id, id: domain.configId(s) }))
+    .map(s => ({
+      entityId: s.entity_id,
+      id: registry.uniqueIdByEntity[s.entity_id] ?? s.attributes?.id
+    }))
     .filter((a): a is { entityId: string; id: string } => Boolean(a.id))
 
   if (!items.length) {
@@ -253,19 +262,19 @@ async function download(
 
   let groups: Record<string, unknown[]> = {}
   for (let { entityId, id } of items) {
-    let category = categoryByEntity[entityId] || UNCATEGORIZED
+    let category = registry.categoryByEntity[entityId] || UNCATEGORIZED
     let config
     try {
       config = await api<Record<string, unknown>>(domain.configPath(id))
     } catch {
-      console.error(`  ! skipped ${entityId} (not editable)`)
+      console.error(styleText('red', `  ! skipped ${entityId} (not editable)`))
       continue
     }
     delete config.id
     if (typeof config.description === 'string' && !config.description.trim()) {
       delete config.description
     }
-    ;(groups[category] ||= []).push(config)
+    ;(groups[category] ||= []).push({ id: entityId, ...config })
     console.error(`  - [${category}] ${entityId}`)
   }
 
@@ -290,9 +299,9 @@ async function download(
 try {
   console.info(`Fetching entities from ${HOST} ...`)
   let states = await api<HassState[]>('states')
-  let categoryByEntity = await fetchCategories(DOMAINS.map(d => d.scope))
+  let registry = await fetchRegistry(DOMAINS.map(d => d.scope))
   for (let domain of DOMAINS) {
-    await download(domain, states, categoryByEntity)
+    await download(domain, states, registry)
   }
 } catch (err) {
   console.error(err instanceof Error ? err.message : String(err))

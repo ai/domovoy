@@ -1,4 +1,5 @@
-- alias: Уведомить о разряде батареи
+- id: automation.low_battery_notification
+  alias: Уведомить о разряде батареи
   triggers:
     - trigger: time
       at: '10:00:00'
@@ -17,7 +18,8 @@
   variables:
     threshold: 30
     sensors: "{% set result = namespace(sensors=[]) %} {% for state in states.sensor | selectattr('attributes.device_class', '==', 'battery') %}\n  {% if 0 <= state.state | int(-1) < threshold | int %}\n    {% set result.sensors = result.sensors + [state.name ~ ' (' ~ state.state ~ ' %)'] %}\n  {% endif %}\n{% endfor %} {{result.sensors|join(', ')}}"
-- alias: Протечка воды в ванной
+- id: automation.bathroom_water_leak
+  alias: Протечка воды в ванной
   triggers:
     - trigger: state
       entity_id: binary_sensor.water_bathroom_water_leak
@@ -29,7 +31,8 @@
         title: Ванная
         message: Протечка воды
   mode: single
-- alias: Протечка воды на кухне
+- id: automation.kitcher_water_leak
+  alias: Протечка воды на кухне
   triggers:
     - trigger: state
       entity_id: binary_sensor.water_kitchen_water_leak
@@ -41,19 +44,8 @@
         title: Кухня
         message: Протечка воды
   mode: single
-- alias: Протечка воды в туалете
-  triggers:
-    - trigger: state
-      entity_id: binary_sensor.water_toilet_water_leak
-      from: 'off'
-      to: 'on'
-  actions:
-    - action: notify.notify
-      data:
-        title: Туалет
-        message: Протечка воды
-  mode: single
-- alias: Высокий уровне CO² у Андрея
+- id: automation.high_co2_notification_andrey
+  alias: Высокий уровне CO² у Андрея
   triggers:
     - trigger: numeric_state
       entity_id: sensor.presence_apollo_msr_2_co2
@@ -71,7 +63,53 @@
         title: Кабинет Андрея
         message: "Высокий уровень CO²: {{ states('sensor.presence_apollo_msr_2_co2') }}"
   mode: single
-- alias: Чистка поилки кошки
+- id: automation.high_co2_notification_bedroom
+  alias: Высокий CO² в спальне ночью
+  triggers:
+    - trigger: numeric_state
+      entity_id: sensor.air_bedroom_co2
+      above: 1000
+      id: detect
+    - trigger: time
+      at: input_datetime.night_start
+      id: night_start
+  conditions:
+    - condition: state
+      entity_id: input_boolean.stop
+      state: 'off'
+    - condition: time
+      after: input_datetime.night_start
+      before: input_datetime.night_end
+    - condition: numeric_state
+      entity_id: sensor.air_bedroom_co2
+      above: 1000
+  actions:
+    - action: notify.mobile_app_phone_bedoll
+      data:
+        title: Спальня
+        message: 'Ночью высокий уровень CO²: {{ states("sensor.air_bedroom_co2") }}'
+        data:
+          channel: Maintaince
+          importance: low
+  mode: single
+- id: automation.cat_fountain_low_water
+  alias: Мало воды в поилке кошке
+  triggers:
+    - trigger: numeric_state
+      entity_id: sensor.fountain_dockstream_2_remaining_water_2
+      below: 40
+  conditions:
+    - condition: state
+      entity_id: input_boolean.stop
+      state: 'off'
+  actions:
+    - action: notify.mobile_app_phone_bedoll
+      data:
+        title: Поилка кошки
+        message: 'Мало воды: {{ states("sensor.fountain_dockstream_2_remaining_water_2") }}%'
+  mode: single
+- id: automation.cat_fountain_cleaning
+  alias: Чистка поилки кошки
   triggers:
     - trigger: numeric_state
       entity_id: sensor.fountain_dockstream_2_remaining_filter_day
@@ -114,46 +152,16 @@
                 data:
                   tag: fountain_clean
   mode: single
-- alias: Мало воды в поилке кошке
+- id: automation.toilet_water_leak
+  alias: Протечка воды в туалете
   triggers:
-    - trigger: numeric_state
-      entity_id: sensor.fountain_dockstream_2_remaining_water_2
-      below: 40
-  conditions:
-    - condition: state
-      entity_id: input_boolean.stop
-      state: 'off'
+    - trigger: state
+      entity_id: binary_sensor.water_toilet_water_leak
+      from: 'off'
+      to: 'on'
   actions:
-    - action: notify.mobile_app_phone_bedoll
+    - action: notify.notify
       data:
-        title: Поилка кошки
-        message: 'Мало воды: {{ states("sensor.fountain_dockstream_2_remaining_water_2") }}%'
-  mode: single
-- alias: Высокий CO² в спальне ночью
-  triggers:
-    - trigger: numeric_state
-      entity_id: sensor.air_bedroom_co2
-      above: 1000
-      id: detect
-    - trigger: time
-      at: input_datetime.night_start
-      id: night_start
-  conditions:
-    - condition: state
-      entity_id: input_boolean.stop
-      state: 'off'
-    - condition: time
-      after: input_datetime.night_start
-      before: input_datetime.night_end
-    - condition: numeric_state
-      entity_id: sensor.air_bedroom_co2
-      above: 1000
-  actions:
-    - action: notify.mobile_app_phone_bedoll
-      data:
-        title: Спальня
-        message: 'Ночью высокий уровень CO²: {{ states("sensor.air_bedroom_co2") }}'
-        data:
-          channel: Maintaince
-          importance: low
+        title: Туалет
+        message: Протечка воды
   mode: single

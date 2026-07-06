@@ -1,4 +1,5 @@
-- alias: Выключатель света в кабинете Андрея
+- id: automation.wall_switch_andrey
+  alias: Выключатель света в кабинете Андрея
   conditions:
     - condition: state
       entity_id: input_boolean.stop
@@ -9,7 +10,8 @@
       wall_switch: 2d30ab78a44cd462ac7d142927c6e6b5
       light_group: light.light_group_andrey
       adaptive_switch: switch.daylight_adaptive_lighting_daylight
-- alias: Выключатель света на кухне
+- id: automation.wall_switch_kitchen
+  alias: Выключатель света на кухне
   conditions:
     - condition: state
       entity_id: input_boolean.stop

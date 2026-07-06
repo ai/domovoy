@@ -1,4 +1,5 @@
-- sequence:
+- id: script.clean_cat_fountain
+  sequence:
     - action: button.press
       target:
         entity_id: button.fountain_dockstream_2_filter_reset

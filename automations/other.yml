@@ -28,3 +28,35 @@
               target:
                 entity_id: switch.wall_switch_bathroom_l2
   mode: single
+- id: automation.heating_cooling_interlock
+  alias: Взаимоблокировка обогрева и охлаждения
+  triggers:
+    - trigger: state
+      entity_id: input_boolean.cooling
+      to: 'on'
+      id: cooling
+    - trigger: state
+      entity_id: input_boolean.heating
+      to: 'on'
+      id: heating
+  conditions:
+    - condition: state
+      entity_id: input_boolean.stop
+      state: 'off'
+  actions:
+    - choose:
+        - conditions:
+            - condition: trigger
+              id: cooling
+          sequence:
+            - action: input_boolean.turn_off
+              target:
+                entity_id: input_boolean.heating
+        - conditions:
+            - condition: trigger
+              id: heating
+          sequence:
+            - action: input_boolean.turn_off
+              target:
+                entity_id: input_boolean.cooling
+  mode: single

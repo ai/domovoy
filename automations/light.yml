@@ -1,4 +1,8 @@
 - alias: Выключатель света в кабинете Андрея
+  conditions:
+    - condition: state
+      entity_id: input_boolean.stop
+      state: 'off'
   use_blueprint:
     path: domovoy/wall-switch.yaml
     input:
@@ -6,6 +10,10 @@
       light_group: light.light_group_andrey
       adaptive_switch: switch.daylight_adaptive_lighting_daylight
 - alias: Выключатель света на кухне
+  conditions:
+    - condition: state
+      entity_id: input_boolean.stop
+      state: 'off'
   use_blueprint:
     path: domovoy/wall-switch.yaml
     input:

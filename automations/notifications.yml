@@ -3,7 +3,11 @@
     - trigger: time
       at: '10:00:00'
   conditions:
-    - "{{ sensors != '' }}"
+    - condition: template
+      value_template: "{{ sensors != '' }}"
+    - condition: state
+      entity_id: input_boolean.stop
+      state: 'off'
   actions:
     - action: notify.mobile_app_phone_bedoll
       data:
@@ -58,6 +62,9 @@
     - condition: state
       entity_id: person.andrey
       state: home
+    - condition: state
+      entity_id: input_boolean.stop
+      state: 'off'
   actions:
     - action: notify.mobile_app_phone_bedoll
       data:

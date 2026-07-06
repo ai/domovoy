@@ -3,7 +3,6 @@
 import { mkdirSync, readdirSync, rmSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 
-const OUTPUT_DIR = 'automations'
 const HOST = 'https://domovoy.local'
 const WS = 'wss://domovoy.local/api/websocket'
 const UNCATEGORIZED = 'Прочее'
@@ -13,6 +12,31 @@ const SLUGS: Record<string, string> = {
   Свет: 'light',
   Уведомления: 'notifications'
 }
+
+interface Domain {
+  prefix: string
+  outputDir: string
+  scope: string
+  configId: (state: HassState) => string | undefined
+  configPath: (id: string) => string
+}
+
+const DOMAINS: Domain[] = [
+  {
+    prefix: 'automation.',
+    outputDir: 'automations',
+    scope: 'automation',
+    configId: s => s.attributes?.id,
+    configPath: id => `config/automation/config/${id}`
+  },
+  {
+    prefix: 'script.',
+    outputDir: 'scripts',
+    scope: 'script',
+    configId: s => s.entity_id.slice('script.'.length),
+    configPath: id => `config/script/config/${id}`
+  }
+]
 
 interface HassState {
   entity_id: string
@@ -26,7 +50,7 @@ interface Category {
 
 interface EntityEntry {
   entity_id: string
-  categories?: { automation?: string }
+  categories?: Record<string, string>
 }
 
 async function api<T>(path: string): Promise<T> {
@@ -43,25 +67,20 @@ async function api<T>(path: string): Promise<T> {
   return res.json() as Promise<T>
 }
 
-function fetchCategories(): Promise<Record<string, string>> {
+function fetchCategories(scopes: string[]): Promise<Record<string, string>> {
   return new Promise((resolve, reject) => {
     let ws = new WebSocket(WS)
     let seq = 0
-    let pending: Record<number, string> = {}
-    let categories: Record<string, string> = {}
-    let entityCategory: Record<string, string> = {}
+    let pending: Record<number, { type: string; scope?: string }> = {}
+    let byScope: Record<string, Record<string, string>> = {}
+    let entityCategory: Record<string, { scope: string; id: string }> = {}
     let got = 0
+    let expected = scopes.length + 1
 
-    let send = (type: string) => {
+    let send = (type: string, scope?: string) => {
       let id = ++seq
-      pending[id] = type
-      ws.send(
-        JSON.stringify({
-          id,
-          type,
-          ...(type.includes('category') && { scope: 'automation' })
-        })
-      )
+      pending[id] = { type, scope }
+      ws.send(JSON.stringify({ id, type, ...(scope && { scope }) }))
     }
 
     ws.onmessage = (ev: MessageEvent) => {
@@ -76,29 +95,30 @@ function fetchCategories(): Promise<Record<string, string>> {
       } else if (msg.type === 'auth_invalid') {
         reject(new Error('WebSocket auth failed: check HOMEASSISTANT_TOKEN'))
       } else if (msg.type === 'auth_ok') {
-        send('config/category_registry/list')
+        for (let scope of scopes) send('config/category_registry/list', scope)
         send('config/entity_registry/list')
       } else if (msg.type === 'result') {
+        let req = pending[msg.id]!
         if (!msg.success) {
-          reject(new Error(`WebSocket request ${pending[msg.id]} failed`))
+          reject(new Error(`WebSocket request ${req.type} failed`))
           return
         }
-        if (pending[msg.id] === 'config/category_registry/list') {
-          for (let c of msg.result as Category[]) {
-            categories[c.category_id] = c.name
-          }
+        if (req.type === 'config/category_registry/list') {
+          let map = (byScope[req.scope!] ||= {})
+          for (let c of msg.result as Category[]) map[c.category_id] = c.name
         } else {
           for (let e of msg.result as EntityEntry[]) {
-            if (e.categories && e.categories.automation) {
-              entityCategory[e.entity_id] = e.categories.automation
+            for (let [scope, id] of Object.entries(e.categories ?? {})) {
+              if (id) entityCategory[e.entity_id] = { scope, id }
             }
           }
         }
-        if (++got === 2) {
+        if (++got === expected) {
           ws.close()
           let byEntity: Record<string, string> = {}
-          for (let [entity, id] of Object.entries(entityCategory)) {
-            if (categories[id]) byEntity[entity] = categories[id]
+          for (let [entity, { scope, id }] of Object.entries(entityCategory)) {
+            let name = byScope[scope]?.[id]
+            if (name) byEntity[entity] = name
           }
           resolve(byEntity)
         }
@@ -216,39 +236,40 @@ function fileName(category: string): string {
   return base + '.yml'
 }
 
-try {
-  console.info(`Fetching automation list from ${HOST} ...`)
+async function download(
+  domain: Domain,
+  states: HassState[],
+  categoryByEntity: Record<string, string>
+): Promise<void> {
+  let items = states
+    .filter(s => s.entity_id.startsWith(domain.prefix))
+    .map(s => ({ entityId: s.entity_id, id: domain.configId(s) }))
+    .filter((a): a is { entityId: string; id: string } => Boolean(a.id))
 
-  let automations = (await api<HassState[]>('states'))
-    .filter(
-      s =>
-        typeof s.entity_id === 'string' && s.entity_id.startsWith('automation.')
-    )
-    .map(s => ({ entityId: s.entity_id, id: s.attributes && s.attributes.id }))
-    .filter(a => a.id)
-
-  if (!automations.length) {
-    console.info('No automations found (or none are UI-managed).')
-    process.exit(1)
+  if (!items.length) {
+    console.info(`No UI-managed ${domain.outputDir} found.`)
+    return
   }
 
-  let categoryByEntity = await fetchCategories()
-
   let groups: Record<string, unknown[]> = {}
-  for (let { entityId, id } of automations) {
+  for (let { entityId, id } of items) {
     let category = categoryByEntity[entityId] || UNCATEGORIZED
-    let config = await api<Record<string, unknown>>(
-      `config/automation/config/${id}`
-    )
+    let config
+    try {
+      config = await api<Record<string, unknown>>(domain.configPath(id))
+    } catch {
+      console.error(`  ! skipped ${entityId} (not editable)`)
+      continue
+    }
     delete config.id
     if (typeof config.description === 'string' && !config.description.trim()) {
       delete config.description
     }
     ;(groups[category] ||= []).push(config)
-    console.error(`  - [${category}] ${id}`)
+    console.error(`  - [${category}] ${entityId}`)
   }
 
-  let dir = join(import.meta.dirname, OUTPUT_DIR)
+  let dir = join(import.meta.dirname, domain.outputDir)
   mkdirSync(dir, { recursive: true })
   for (let f of readdirSync(dir)) {
     if (f.endsWith('.yml')) rmSync(join(dir, f))
@@ -262,8 +283,17 @@ try {
 
   let names = Object.keys(groups).length
   console.log(
-    `Saved ${count} automation(s) to ${names} file(s) in ${OUTPUT_DIR}/`
+    `Saved ${count} ${domain.outputDir} to ${names} file(s) in ${domain.outputDir}/`
   )
+}
+
+try {
+  console.info(`Fetching entities from ${HOST} ...`)
+  let states = await api<HassState[]>('states')
+  let categoryByEntity = await fetchCategories(DOMAINS.map(d => d.scope))
+  for (let domain of DOMAINS) {
+    await download(domain, states, categoryByEntity)
+  }
 } catch (err) {
   console.error(err instanceof Error ? err.message : String(err))
   process.exit(1)

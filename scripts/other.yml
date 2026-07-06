@@ -1,0 +1,8 @@
+- sequence:
+    - action: button.press
+      target:
+        entity_id: button.fountain_dockstream_2_filter_reset
+    - action: button.press
+      target:
+        entity_id: button.fountain_dockstream_2_cleaning_reset
+  alias: Помыли поилку кошке

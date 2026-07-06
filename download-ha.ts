@@ -38,7 +38,13 @@ const DOMAINS: Domain[] = [
 
 interface HassState {
   entity_id: string
-  attributes: { id?: string }
+  state: string
+  attributes: {
+    id?: string
+    friendly_name?: string
+    unit_of_measurement?: string
+    device_class?: string
+  }
 }
 
 interface Category {
@@ -49,7 +55,22 @@ interface Category {
 interface EntityEntry {
   entity_id: string
   unique_id?: string
+  entity_category?: string | null
+  area_id?: string | null
+  device_id?: string | null
+  disabled_by?: string | null
+  hidden_by?: string | null
   categories?: Record<string, string>
+}
+
+interface Area {
+  area_id: string
+  name: string
+}
+
+interface Device {
+  id: string
+  area_id?: string | null
 }
 
 async function api<T>(path: string): Promise<T> {
@@ -69,6 +90,9 @@ async function api<T>(path: string): Promise<T> {
 interface Registry {
   categoryByEntity: Record<string, string>
   uniqueIdByEntity: Record<string, string>
+  entities: EntityEntry[]
+  areaById: Record<string, string>
+  deviceArea: Record<string, string>
 }
 
 function fetchRegistry(scopes: string[]): Promise<Registry> {
@@ -79,8 +103,11 @@ function fetchRegistry(scopes: string[]): Promise<Registry> {
     let byScope: Record<string, Record<string, string>> = {}
     let entityCategory: Record<string, { scope: string; id: string }> = {}
     let uniqueIdByEntity: Record<string, string> = {}
+    let entities: EntityEntry[] = []
+    let areaById: Record<string, string> = {}
+    let deviceArea: Record<string, string> = {}
     let got = 0
-    let expected = scopes.length + 1
+    let expected = scopes.length + 3
 
     let send = (type: string, scope?: string) => {
       let id = ++seq
@@ -102,6 +129,8 @@ function fetchRegistry(scopes: string[]): Promise<Registry> {
       } else if (msg.type === 'auth_ok') {
         for (let scope of scopes) send('config/category_registry/list', scope)
         send('config/entity_registry/list')
+        send('config/area_registry/list')
+        send('config/device_registry/list')
       } else if (msg.type === 'result') {
         let req = pending[msg.id]!
         if (!msg.success) {
@@ -111,8 +140,15 @@ function fetchRegistry(scopes: string[]): Promise<Registry> {
         if (req.type === 'config/category_registry/list') {
           let map = (byScope[req.scope!] ||= {})
           for (let c of msg.result as Category[]) map[c.category_id] = c.name
+        } else if (req.type === 'config/area_registry/list') {
+          for (let a of msg.result as Area[]) areaById[a.area_id] = a.name
+        } else if (req.type === 'config/device_registry/list') {
+          for (let d of msg.result as Device[]) {
+            if (d.area_id) deviceArea[d.id] = d.area_id
+          }
         } else {
           for (let e of msg.result as EntityEntry[]) {
+            entities.push(e)
             if (e.unique_id) uniqueIdByEntity[e.entity_id] = e.unique_id
             for (let [scope, id] of Object.entries(e.categories ?? {})) {
               if (id) entityCategory[e.entity_id] = { scope, id }
@@ -126,7 +162,13 @@ function fetchRegistry(scopes: string[]): Promise<Registry> {
             let name = byScope[scope]?.[id]
             if (name) categoryByEntity[entity] = name
           }
-          resolve({ categoryByEntity, uniqueIdByEntity })
+          resolve({
+            categoryByEntity,
+            uniqueIdByEntity,
+            entities,
+            areaById,
+            deviceArea
+          })
         }
       }
     }
@@ -296,13 +338,89 @@ async function download(
   )
 }
 
+const NO_AREA = 'Без области'
+
+const EXCLUDE_ENTITIES = [
+  /^conversation\./,
+  /^update\./,
+  /^device_tracker\./,
+  /^automation\./,
+  /^todo\./,
+  /^tts\./,
+  /\.halva/,
+  /zigbee2mqtt_bridge/,
+  /backup/,
+  /^sensor\.petlibro_/
+]
+
+function isNoise(meta: EntityEntry | undefined): boolean {
+  return Boolean(
+    meta?.disabled_by ||
+    meta?.hidden_by ||
+    meta?.entity_category === 'diagnostic' ||
+    meta?.entity_category === 'config'
+  )
+}
+
+function writeEntities(states: HassState[], registry: Registry): void {
+  let metaById: Record<string, EntityEntry> = {}
+  for (let e of registry.entities) metaById[e.entity_id] = e
+
+  let areas: Record<string, Record<string, string>> = {}
+  for (let s of states) {
+    if (EXCLUDE_ENTITIES.some(re => re.test(s.entity_id))) continue
+    let meta = metaById[s.entity_id]
+    if (isNoise(meta)) continue
+
+    let areaId =
+      meta?.area_id ??
+      (meta?.device_id ? registry.deviceArea[meta.device_id] : undefined)
+    let area = (areaId && registry.areaById[areaId]) || NO_AREA
+
+    let a = s.attributes
+    let parts = [a.friendly_name ?? s.entity_id]
+    if (s.state.length <= 40) {
+      parts.push(
+        a.unit_of_measurement ? `${s.state} ${a.unit_of_measurement}` : s.state
+      )
+    }
+    if (a.device_class) parts.push(a.device_class)
+    ;(areas[area] ||= {})[s.entity_id] = parts.join(' · ')
+  }
+
+  let order = (x: string, y: string) =>
+    x === NO_AREA ? 1 : y === NO_AREA ? -1 : x.localeCompare(y)
+  let sorted: Record<string, Record<string, string>> = {}
+  for (let area of Object.keys(areas).sort(order)) {
+    let inner: Record<string, string> = {}
+    for (let id of Object.keys(areas[area]!).sort())
+      inner[id] = areas[area]![id]!
+    sorted[area] = inner
+  }
+
+  let header =
+    '# Auto-generated by download-ha.ts\n' +
+    '# Important home entities grouped by area\n' +
+    '# Format: entity_id: "friendly name · current value · device_class"\n\n'
+  let dir = join(import.meta.dirname, 'home')
+  mkdirSync(dir, { recursive: true })
+  writeFileSync(join(dir, 'entities.yml'), header + toYaml(sorted))
+
+  let count = Object.values(sorted).reduce(
+    (n, m) => n + Object.keys(m).length,
+    0
+  )
+  console.log(`Saved ${count} entities to home/entities.yml`)
+}
+
 try {
-  console.info(`Fetching entities from ${HOST} ...`)
+  console.info(`Fetching entities from ${HOST} …`)
   let states = await api<HassState[]>('states')
   let registry = await fetchRegistry(DOMAINS.map(d => d.scope))
   for (let domain of DOMAINS) {
     await download(domain, states, registry)
   }
+  writeEntities(states, registry)
 } catch (err) {
   console.error(err instanceof Error ? err.message : String(err))
   process.exit(1)

@@ -1,5 +1,7 @@
 Use Home Assistant MCP to get data about the home.
 
+Before writing automations, consult `home/entities.yml` for the list of home entities.
+
 Try to avoid obvious comments.
 
 domovoy.local uses custom CA which we install to system.

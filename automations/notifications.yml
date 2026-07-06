@@ -78,20 +78,18 @@
       above: 1000
       id: detect
     - trigger: time
-      at: '22:00:00'
+      at: input_datetime.night_start
       id: night_start
   conditions:
     - condition: state
       entity_id: input_boolean.stop
       state: 'off'
-    - condition: template
-      value_template: '{{ now().hour >= 22 or now().hour < 9 }}'
+    - condition: time
+      after: input_datetime.night_start
+      before: input_datetime.night_end
     - condition: numeric_state
       entity_id: sensor.air_bedroom_co2
       above: 1000
-    - condition: state
-      entity_id: person.andrey
-      state: home
   actions:
     - action: notify.mobile_app_phone_bedoll
       data:

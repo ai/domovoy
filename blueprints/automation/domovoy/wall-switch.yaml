@@ -1,20 +1,19 @@
 blueprint:
-  name: Настенный выключатель
+  name: Wall switch
   domain: automation
   author: Andrey Sitnik
   source_url: https://github.com/ai/domovoy/blob/main/blueprints/automation/domovoy/wall-switch.yaml
   input:
     wall_switch:
-      name: Выключатель
+      name: Switch
       selector:
         device:
           filter:
             - integration: shelly
     button:
-      name: Кнопка
+      name: Button
       description: >-
-        Кнопка, управляющая светом. Shelly 1PM Mini — только button1.
-        На Shelly 2PM вторая кнопка управляет вентилятором вне системы.
+        Button that controls the light on the switch if it has multiple buttons
       default: button1
       selector:
         select:
@@ -22,13 +21,13 @@ blueprint:
             - button1
             - button2
     light_group:
-      name: Группа ламп
+      name: Light group
       selector:
         entity:
           filter:
             - domain: light
     adaptive_switch:
-      name: Адаптивное освещение
+      name: Adaptive lighting
       default: ''
       selector:
         entity:

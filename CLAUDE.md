@@ -1,11 +1,10 @@
-Use Home Assistant MCP to get data about the home.
+Repo with automations/scripts from smart home on Home Assistant.
 
-Before writing automations, consult `home/entities.yml` for the list of home entities.
-
-Try to avoid obvious comments.
-
-domovoy.local uses custom CA which we install to system.
-
-To all automations add condition that `input_boolean.stop` is `off`.
-
-Use the latest Node.js 26 API.
+- Use `Home Assistant` or HTTP API `https://domovoy.local` (with custom CA installed in the system).
+- Before writing automations, consult `home/entities.yml` for the list of home entities.
+- Create automations/scripts on the server and copy them back by calling `./download-ha.ts`.
+- Ask user before creating any new entities.
+- Use short English based `entityId` and short Russian `alias`. Set room for automation if it is related. See examples in `./automations/*.yml`.
+- Try to avoid obvious comments.
+- To all automations add condition that `input_boolean.stop` is `off`.
+- Use the latest Node.js 26 API.

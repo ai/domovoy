@@ -7,6 +7,14 @@ views:
             heading: Режимы
             heading_style: title
           - type: tile
+            entity: input_boolean.empty_home
+          - type: tile
+            entity: input_boolean.stop
+            vertical: false
+            tap_action:
+              action: toggle
+            features_position: bottom
+          - type: tile
             entity: input_boolean.heating
             vertical: false
             tap_action:
@@ -19,13 +27,7 @@ views:
               action: toggle
             features_position: bottom
           - type: tile
-            entity: input_boolean.stop
-            vertical: false
-            tap_action:
-              action: toggle
-            features_position: bottom
-          - type: tile
-            entity: input_boolean.empty_home
+            entity: input_boolean.cat_alone
       - type: grid
         cards:
           - type: heading
@@ -95,3 +97,5 @@ views:
             entity: input_datetime.night_start
           - type: tile
             entity: input_datetime.night_end
+    max_columns: 3
+    cards: []

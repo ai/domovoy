@@ -45,6 +45,11 @@ views:
                 show_icon: true
                 entity: sensor.air_bedroom_co2
           - type: tile
+            entity: light.light_group_bedroom
+            name: Свет
+            vertical: false
+            features_position: bottom
+          - type: tile
             entity: cover.shutter_bedroom
             name: Персиана
             vertical: false
@@ -89,13 +94,13 @@ views:
             vertical: false
             features_position: bottom
           - type: tile
-            entity: climate.ac_andrey
-            name: Климат
+            entity: cover.shutter_andrey
+            name: Персиана
             vertical: false
             features_position: bottom
           - type: tile
-            entity: cover.shutter_andrey
-            name: Персиана
+            entity: climate.ac_andrey
+            name: Климат
             vertical: false
             features_position: bottom
       - type: grid
@@ -103,6 +108,11 @@ views:
           - type: heading
             heading: Кабинет Кати
             heading_style: title
+          - type: tile
+            entity: light.light_group_kate
+            name: Свет
+            vertical: false
+            features_position: bottom
       - type: grid
         cards:
           - type: heading
@@ -113,6 +123,11 @@ views:
                 show_state: true
                 show_icon: true
                 entity: sensor.temperature_children_temperature
+          - type: tile
+            entity: light.light_group_children
+            name: Свет
+            vertical: false
+            features_position: bottom
       - type: grid
         cards:
           - type: heading

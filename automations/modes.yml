@@ -103,3 +103,43 @@
               target:
                 entity_id: input_boolean.empty_home
   mode: single
+
+- id: automation.empty_home_devices
+  alias: 'Пустой дом: шторы и свет'
+  triggers:
+    - trigger: state
+      entity_id: input_boolean.empty_home
+      to: 'on'
+      id: 'on'
+    - trigger: state
+      entity_id: input_boolean.empty_home
+      to: 'off'
+      id: 'off'
+  conditions:
+    - condition: state
+      entity_id: input_boolean.stop
+      state: 'off'
+  actions:
+    - choose:
+        - conditions:
+            - condition: trigger
+              id: 'on'
+          sequence:
+            - action: cover.close_cover
+              target:
+                entity_id: cover.shutter_andrey
+            - action: switch.turn_off
+              target:
+                entity_id: switch.wall_switch_toilet_l2
+            - action: script.turn_off_everything
+        - conditions:
+            - condition: trigger
+              id: 'off'
+          sequence:
+            - action: cover.open_cover
+              target:
+                entity_id: cover.shutter_andrey
+            - action: switch.turn_on
+              target:
+                entity_id: switch.wall_switch_toilet_l2
+  mode: single

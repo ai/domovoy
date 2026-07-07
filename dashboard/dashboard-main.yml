@@ -34,6 +34,9 @@ views:
             visibility:
               - condition: state
                 state: 'off'
+              - condition: state
+                entity: input_boolean.empty_home
+                state: 'off'
             entity: switch.wall_switch_toilet_l2
             name: Общая вытяжка
             icon: mdi:fan-alert

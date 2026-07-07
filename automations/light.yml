@@ -21,3 +21,11 @@
     input:
       wall_switch: e97d66acdb3f1b0b4289d5d3afd14b66
       light_group: light.light_group_kitchen
+- id: automation.wall_switch_toilet
+  alias: Выключатель в туалете
+  use_blueprint:
+    path: domovoy/wall-switch.yaml
+    input:
+      wall_switch: 1fe4d7f5871d1ee1f17a91a7fd2a8a5e
+      light_group: light.light_group_toilet
+      adaptive_switch: switch.adaptive_lightning_service

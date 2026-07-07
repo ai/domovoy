@@ -11,7 +11,8 @@ const UNCATEGORIZED = 'Прочее'
 const SLUGS: Record<string, string> = {
   Прочее: 'other',
   Свет: 'light',
-  Уведомления: 'notifications'
+  Уведомления: 'notifications',
+  Режимы: 'modes'
 }
 
 interface Domain {

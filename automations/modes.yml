@@ -1,0 +1,103 @@
+- id: automation.heating_cooling_interlock
+  alias: Взаимоблокировка обогрева и охлаждения
+  triggers:
+    - trigger: state
+      entity_id: input_boolean.cooling
+      to: 'on'
+      id: cooling
+    - trigger: state
+      entity_id: input_boolean.heating
+      to: 'on'
+      id: heating
+  conditions:
+    - condition: state
+      entity_id: input_boolean.stop
+      state: 'off'
+  actions:
+    - choose:
+        - conditions:
+            - condition: trigger
+              id: cooling
+          sequence:
+            - action: input_boolean.turn_off
+              target:
+                entity_id: input_boolean.heating
+        - conditions:
+            - condition: trigger
+              id: heating
+          sequence:
+            - action: input_boolean.turn_off
+              target:
+                entity_id: input_boolean.cooling
+  mode: single
+- id: automation.empty_home_button
+  alias: Кнопка «Никого нет дома»
+  triggers:
+    - trigger: device
+      domain: mqtt
+      device_id: 051afa3d576af13df00f57ac4f8a7ff6
+      type: action
+      subtype: on_b1_down
+      id: set
+    - trigger: device
+      domain: mqtt
+      device_id: 051afa3d576af13df00f57ac4f8a7ff6
+      type: action
+      subtype: toggle_b2_down
+      id: clear
+  conditions:
+    - condition: state
+      entity_id: input_boolean.stop
+      state: 'off'
+  actions:
+    - choose:
+        - conditions:
+            - condition: trigger
+              id: set
+          sequence:
+            - action: script.turn_on
+              target:
+                entity_id: script.empty_home
+        - conditions:
+            - condition: trigger
+              id: clear
+          sequence:
+            - action: input_boolean.turn_off
+              target:
+                entity_id: input_boolean.empty_home
+  mode: single
+- id: automation.empty_home_presence
+  alias: Обновление «Никого нет дома»
+  triggers:
+    - trigger: state
+      entity_id: zone.home
+      from: '0'
+      id: arrived
+    - trigger: state
+      entity_id: zone.home
+      to: '0'
+      id: emptied
+  conditions:
+    - condition: state
+      entity_id: input_boolean.stop
+      state: 'off'
+  actions:
+    - choose:
+        - conditions:
+            - condition: trigger
+              id: arrived
+          sequence:
+            - action: input_boolean.turn_off
+              target:
+                entity_id: input_boolean.empty_home
+        - conditions:
+            - condition: trigger
+              id: emptied
+            - condition: state
+              entity_id: timer.empty_home
+              state: active
+          sequence:
+            - action: input_boolean.turn_on
+              target:
+                entity_id: input_boolean.empty_home
+  mode: single

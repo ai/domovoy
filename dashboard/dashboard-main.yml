@@ -41,6 +41,23 @@ views:
             tap_action:
               action: toggle
             features_position: bottom
+          - type: tile
+            visibility:
+              - condition: state
+                entity: input_boolean.empty_home
+                state: 'off'
+            entity: script.empty_home
+            name: Мы ушли
+            hide_state: true
+            vertical: false
+            tap_action:
+              action: toggle
+            features_position: bottom
+          - type: tile
+            entity: input_boolean.empty_home
+            visibility:
+              - condition: state
+                state: 'on'
       - type: grid
         cards:
           - type: heading

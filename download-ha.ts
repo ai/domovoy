@@ -73,6 +73,18 @@ interface Device {
   area_id?: string | null
 }
 
+interface Dashboard {
+  id: string
+  url_path: string | null
+  title?: string
+  mode: string
+}
+
+interface DashboardConfig {
+  name: string
+  config: Record<string, unknown>
+}
+
 async function api<T>(path: string): Promise<T> {
   let res = await fetch(`${HOST}/api/${path}`, {
     headers: {
@@ -343,6 +355,96 @@ async function download(
   )
 }
 
+function fetchDashboards(): Promise<DashboardConfig[]> {
+  return new Promise((resolve, reject) => {
+    let ws = new WebSocket(WS)
+    let seq = 0
+    let pending: Record<number, { type: string; name?: string }> = {}
+    let results: DashboardConfig[] = []
+    let expected = Infinity
+    let got = 0
+
+    let send = (
+      payload: { type: string; url_path?: string | null },
+      name?: string
+    ) => {
+      let id = ++seq
+      pending[id] = { type: payload.type, name }
+      ws.send(JSON.stringify({ id, ...payload }))
+    }
+
+    ws.onmessage = (ev: MessageEvent) => {
+      let msg = JSON.parse(ev.data)
+      if (msg.type === 'auth_required') {
+        ws.send(
+          JSON.stringify({
+            type: 'auth',
+            access_token: process.env.HOMEASSISTANT_TOKEN
+          })
+        )
+      } else if (msg.type === 'auth_invalid') {
+        reject(new Error('WebSocket auth failed: check HOMEASSISTANT_TOKEN'))
+      } else if (msg.type === 'auth_ok') {
+        send({ type: 'lovelace/dashboards/list' })
+      } else if (msg.type === 'result') {
+        let req = pending[msg.id]!
+        if (req.type === 'lovelace/dashboards/list') {
+          if (!msg.success) {
+            reject(new Error('WebSocket request lovelace/dashboards/list failed'))
+            return
+          }
+          let dashboards = msg.result as Dashboard[]
+          let targets = [
+            { name: 'overview', url_path: null },
+            ...dashboards
+              .filter(d => d.url_path !== 'map')
+              .map(d => ({
+                name: d.url_path ?? d.id,
+                url_path: d.url_path
+              }))
+          ]
+          expected = targets.length
+          for (let t of targets) {
+            send({ type: 'lovelace/config', url_path: t.url_path }, t.name)
+          }
+        } else if (msg.success) {
+          results.push({
+            name: req.name!,
+            config: msg.result as Record<string, unknown>
+          })
+          if (++got === expected) {
+            ws.close()
+            resolve(results)
+          }
+        } else {
+          console.error(
+            styleText('red', `  ! skipped dashboard ${req.name} (yaml mode)`)
+          )
+          if (++got === expected) {
+            ws.close()
+            resolve(results)
+          }
+        }
+      }
+    }
+    ws.onerror = () => reject(new Error(`Cannot connect to ${WS}`))
+  })
+}
+
+async function downloadDashboards(): Promise<void> {
+  let items = await fetchDashboards()
+  let dir = join(import.meta.dirname, 'dashboard')
+  mkdirSync(dir, { recursive: true })
+  for (let f of readdirSync(dir)) {
+    if (f.endsWith('.yml')) rmSync(join(dir, f))
+  }
+  for (let { name, config } of items) {
+    writeFileSync(join(dir, fileName(name)), toYaml(config))
+    console.error(`  - ${name}`)
+  }
+  console.log(`Saved ${items.length} dashboard(s) to dashboard/`)
+}
+
 const NO_AREA = 'Без области'
 
 const EXCLUDE_ENTITIES = [
@@ -426,6 +528,7 @@ try {
     await download(domain, states, registry)
   }
   writeEntities(states, registry)
+  await downloadDashboards()
 } catch (err) {
   console.error(err instanceof Error ? err.message : String(err))
   process.exit(1)

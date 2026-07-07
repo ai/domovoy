@@ -1,0 +1,157 @@
+views:
+  - type: sections
+    sections:
+      - type: grid
+        cards:
+          - type: heading
+            heading: Климат
+            heading_style: title
+          - type: statistics-graph
+            entities:
+              - entity: sensor.forecast_aemet_temperature
+                name: Улица
+                color: grey
+              - entity: sensor.air_bathroom_temperature
+                name:
+                  type: area
+                color: blue
+              - entity: sensor.air_bedroom_temperature
+                name:
+                  type: area
+                color: deep-purple
+              - entity: sensor.temperature_andrey_temperature
+                name:
+                  type: area
+                color: green
+              - entity: sensor.temperature_children_temperature
+                name:
+                  type: area
+                color: red
+              - entity: sensor.temperature_lounge_temperature
+                name:
+                  type: area
+                color: yellow
+              - entity: sensor.temperature_kitchen_temperature
+                name:
+                  type: area
+                color: brown
+            title: Температура
+            days_to_show: 1
+            period: 5minute
+            chart_type: line
+            stat_types:
+              - mean
+          - type: statistics-graph
+            entities:
+              - entity: sensor.air_bedroom_co2
+                name:
+                  type: area
+                color: deep-purple
+              - entity: sensor.presence_apollo_msr_2_co2
+                name:
+                  type: area
+                color: green
+            title: CO²
+            days_to_show: 1
+            period: 5minute
+            chart_type: line
+            stat_types:
+              - mean
+            hide_legend: false
+            expand_legend: false
+            logarithmic_scale: false
+            min_y_axis: 200
+            max_y_axis: 1500
+          - type: statistics-graph
+            entities:
+              - entity: sensor.air_bedroom_pm2_5
+                name:
+                  type: area
+                color: deep-purple
+              - entity: sensor.air_waqi_pm2_5
+                name: Улица
+                color: grey
+            title: PM2.5
+            days_to_show: 1
+            period: hour
+            chart_type: line
+            stat_types:
+              - mean
+            min_y_axis: 0
+            max_y_axis: 200
+            energy_date_selection: false
+          - type: statistics-graph
+            entities:
+              - entity: sensor.air_bathroom_humidity
+                name:
+                  type: area
+                color: blue
+              - entity: sensor.air_bedroom_humidity
+                name:
+                  type: area
+                color: deep-purple
+              - entity: sensor.air_waqi_humidity
+                name: Улица
+                color: grey
+              - entity: sensor.temperature_andrey_humidity
+                name:
+                  type: area
+                color: green
+              - entity: sensor.temperature_children_humidity
+                name:
+                  type: area
+                color: red
+              - entity: sensor.temperature_lounge_humidity
+                name:
+                  type: area
+                color: yellow
+              - entity: sensor.temperature_kitchen_humidity
+                name:
+                  type: area
+                color: brown
+            title: Влажность
+            days_to_show: 1
+            period: 5minute
+            chart_type: line
+            stat_types:
+              - mean
+            min_y_axis: 30
+            max_y_axis: 100
+      - type: grid
+        cards:
+          - type: heading
+            heading: Разное
+            heading_style: title
+          - type: history-graph
+            entities:
+              - entity: sensor.fountain_dockstream_2_today_s_water_consumption
+                name: Кошка выпила
+              - entity: sensor.fountain_dockstream_2_remaining_water_2
+                name: Осталось воды
+            title: Кошачья поилка
+            hours_to_show: 72
+            min_y_axis: 0
+            max_y_axis: 100
+          - type: tile
+            grid_options:
+              columns: 6
+              rows: 1
+            entity: sensor.fountain_dockstream_2_remaining_filter_day
+            name: Осталось фильтра
+            icon: mdi:cup-water
+            show_entity_picture: false
+            hide_state: false
+            vertical: false
+            features_position: bottom
+          - type: tile
+            grid_options:
+              columns: 6
+              rows: 1
+            entity: script.clean_cat_fountain
+            name: Помыли
+            icon: mdi:hand-water
+            hide_state: true
+            vertical: false
+            tap_action:
+              action: toggle
+            features_position: bottom

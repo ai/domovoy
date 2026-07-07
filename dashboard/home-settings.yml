@@ -1,0 +1,95 @@
+views:
+  - type: sections
+    sections:
+      - type: grid
+        cards:
+          - type: heading
+            heading: Режимы
+            heading_style: title
+          - type: tile
+            entity: input_boolean.heating
+            vertical: false
+            tap_action:
+              action: toggle
+            features_position: bottom
+          - type: tile
+            entity: input_boolean.cooling
+            vertical: false
+            tap_action:
+              action: toggle
+            features_position: bottom
+          - type: tile
+            entity: input_boolean.stop
+            vertical: false
+            tap_action:
+              action: toggle
+            features_position: bottom
+      - type: grid
+        cards:
+          - type: heading
+            heading: Питание ламп
+            heading_style: title
+          - type: tile
+            entity: switch.wall_switch_andrey
+            name:
+              type: area
+            icon: mdi:penguin
+            show_entity_picture: false
+            hide_state: false
+            vertical: false
+            features_position: bottom
+          - type: tile
+            entity: switch.wall_switch_kitchen_worktop
+            name:
+              type: area
+            icon: mdi:fridge
+            hide_state: false
+            vertical: false
+            features_position: bottom
+          - type: tile
+            entity: switch.wall_switch_bathroom_l1
+            name:
+              type: area
+            icon: mdi:shower
+            vertical: false
+            features_position: bottom
+          - type: tile
+            entity: switch.wall_switch_toilet_l1
+            name:
+              type: area
+            icon: mdi:ideogram-cjk
+            vertical: false
+            tap_action:
+              action: toggle
+            features_position: bottom
+      - type: grid
+        cards:
+          - type: heading
+            heading: Вытяжка
+            heading_style: title
+          - type: tile
+            entity: switch.wall_switch_toilet_l2
+            name: Общий
+            icon: mdi:fan
+            vertical: false
+            tap_action:
+              action: toggle
+            features_position: bottom
+          - type: tile
+            entity: switch.wall_switch_bathroom_l2
+            name:
+              type: area
+            icon: mdi:fan
+            vertical: false
+            tap_action:
+              action: toggle
+            features_position: bottom
+      - type: grid
+        cards:
+          - type: heading
+            heading: Время
+            heading_style: title
+          - type: tile
+            entity: input_datetime.night_start
+          - type: tile
+            entity: input_datetime.night_end

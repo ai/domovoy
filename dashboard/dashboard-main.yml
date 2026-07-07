@@ -1,0 +1,178 @@
+views:
+  - type: sections
+    sections:
+      - type: grid
+        cards:
+          - type: heading
+            heading: Улица
+            heading_style: title
+            badges:
+              - type: entity
+                show_state: true
+                show_icon: true
+                entity: sensor.forecast_aemet_temperature_feeling
+              - type: entity
+                show_state: true
+                show_icon: true
+                entity: sensor.forecast_aemet_humidity
+              - type: entity
+                show_state: true
+                show_icon: true
+                entity: sensor.air_waqi_pm2_5
+      - type: grid
+        cards:
+          - type: heading
+            heading: Дом
+            heading_style: title
+          - type: tile
+            entity: script.turn_off_everything
+            icon: mdi:lightbulb-off
+            hide_state: true
+            vertical: false
+            features_position: bottom
+      - type: grid
+        cards:
+          - type: heading
+            heading: Спальня
+            heading_style: title
+            badges:
+              - type: entity
+                show_state: true
+                show_icon: true
+                entity: sensor.air_bedroom_temperature
+              - type: entity
+                show_state: true
+                show_icon: true
+                entity: sensor.air_bedroom_co2
+          - type: tile
+            entity: cover.shutter_bedroom
+            name: Персиана
+            vertical: false
+            features_position: bottom
+      - type: grid
+        cards:
+          - type: heading
+            heading: Зал
+            heading_style: title
+            badges:
+              - type: entity
+                show_state: true
+                show_icon: true
+                entity: sensor.temperature_lounge_temperature
+          - type: tile
+            entity: climate.ac_lounge
+            name: Климат
+            vertical: false
+            features_position: bottom
+          - type: tile
+            entity: cover.shutter_lounge
+            name: Персиана
+            vertical: false
+            features_position: bottom
+      - type: grid
+        cards:
+          - type: heading
+            heading: Кабинет Андрея
+            heading_style: title
+            badges:
+              - type: entity
+                show_state: true
+                show_icon: true
+                entity: sensor.temperature_andrey_temperature
+              - type: entity
+                show_state: true
+                show_icon: true
+                entity: sensor.presence_apollo_msr_2_co2
+          - type: tile
+            entity: light.light_group_andrey
+            name: Свет
+            vertical: false
+            features_position: bottom
+          - type: tile
+            entity: climate.ac_andrey
+            name: Климат
+            vertical: false
+            features_position: bottom
+          - type: tile
+            entity: cover.shutter_andrey
+            name: Персиана
+            vertical: false
+            features_position: bottom
+      - type: grid
+        cards:
+          - type: heading
+            heading: Кабинет Кати
+            heading_style: title
+      - type: grid
+        cards:
+          - type: heading
+            heading: Детская
+            heading_style: title
+            badges:
+              - type: entity
+                show_state: true
+                show_icon: true
+                entity: sensor.temperature_children_temperature
+      - type: grid
+        cards:
+          - type: heading
+            heading: Кухня
+            heading_style: title
+            badges:
+              - type: entity
+                show_state: true
+                show_icon: true
+                entity: sensor.temperature_kitchen_temperature
+              - type: entity
+                show_state: true
+                show_icon: true
+                entity: sensor.temperature_kitchen_humidity
+          - type: tile
+            entity: light.light_group_kitchen
+            name: Свет
+            vertical: false
+            features_position: bottom
+      - type: grid
+        cards:
+          - type: heading
+            heading: Прихожая
+            heading_style: title
+      - type: grid
+        cards:
+          - type: heading
+            heading: Ванная
+            heading_style: title
+            badges:
+              - type: entity
+                show_state: true
+                show_icon: true
+                entity: sensor.air_bathroom_temperature
+              - type: entity
+                show_state: true
+                show_icon: true
+                entity: sensor.air_bathroom_humidity
+          - type: tile
+            entity: switch.wall_switch_bathroom_l1
+            name: Свет
+            icon: mdi:lightbulb
+            vertical: false
+            features_position: bottom
+          - type: tile
+            entity: switch.wall_switch_bathroom_l2
+            name: Вентилятор
+            icon: mdi:fan
+            vertical: false
+            features_position: bottom
+      - type: grid
+        cards:
+          - type: heading
+            heading: Туалет
+            heading_style: title
+          - type: tile
+            entity: light.light_group_toilet
+            name: Свет
+            vertical: false
+            features_position: bottom
+    max_columns: 3
+    title: Общее
+    cards: []

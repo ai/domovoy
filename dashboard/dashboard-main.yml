@@ -30,6 +30,17 @@ views:
             hide_state: true
             vertical: false
             features_position: bottom
+          - type: tile
+            visibility:
+              - condition: state
+                state: 'off'
+            entity: switch.wall_switch_toilet_l2
+            name: Общая вытяжка
+            icon: mdi:fan-alert
+            vertical: false
+            tap_action:
+              action: toggle
+            features_position: bottom
       - type: grid
         cards:
           - type: heading

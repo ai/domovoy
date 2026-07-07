@@ -10,6 +10,7 @@
       wall_switch: 2d30ab78a44cd462ac7d142927c6e6b5
       light_group: light.light_group_andrey
       adaptive_switch: switch.adaptive_lighting_private_adaptive_lighting_daylight
+
 - id: automation.wall_switch_kitchen
   alias: Выключатель света на кухне
   conditions:
@@ -21,6 +22,7 @@
     input:
       wall_switch: e97d66acdb3f1b0b4289d5d3afd14b66
       light_group: light.light_group_kitchen
+
 - id: automation.wall_switch_toilet
   alias: Выключатель в туалете
   use_blueprint:

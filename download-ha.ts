@@ -346,7 +346,8 @@ async function download(
 
   let count = 0
   for (let [category, configs] of Object.entries(groups)) {
-    writeFileSync(join(dir, fileName(category)), toYaml(configs))
+    let yaml = configs.map(config => toYaml([config])).join('\n')
+    writeFileSync(join(dir, fileName(category)), yaml)
     count += configs.length
   }
 

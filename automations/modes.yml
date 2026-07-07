@@ -30,6 +30,7 @@
               target:
                 entity_id: input_boolean.cooling
   mode: single
+
 - id: automation.empty_home_button
   alias: Кнопка «Никого нет дома»
   triggers:
@@ -66,6 +67,7 @@
               target:
                 entity_id: input_boolean.empty_home
   mode: single
+
 - id: automation.empty_home_presence
   alias: Обновление «Никого нет дома»
   triggers:

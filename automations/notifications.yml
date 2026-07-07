@@ -18,6 +18,7 @@
   variables:
     threshold: 30
     sensors: "{% set result = namespace(sensors=[]) %} {% for state in states.sensor | selectattr('attributes.device_class', '==', 'battery') %}\n  {% if 0 <= state.state | int(-1) < threshold | int %}\n    {% set result.sensors = result.sensors + [state.name ~ ' (' ~ state.state ~ ' %)'] %}\n  {% endif %}\n{% endfor %} {{result.sensors|join(', ')}}"
+
 - id: automation.bathroom_water_leak
   alias: Протечка воды в ванной
   triggers:
@@ -31,6 +32,7 @@
         title: Ванная
         message: Протечка воды
   mode: single
+
 - id: automation.kitcher_water_leak
   alias: Протечка воды на кухне
   triggers:
@@ -44,6 +46,7 @@
         title: Кухня
         message: Протечка воды
   mode: single
+
 - id: automation.high_co2_notification_andrey
   alias: Высокий уровне CO² у Андрея
   triggers:
@@ -65,6 +68,7 @@
         data:
           tag: co2_andrey
   mode: single
+
 - id: automation.high_co2_notification_bedroom
   alias: Высокий CO² в спальне ночью
   triggers:
@@ -95,6 +99,7 @@
           channel: Maintaince
           importance: low
   mode: single
+
 - id: automation.cat_fountain_low_water
   alias: Мало воды в поилке кошке
   triggers:
@@ -111,6 +116,7 @@
         title: Поилка кошки
         message: 'Мало воды: {{ states("sensor.fountain_dockstream_2_remaining_water_2") }}%'
   mode: single
+
 - id: automation.cat_fountain_cleaning
   alias: Чистка поилки кошки
   triggers:
@@ -155,6 +161,7 @@
                 data:
                   tag: fountain_clean
   mode: single
+
 - id: automation.toilet_water_leak
   alias: Протечка воды в туалете
   triggers:
@@ -168,6 +175,7 @@
         title: Туалет
         message: Протечка воды
   mode: single
+
 - id: automation.missing_devices
   alias: Пропавшие устройства
   triggers:

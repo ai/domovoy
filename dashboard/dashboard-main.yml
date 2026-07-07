@@ -261,6 +261,62 @@ views:
       - type: grid
         cards:
           - type: heading
+            heading: Тариф на электричество
+            heading_style: title
+          - type: custom:tariff-chart-card
+            visibility:
+              - condition: state
+                entity: binary_sensor.workday
+                state: 'on'
+            currentTimeLine:
+              labelColor: '#000000'
+            yAxis:
+              min: 0
+              max: 25
+              title: 0,xx €/kWh
+            tariffs:
+              - name: Дешёвый
+                value: 15
+                timeFrames:
+                  - 00:00-08:00
+                color: '#00E5FF'
+              - name: Средний
+                value: 18
+                timeFrames:
+                  - 08:00-10:00
+                  - 14:00-18:00
+                  - 22:00-24:00
+                color: '#FF9800'
+              - name: Дорогой
+                value: 25
+                timeFrames:
+                  - 10:00-14:00
+                  - 18:00-22:00
+                color: '#FF5252'
+          - type: custom:tariff-chart-card
+            visibility:
+              - condition: state
+                entity: binary_sensor.workday
+                state: 'off'
+            currentTimeLine:
+              labelColor: '#000000'
+            yAxis:
+              min: 0
+              title: 0,xx €/kWh
+            tariffs:
+              - name: Дешёвый
+                value: 15
+                timeFrames:
+                  - 00:00-23:00
+                color: '#00E5FF'
+              - name: Дешёвый
+                value: 25
+                timeFrames:
+                  - 23:55-24:00
+                color: '#00E5FF'
+      - type: grid
+        cards:
+          - type: heading
             icon: mdi:fridge
             heading: Подключиться к WiFi
             heading_style: title

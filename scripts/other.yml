@@ -1,4 +1,5 @@
 - id: script.clean_cat_fountain
+  alias: Помыли поилку кошке
   sequence:
     - action: button.press
       target:
@@ -6,8 +7,8 @@
     - action: button.press
       target:
         entity_id: button.fountain_dockstream_2_cleaning_reset
-  alias: Помыли поилку кошке
 - id: script.turn_off_everything
+  alias: Выключить всё
   sequence:
     - action: light.turn_off
       metadata: {}
@@ -23,4 +24,3 @@
       target:
         entity_id: switch.wall_switch_bathroom_l1
       data: {}
-  alias: Выключить всё

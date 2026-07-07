@@ -316,7 +316,12 @@ async function download(
     if (typeof config.description === 'string' && !config.description.trim()) {
       delete config.description
     }
-    ;(groups[category] ||= []).push({ id: entityId, ...config })
+    let { alias, ...rest } = config
+    let entry =
+      alias === undefined
+        ? { id: entityId, ...rest }
+        : { id: entityId, alias, ...rest }
+    ;(groups[category] ||= []).push(entry)
     console.error(`  - [${category}] ${entityId}`)
   }
 

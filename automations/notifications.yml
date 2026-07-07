@@ -168,3 +168,35 @@
         title: Туалет
         message: Протечка воды
   mode: single
+- id: automation.missing_devices
+  alias: Пропавшие устройства
+  triggers:
+    - trigger: time_pattern
+      id: periodic
+      hours: /1
+      minutes: 0
+    - trigger: state
+      entity_id: person.andrey
+      to: home
+      id: home
+  conditions:
+    - condition: state
+      entity_id: input_boolean.stop
+      state: 'off'
+    - condition: state
+      entity_id: person.andrey
+      state: home
+    - condition: template
+      value_template: "{{ missing != '' }}"
+  actions:
+    - action: notify.mobile_app_phone_bedoll
+      data:
+        title: Дом
+        message: 'Пропали из системы: {{ missing }}'
+        data:
+          tag: missing_devices
+          channel: Maintaince
+          importance: low
+  variables:
+    missing: "{% set ns = namespace(names=[]) %}{% for s in states | selectattr('state', '==', 'unavailable') | rejectattr('domain', 'in', ['group', 'scene', 'script', 'automation', 'button', 'input_button', 'update']) %}{% if (now() - s.last_changed).total_seconds() > 30 * 60 %}{% set did = device_id(s.entity_id) %}{% set name = (device_attr(did, 'name_by_user') or device_attr(did, 'name')) if did else s.name %}{% if name and name not in ns.names %}{% set ns.names = ns.names + [name] %}{% endif %}{% endif %}{% endfor %}{{ ns.names | join(', ') }}"
+  mode: single

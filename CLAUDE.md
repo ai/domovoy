@@ -4,7 +4,8 @@ Repo with automations/scripts from smart home on Home Assistant.
 - Before writing automations, consult `home/entities.yml` for the list of home entities.
 - Create automations/scripts on the server and copy them back by calling `./download-ha.ts`.
 - Ask user before creating any new entities.
-- Use short English based `entityId` and short Russian `alias`. Set room for automation if it is related. See examples in `./automations/*.yml`.
+- Set room for automation if it is related. See examples in `./automations/*.yml`.
+- After creating update automation `entityId` to use only English words.
 - Try to avoid obvious comments.
 - To all automations add condition that `input_boolean.stop` is `off`.
 - Use the latest Node.js 26 API.

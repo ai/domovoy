@@ -390,7 +390,9 @@ function fetchDashboards(): Promise<DashboardConfig[]> {
         let req = pending[msg.id]!
         if (req.type === 'lovelace/dashboards/list') {
           if (!msg.success) {
-            reject(new Error('WebSocket request lovelace/dashboards/list failed'))
+            reject(
+              new Error('WebSocket request lovelace/dashboards/list failed')
+            )
             return
           }
           let dashboards = msg.result as Dashboard[]
@@ -417,9 +419,6 @@ function fetchDashboards(): Promise<DashboardConfig[]> {
             resolve(results)
           }
         } else {
-          console.error(
-            styleText('red', `  ! skipped dashboard ${req.name} (yaml mode)`)
-          )
           if (++got === expected) {
             ws.close()
             resolve(results)

@@ -1,13 +1,18 @@
-// Script for Shelly Gen4 relays
+// Script for Shelly Gen4 relays (Shelly 1PM Mini or Shelly 2PM)
 // Fallback for the HA wall switch blueprint: HA sees the same button press
 // over WiFi (Shelly integration) and toggles the light group. The script
 // reads the first bulb state on press, waits, and reads it again.
-// IKf nothing changed (HA is down), it drives the bulbs directly.
+// If nothing changed (HA is down), it drives the bulbs directly.
 
 let DEBUG = true // Print debug output to the script console
 
 // Z2M: Devices -> bulb -> Network address (e.g. 0x1A2B)
 let LIGHTS = [0xcd99, 0x2a4b]
+
+// Which Shelly input drives the light. 1PM Mini has only input:0. On 2PM the
+// other button controls the fan on its own relay (Output Type "Attached") and
+// stays outside the system, so this script listens to a single input.
+let INPUT = 'input:0'
 
 let HA_WAIT_MS = 600
 
@@ -86,7 +91,7 @@ let longPressed = false
 let haWaitTimer = null
 
 Shelly.addEventHandler(function (e) {
-  if (e.component !== 'input:0') {
+  if (e.component !== INPUT) {
     return
   }
 
@@ -124,7 +129,7 @@ Shelly.addEventHandler(function (e) {
               return
             }
             debug('No reaction from HA, sending ' + (before ? 'off' : 'on'))
-            sendToAll(before ? 0 : 1, true)
+            sendToAll(before ? 0 : 1)
           })
         })
       })

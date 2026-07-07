@@ -10,6 +10,17 @@ blueprint:
         device:
           filter:
             - integration: shelly
+    button:
+      name: Кнопка
+      description: >-
+        Кнопка, управляющая светом. Shelly 1PM Mini — только button1.
+        На Shelly 2PM вторая кнопка управляет вентилятором вне системы.
+      default: button1
+      selector:
+        select:
+          options:
+            - button1
+            - button2
     light_group:
       name: Группа ламп
       selector:
@@ -37,13 +48,13 @@ triggers:
     domain: shelly
     device_id: !input wall_switch
     type: single_push
-    subtype: button1
+    subtype: !input button
   - trigger: device
     id: hold
     domain: shelly
     device_id: !input wall_switch
     type: long_push
-    subtype: button1
+    subtype: !input button
 
 conditions: []
 

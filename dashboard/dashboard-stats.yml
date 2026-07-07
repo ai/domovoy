@@ -120,7 +120,7 @@ views:
       - type: grid
         cards:
           - type: heading
-            heading: Разное
+            heading: Кошка
             heading_style: title
           - type: history-graph
             entities:
@@ -128,7 +128,7 @@ views:
                 name: Кошка выпила
               - entity: sensor.fountain_dockstream_2_remaining_water_2
                 name: Осталось воды
-            title: Кошачья поилка
+            title: Поилка
             hours_to_show: 72
             min_y_axis: 0
             max_y_axis: 100

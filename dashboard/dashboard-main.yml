@@ -19,11 +19,17 @@ views:
                 show_state: true
                 show_icon: true
                 entity: sensor.air_waqi_pm2_5
+            tap_action:
+              action: navigate
+              navigation_path: /dashboard-main/street
       - type: grid
         cards:
           - type: heading
             heading: Дом
             heading_style: title
+            tap_action:
+              action: navigate
+              navigation_path: /dashboard-main/home
           - type: tile
             entity: script.turn_off_everything
             icon: mdi:lightbulb-off
@@ -75,6 +81,9 @@ views:
                 show_state: true
                 show_icon: true
                 entity: sensor.air_bedroom_co2
+            tap_action:
+              action: navigate
+              navigation_path: /dashboard-main/bedroom
           - type: tile
             entity: light.light_group_bedroom
             name: Свет
@@ -119,6 +128,9 @@ views:
                 show_state: true
                 show_icon: true
                 entity: sensor.presence_apollo_msr_2_co2
+            tap_action:
+              action: navigate
+              navigation_path: /dashboard-main/andrey
           - type: tile
             entity: light.light_group_andrey
             name: Свет
@@ -139,6 +151,9 @@ views:
           - type: heading
             heading: Кабинет Кати
             heading_style: title
+            tap_action:
+              action: navigate
+              navigation_path: /dashboard-main/katya
           - type: tile
             entity: light.light_group_kate
             name: Свет
@@ -154,6 +169,9 @@ views:
                 show_state: true
                 show_icon: true
                 entity: sensor.temperature_children_temperature
+            tap_action:
+              action: navigate
+              navigation_path: /dashboard-main/children
           - type: tile
             entity: light.light_group_children
             name: Свет
@@ -173,6 +191,9 @@ views:
                 show_state: true
                 show_icon: true
                 entity: sensor.temperature_kitchen_humidity
+            tap_action:
+              action: navigate
+              navigation_path: /dashboard-main/kitchen
           - type: tile
             entity: light.light_group_kitchen
             name: Свет
@@ -222,3 +243,71 @@ views:
     max_columns: 3
     title: Общее
     cards: []
+  - type: sections
+    max_columns: 3
+    title: Улица
+    path: street
+    sections:
+      - type: grid
+        cards: []
+    subview: true
+    cards: []
+  - type: sections
+    max_columns: 4
+    subview: true
+    path: home
+    title: Дом
+    sections:
+      - type: grid
+        cards:
+          - type: heading
+            icon: mdi:fridge
+            heading: Подключиться к WiFi
+            heading_style: title
+          - type: picture
+            image_entity: image.network_domovoy_wifi_qr_code
+            grid_options:
+              columns: 6
+              rows: auto
+    cards: []
+  - type: sections
+    max_columns: 4
+    subview: true
+    path: bedroom
+    title: Спальня
+    sections:
+      - type: grid
+        cards: []
+    cards: []
+  - type: sections
+    max_columns: 4
+    subview: true
+    path: andrey
+    title: Кабинет Андрея
+    sections:
+      - type: grid
+        cards: []
+  - type: sections
+    max_columns: 4
+    title: Кабинет Кати
+    path: katya
+    subview: true
+    sections:
+      - type: grid
+        cards: []
+  - type: sections
+    max_columns: 4
+    title: Детская
+    path: children
+    subview: true
+    sections:
+      - type: grid
+        cards: []
+  - type: sections
+    max_columns: 4
+    title: Кухня
+    path: kitchen
+    subview: true
+    sections:
+      - type: grid
+        cards: []

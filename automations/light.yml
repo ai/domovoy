@@ -20,4 +20,4 @@
     path: domovoy/wall-switch.yaml
     input:
       wall_switch: e97d66acdb3f1b0b4289d5d3afd14b66
-      light_group: light.light_kitchen_group
+      light_group: light.light_group_kitchen

@@ -7,3 +7,20 @@
       target:
         entity_id: button.fountain_dockstream_2_cleaning_reset
   alias: Помыли поилку кошке
+- id: script.turn_off_everything
+  sequence:
+    - action: light.turn_off
+      metadata: {}
+      data: {}
+      target:
+        entity_id:
+          - light.light_group_kate
+          - light.light_group_andrey
+          - light.light_group_toilet
+          - light.light_group_kitchen
+    - action: switch.turn_off
+      metadata: {}
+      target:
+        entity_id: switch.wall_switch_bathroom_l1
+      data: {}
+  alias: Выключить всё

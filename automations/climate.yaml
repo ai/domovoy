@@ -35,7 +35,13 @@
   alias: Выключить кондиционер Андрея ночью
   triggers:
     - trigger: time
-      at: '22:00:00'
+      at: '20:00:00'
+    - trigger: numeric_state
+      entity_id: sensor.ac_andrey_outside_temperature
+      below: 30
+    - trigger: time
+      at: '00:00:00'
+      id: midnight
   conditions:
     - condition: state
       entity_id: input_boolean.stop
@@ -43,6 +49,17 @@
     - condition: state
       entity_id: input_boolean.cooling
       state: 'on'
+    - condition: or
+      conditions:
+        - condition: trigger
+          id: midnight
+        - condition: and
+          conditions:
+            - condition: time
+              after: '20:00:00'
+            - condition: numeric_state
+              entity_id: sensor.ac_andrey_outside_temperature
+              below: 30
   actions:
     - action: climate.turn_off
       target:

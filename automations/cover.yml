@@ -38,6 +38,24 @@
                 position: 10
   mode: single
 
+- id: automation.andrey_shutter_low_sun
+  alias: Открыть штору Андрея при низком солнце
+  triggers:
+    - trigger: numeric_state
+      entity_id:
+        - sun.sun
+      attribute: elevation
+      below: 12
+  conditions:
+    - condition: state
+      entity_id: input_boolean.stop
+      state: 'off'
+  actions:
+    - action: cover.open_cover
+      target:
+        entity_id: cover.shutter_andrey
+  mode: single
+
 - id: automation.andrey_shutter_sun
   alias: Прикрыть штору Андрея от солнца
   triggers:
@@ -58,4 +76,58 @@
         entity_id: cover.shutter_andrey
       data:
         position: 40
+  mode: single
+
+- id: automation.lounge_shutter_cooling_sun
+  alias: Прикрыть штору гостиной от солнца
+  triggers:
+    - trigger: numeric_state
+      entity_id: sun.sun
+      attribute: azimuth
+      above: 249
+      id: propose
+    - trigger: event
+      event_type: mobile_app_notification_action
+      event_data:
+        action: CLOSE_LOUNGE_SHUTTER
+      id: close
+  conditions:
+    - condition: state
+      entity_id: input_boolean.stop
+      state: 'off'
+  actions:
+    - choose:
+        - conditions:
+            - condition: trigger
+              id: propose
+            - condition: state
+              entity_id: input_boolean.cooling
+              state: 'on'
+            - condition: state
+              entity_id: person.andrey
+              state: home
+          sequence:
+            - action: notify.mobile_app_phone_bedoll
+              data:
+                title: Гостиная
+                message: Прикрыть штору от солнца? Проверьте, что дверь свободна
+                data:
+                  tag: lounge_shutter
+                  actions:
+                    - action: CLOSE_LOUNGE_SHUTTER
+                      title: Прикрыть
+        - conditions:
+            - condition: trigger
+              id: close
+          sequence:
+            - action: cover.set_cover_position
+              target:
+                entity_id: cover.shutter_lounge
+              data:
+                position: 40
+            - action: notify.mobile_app_phone_bedoll
+              data:
+                message: clear_notification
+                data:
+                  tag: lounge_shutter
   mode: single

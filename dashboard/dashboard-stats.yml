@@ -120,6 +120,16 @@ views:
       - type: grid
         cards:
           - type: heading
+            heading: Люди
+            heading_style: title
+          - type: history-graph
+            entities:
+              - entity: person.andrey
+              - entity: person.kate
+              - entity: sun.sun
+            title: Дома
+            hours_to_show: 24
+          - type: heading
             heading: Кошка
             heading_style: title
           - type: history-graph

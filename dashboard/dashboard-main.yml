@@ -317,7 +317,7 @@ views:
       - type: grid
         cards:
           - type: heading
-            icon: mdi:fridge
+            icon: ''
             heading: Подключиться к WiFi
             heading_style: title
           - type: picture
@@ -325,6 +325,21 @@ views:
             grid_options:
               columns: 6
               rows: auto
+      - type: grid
+        cards:
+          - type: heading
+            heading: Люди
+            heading_style: title
+          - type: tile
+            entity: person.andrey
+            features_position: bottom
+            vertical: false
+            show_entity_picture: true
+          - type: tile
+            entity: person.kate
+            features_position: bottom
+            vertical: false
+            show_entity_picture": true
     cards: []
   - type: sections
     max_columns: 4

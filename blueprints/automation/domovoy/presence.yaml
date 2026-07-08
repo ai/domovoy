@@ -58,9 +58,6 @@ conditions:
     entity_id: input_boolean.cat_alone
     state: 'off'
   - condition: state
-    entity_id: input_boolean.everyone_sleep
-    state: 'off'
-  - condition: state
     entity_id: !input manual_flag
     state: 'off'
 

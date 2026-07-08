@@ -1,0 +1,86 @@
+blueprint:
+  name: Presence light
+  description: Turns the light on while someone is in the room
+  domain: automation
+  author: Andrey Sitnik
+  source_url: https://github.com/ai/domovoy/blob/main/blueprints/automation/domovoy/presence.yaml
+  input:
+    presence_sensor:
+      name: Presence sensor
+      selector:
+        entity:
+          filter:
+            - device_class: occupancy
+              domain: binary_sensor
+            - device_class: motion
+              domain: binary_sensor
+            - device_class: presence
+              domain: binary_sensor
+    light:
+      name: Light
+      selector:
+        target:
+          entity:
+            domain: light
+    before_on:
+      name: Extra action on turn on
+      default: []
+      selector:
+        action: {}
+    after_off:
+      name: Extra action on turn off
+      default: []
+      selector:
+        action: {}
+    manual_flag:
+      name: Manual flag
+      description: >-
+        input_boolean that blocks auto-off while it is on. Set by the wall
+        switch blueprint when the light was turned on manually
+      selector:
+        entity:
+          filter:
+            - domain: input_boolean
+
+mode: restart
+
+triggers:
+  - trigger: state
+    entity_id: !input presence_sensor
+    from: 'off'
+    to: 'on'
+
+conditions:
+  - condition: state
+    entity_id: input_boolean.stop
+    state: 'off'
+  - condition: state
+    entity_id: input_boolean.cat_alone
+    state: 'off'
+  - condition: state
+    entity_id: input_boolean.everyone_sleep
+    state: 'off'
+  - condition: state
+    entity_id: !input manual_flag
+    state: 'off'
+
+actions:
+  - sequence: !input before_on
+  - action: light.turn_on
+    target: !input light
+  - wait_for_trigger:
+      trigger: state
+      entity_id: !input presence_sensor
+      from: 'on'
+      to: 'off'
+  - if:
+      - condition: state
+        entity_id: input_boolean.stop
+        state: 'off'
+      - condition: state
+        entity_id: !input manual_flag
+        state: 'off'
+    then:
+      - action: light.turn_off
+        target: !input light
+      - sequence: !input after_off

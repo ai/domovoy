@@ -35,3 +35,4 @@
       wall_switch: 1fe4d7f5871d1ee1f17a91a7fd2a8a5e
       light_group: light.light_group_toilet
       adaptive_switch: switch.adaptive_lighting_service
+      manual_flag: input_boolean.stop_toilet

@@ -34,10 +34,20 @@ blueprint:
           filter:
             - domain: switch
               integration: adaptive_lighting
+    manual_flag:
+      name: Manual flag
+      description: >-
+        Use it in motion-based automations to block auto-off after a manual switch
+      default: ''
+      selector:
+        entity:
+          filter:
+            - domain: input_boolean
 
 variables:
   light_group: !input light_group
   adaptive_switch: !input adaptive_switch
+  manual_flag: !input manual_flag
 
 mode: single
 
@@ -85,12 +95,26 @@ actions:
                 data:
                   brightness: 255
                   transition: 1
+          - if:
+              - condition: template
+                value_template: "{{ manual_flag != '' }}"
+            then:
+              - action: input_boolean.turn_on
+                target:
+                  entity_id: '{{ manual_flag }}'
         else:
           - action: light.turn_off
             target:
               entity_id: !input light_group
             data:
               transition: 1
+          - if:
+              - condition: template
+                value_template: "{{ manual_flag != '' }}"
+            then:
+              - action: input_boolean.turn_off
+                target:
+                  entity_id: '{{ manual_flag }}'
     else:
       - if:
           - condition: template
@@ -134,3 +158,10 @@ actions:
               # Transition from "off" makes bulbs flash at the previous
               # brightness before dimming down
               transition: "{{ 1 if is_state(light_group, 'on') else 0 }}"
+      - if:
+          - condition: template
+            value_template: "{{ manual_flag != '' }}"
+        then:
+          - action: input_boolean.turn_on
+            target:
+              entity_id: '{{ manual_flag }}'

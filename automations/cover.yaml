@@ -1,21 +1,3 @@
-- id: automation.andrey_shutter_low_sun
-  alias: Открыть штору Андрея при низком солнце
-  triggers:
-    - trigger: numeric_state
-      entity_id:
-        - sun.sun
-      attribute: elevation
-      below: 12
-  conditions:
-    - condition: state
-      entity_id: input_boolean.stop
-      state: 'off'
-  actions:
-    - action: cover.open_cover
-      target:
-        entity_id: cover.shutter_andrey
-  mode: single
-
 - id: automation.andrey_shutter_sun
   alias: Прикрыть штору Андрея от солнца
   triggers:
@@ -130,4 +112,24 @@
                 entity_id: cover.shutter_bedroom
               data:
                 position: 10
+  mode: single
+
+- id: automation.open_shutter_on_low_sun
+  alias: Открыть шторы при низком солнце
+  triggers:
+    - trigger: numeric_state
+      entity_id:
+        - sun.sun
+      attribute: elevation
+      below: 12
+  conditions:
+    - condition: state
+      entity_id: input_boolean.stop
+      state: 'off'
+  actions:
+    - action: cover.open_cover
+      target:
+        entity_id:
+          - cover.shutter_andrey
+          - cover.shutter_lounge
   mode: single

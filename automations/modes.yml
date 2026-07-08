@@ -101,11 +101,9 @@
                 - action: cover.close_cover
                   target:
                     entity_id: cover.shutter_andrey
-                - action: cover.set_cover_position
+                - action: cover.close_cover
                   target:
                     entity_id: cover.shutter_lounge
-                  data:
-                    position: 10
             - action: switch.turn_off
               target:
                 entity_id: switch.wall_switch_toilet_l2

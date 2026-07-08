@@ -75,7 +75,7 @@
       target:
         entity_id: cover.shutter_andrey
       data:
-        position: 40
+        position: 50
   mode: single
 
 - id: automation.lounge_shutter_cooling_sun

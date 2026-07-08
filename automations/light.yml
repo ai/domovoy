@@ -9,7 +9,7 @@
     input:
       wall_switch: 2d30ab78a44cd462ac7d142927c6e6b5
       light_group: light.light_group_andrey
-      adaptive_switch: switch.adaptive_lighting_private_adaptive_lighting_daylight
+      adaptive_switch: switch.adaptive_lighting_private
 
 - id: automation.wall_switch_kitchen
   alias: Выключатель света на кухне
@@ -25,9 +25,13 @@
 
 - id: automation.wall_switch_toilet
   alias: Выключатель в туалете
+  conditions:
+    - condition: state
+      entity_id: input_boolean.stop
+      state: 'off'
   use_blueprint:
     path: domovoy/wall-switch.yaml
     input:
       wall_switch: 1fe4d7f5871d1ee1f17a91a7fd2a8a5e
       light_group: light.light_group_toilet
-      adaptive_switch: switch.adaptive_lightning_service
+      adaptive_switch: switch.adaptive_lighting_service

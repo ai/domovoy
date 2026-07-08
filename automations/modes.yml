@@ -96,7 +96,7 @@
                 - condition: numeric_state
                   entity_id: sun.sun
                   attribute: elevation
-                  above: 10
+                  above: 12
               then:
                 - action: cover.close_cover
                   target:

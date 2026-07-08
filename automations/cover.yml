@@ -1,14 +1,14 @@
 - id: automation.bedroom_shutter_night
-  alias: Штора спальни на ночь
+  alias: Штора спальни утром
   triggers:
     - trigger: time
       at:
-        entity_id: input_datetime.night_start
+        entity_id: input_datetime.night_end
         offset: '-01:00:00'
       id: open
     - trigger: time
       at:
-        entity_id: input_datetime.night_start
+        entity_id: input_datetime.night_end
         offset: '01:00:00'
       id: close
   conditions:

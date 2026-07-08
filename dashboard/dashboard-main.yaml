@@ -10,11 +10,11 @@ views:
               - type: entity
                 show_state: true
                 show_icon: true
-                entity: sensor.forecast_aemet_temperature_feeling
+                entity: sensor.weather_aemet_temperature
               - type: entity
                 show_state: true
                 show_icon: true
-                entity: sensor.forecast_aemet_humidity
+                entity: sensor.weather_aemet_humidity
               - type: entity
                 show_state: true
                 show_icon: true
@@ -266,7 +266,27 @@ views:
     path: street
     sections:
       - type: grid
-        cards: []
+        cards:
+          - type: heading
+            icon: ''
+            heading: Погода
+            heading_style: title
+          - show_current: true
+            show_forecast: true
+            type: weather-forecast
+            entity: weather.weather_aemet
+            forecast_type: daily
+            round_temperature: true
+          - type: gauge
+            entity: sensor.air_waqi_pm2_5
+            severity:
+              green: 0
+              yellow: 50
+              red: 100
+            grid_options:
+              columns: 3
+              rows: auto
+            name: Воздух
     subview: true
     cards: []
   - type: sections

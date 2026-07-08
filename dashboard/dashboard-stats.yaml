@@ -8,8 +8,7 @@ views:
             heading_style: title
           - type: statistics-graph
             entities:
-              - entity: sensor.forecast_aemet_temperature
-                name: Улица
+              - entity: sensor.weather_aemet_temperature
                 color: grey
               - entity: sensor.air_bathroom_temperature
                 name:
@@ -115,7 +114,7 @@ views:
             chart_type: line
             stat_types:
               - mean
-            min_y_axis: 30
+            min_y_axis: 15
             max_y_axis: 100
       - type: grid
         cards:

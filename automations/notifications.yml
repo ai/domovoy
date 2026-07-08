@@ -47,6 +47,20 @@
         message: Протечка воды
   mode: single
 
+- id: automation.toilet_water_leak
+  alias: Протечка воды в туалете
+  triggers:
+    - trigger: state
+      entity_id: binary_sensor.water_toilet_water_leak
+      from: 'off'
+      to: 'on'
+  actions:
+    - action: notify.notify
+      data:
+        title: Туалет
+        message: Протечка воды
+  mode: single
+
 - id: automation.high_co2_notification_andrey
   alias: Высокий уровне CO² у Андрея
   triggers:
@@ -100,23 +114,6 @@
           importance: low
   mode: single
 
-- id: automation.cat_fountain_low_water
-  alias: Мало воды в поилке кошке
-  triggers:
-    - trigger: numeric_state
-      entity_id: sensor.fountain_dockstream_2_remaining_water_2
-      below: 40
-  conditions:
-    - condition: state
-      entity_id: input_boolean.stop
-      state: 'off'
-  actions:
-    - action: notify.mobile_app_phone_bedoll
-      data:
-        title: Поилка кошки
-        message: 'Мало воды: {{ states("sensor.fountain_dockstream_2_remaining_water_2") }}%'
-  mode: single
-
 - id: automation.cat_fountain_cleaning
   alias: Чистка поилки кошки
   triggers:
@@ -162,18 +159,21 @@
                   tag: fountain_clean
   mode: single
 
-- id: automation.toilet_water_leak
-  alias: Протечка воды в туалете
+- id: automation.cat_fountain_low_water
+  alias: Мало воды в поилке кошке
   triggers:
-    - trigger: state
-      entity_id: binary_sensor.water_toilet_water_leak
-      from: 'off'
-      to: 'on'
+    - trigger: numeric_state
+      entity_id: sensor.fountain_dockstream_2_remaining_water_2
+      below: 40
+  conditions:
+    - condition: state
+      entity_id: input_boolean.stop
+      state: 'off'
   actions:
-    - action: notify.notify
+    - action: notify.mobile_app_phone_bedoll
       data:
-        title: Туалет
-        message: Протечка воды
+        title: Поилка кошки
+        message: 'Мало воды: {{ states("sensor.fountain_dockstream_2_remaining_water_2") }}%'
   mode: single
 
 - id: automation.missing_devices

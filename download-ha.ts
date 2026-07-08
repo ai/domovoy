@@ -13,7 +13,8 @@ const SLUGS: Record<string, string> = {
   Свет: 'light',
   Уведомления: 'notifications',
   Режимы: 'modes',
-  Климат: 'climate'
+  Климат: 'climate',
+  Шторы: 'cover'
 }
 
 interface Domain {

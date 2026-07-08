@@ -1,0 +1,39 @@
+- id: automation.bedroom_shutter_night
+  alias: Штора спальни на ночь
+  triggers:
+    - trigger: time
+      at:
+        entity_id: input_datetime.night_start
+        offset: '-01:00:00'
+      id: open
+    - trigger: time
+      at:
+        entity_id: input_datetime.night_start
+        offset: '01:00:00'
+      id: close
+  conditions:
+    - condition: state
+      entity_id: input_boolean.stop
+      state: 'off'
+  actions:
+    - choose:
+        - conditions:
+            - condition: trigger
+              id: open
+          sequence:
+            - action: cover.open_cover
+              target:
+                entity_id: cover.shutter_bedroom
+        - conditions:
+            - condition: trigger
+              id: close
+            - condition: state
+              entity_id: input_boolean.cooling
+              state: 'on'
+          sequence:
+            - action: cover.set_cover_position
+              target:
+                entity_id: cover.shutter_bedroom
+              data:
+                position: 10
+  mode: single

@@ -37,3 +37,25 @@
               data:
                 position: 10
   mode: single
+
+- id: automation.andrey_shutter_sun
+  alias: Прикрыть штору Андрея от солнца
+  triggers:
+    - trigger: numeric_state
+      entity_id: sun.sun
+      attribute: azimuth
+      above: 249
+  conditions:
+    - condition: state
+      entity_id: input_boolean.stop
+      state: 'off'
+    - condition: state
+      entity_id: input_boolean.cooling
+      state: 'on'
+  actions:
+    - action: cover.set_cover_position
+      target:
+        entity_id: cover.shutter_andrey
+      data:
+        position: 40
+  mode: single

@@ -308,9 +308,13 @@ async function download(
     .filter(s => s.entity_id.startsWith(domain.prefix))
     .map(s => ({
       entityId: s.entity_id,
-      id: registry.uniqueIdByEntity[s.entity_id] ?? s.attributes?.id
+      id: registry.uniqueIdByEntity[s.entity_id] ?? s.attributes?.id,
+      friendlyName: s.attributes?.friendly_name
     }))
-    .filter((a): a is { entityId: string; id: string } => Boolean(a.id))
+    .filter(
+      (a): a is { entityId: string; id: string; friendlyName: string | undefined } =>
+        Boolean(a.id)
+    )
 
   if (!items.length) {
     console.info(`No UI-managed ${domain.outputDir} found.`)
@@ -318,7 +322,7 @@ async function download(
   }
 
   let groups: Record<string, unknown[]> = {}
-  for (let { entityId, id } of items) {
+  for (let { entityId, id, friendlyName } of items) {
     let category = registry.categoryByEntity[entityId] || UNCATEGORIZED
     let config
     try {
@@ -332,6 +336,18 @@ async function download(
       delete config.description
     }
     let { alias, ...rest } = config
+    if (
+      typeof alias === 'string' &&
+      friendlyName !== undefined &&
+      alias !== friendlyName
+    ) {
+      console.error(
+        styleText(
+          'red',
+          `  ! ${entityId} alias "${alias}" differs from name "${friendlyName}"`
+        )
+      )
+    }
     let entry =
       alias === undefined
         ? { id: entityId, ...rest }

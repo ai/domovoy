@@ -1,5 +1,5 @@
 - id: automation.empty_home_button
-  alias: Кнопка «Никого нет дома»
+  alias: Кнопка «Пустой дом»
   triggers:
     - trigger: device
       domain: mqtt
@@ -36,7 +36,7 @@
   mode: single
 
 - id: automation.empty_home_presence
-  alias: Обновление «Никого нет дома»
+  alias: Обновление «Пустой дом»
   triggers:
     - trigger: state
       entity_id: zone.home
@@ -72,7 +72,7 @@
   mode: single
 
 - id: automation.empty_home_devices
-  alias: 'Пустой дом: шторы и свет'
+  alias: Реакция дома на «Пустой дом»
   triggers:
     - trigger: state
       entity_id: input_boolean.empty_home

@@ -296,7 +296,7 @@ function toYaml(data: unknown): string {
 function fileName(category: string): string {
   let base =
     SLUGS[category] || category.replace(/[/\\\u0000-\u001f]/g, '_').trim()
-  return base + '.yml'
+  return base + '.yaml'
 }
 
 async function download(
@@ -359,7 +359,7 @@ async function download(
   let dir = join(import.meta.dirname, domain.outputDir)
   mkdirSync(dir, { recursive: true })
   for (let f of readdirSync(dir)) {
-    if (f.endsWith('.yml')) rmSync(join(dir, f))
+    if (f.endsWith('.yaml')) rmSync(join(dir, f))
   }
 
   let count = 0
@@ -455,7 +455,7 @@ async function downloadDashboards(): Promise<void> {
   let dir = join(import.meta.dirname, 'dashboard')
   mkdirSync(dir, { recursive: true })
   for (let f of readdirSync(dir)) {
-    if (f.endsWith('.yml')) rmSync(join(dir, f))
+    if (f.endsWith('.yaml')) rmSync(join(dir, f))
   }
   for (let { name, config } of items) {
     writeFileSync(join(dir, fileName(name)), toYaml(config))
@@ -530,13 +530,13 @@ function writeEntities(states: HassState[], registry: Registry): void {
     '# Format: entity_id: "friendly name · current value · device_class"\n\n'
   let dir = join(import.meta.dirname, 'home')
   mkdirSync(dir, { recursive: true })
-  writeFileSync(join(dir, 'entities.yml'), header + toYaml(sorted))
+  writeFileSync(join(dir, 'entities.yaml'), header + toYaml(sorted))
 
   let count = Object.values(sorted).reduce(
     (n, m) => n + Object.keys(m).length,
     0
   )
-  console.log(`Saved ${count} entities to home/entities.yml`)
+  console.log(`Saved ${count} entities to home/entities.yaml`)
 }
 
 try {

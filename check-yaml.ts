@@ -3,7 +3,7 @@
 import { globSync, readFileSync } from 'node:fs'
 import { parseAllDocuments } from 'yaml'
 
-let files = globSync(['**/*.yml', '**/*.yaml'], {
+let files = globSync(['**/*.yaml'], {
   exclude: ['node_modules/**']
 }).sort()
 

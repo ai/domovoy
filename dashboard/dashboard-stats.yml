@@ -153,5 +153,11 @@ views:
             hide_state: true
             vertical: false
             tap_action:
-              action: toggle
+              action: perform-action
+              perform_action: script.clean_cat_fountain
+              target: {}
+            icon_tap_action:
+              action: perform-action
+              perform_action: script.clean_cat_fountain
+              target: {}
             features_position: bottom

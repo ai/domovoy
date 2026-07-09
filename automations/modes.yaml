@@ -11,7 +11,19 @@
       domain: mqtt
       device_id: 051afa3d576af13df00f57ac4f8a7ff6
       type: action
+      subtype: toggle_b2_down
+      id: vacuum
+    - trigger: device
+      domain: mqtt
+      device_id: 051afa3d576af13df00f57ac4f8a7ff6
+      type: action
       subtype: toggle_b1_up
+      id: clear
+    - trigger: device
+      domain: mqtt
+      device_id: 051afa3d576af13df00f57ac4f8a7ff6
+      type: action
+      subtype: toggle_b2_up
       id: clear
   conditions:
     - condition: state
@@ -21,18 +33,22 @@
     - choose:
         - conditions:
             - condition: trigger
-              id: set
-          sequence:
-            - action: script.turn_on
-              target:
-                entity_id: script.empty_home
-        - conditions:
-            - condition: trigger
               id: clear
           sequence:
             - action: input_boolean.turn_off
               target:
                 entity_id: input_boolean.empty_home
+      default:
+        - action: script.turn_on
+          target:
+            entity_id: script.empty_home
+        - if:
+            - condition: trigger
+              id: vacuum
+          then:
+            - action: vacuum.start
+              target:
+                entity_id: vacuum.vacuum_q7_max
   mode: single
 
 - id: automation.empty_home_presence
@@ -118,25 +134,4 @@
             - action: switch.turn_on
               target:
                 entity_id: switch.wall_switch_toilet_l2
-  mode: single
-
-- id: automation.empty_home_vacuum_button
-  alias: Кнопка «Пустой дом» с уборкой
-  triggers:
-    - trigger: device
-      domain: mqtt
-      device_id: 051afa3d576af13df00f57ac4f8a7ff6
-      type: action
-      subtype: toggle_b2_down
-  conditions:
-    - condition: state
-      entity_id: input_boolean.stop
-      state: 'off'
-  actions:
-    - action: script.turn_on
-      target:
-        entity_id: script.empty_home
-    - action: vacuum.start
-      target:
-        entity_id: vacuum.vacuum_q7_max
   mode: single

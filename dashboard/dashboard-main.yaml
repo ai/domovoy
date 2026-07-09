@@ -18,7 +18,7 @@ views:
               - type: entity
                 show_state: true
                 show_icon: true
-                entity: sensor.air_waqi_pm2_5
+                entity: sensor.weather_waqi_pm2_5
             tap_action:
               action: navigate
               navigation_path: /dashboard-main/street
@@ -275,10 +275,14 @@ views:
             show_forecast: true
             type: weather-forecast
             entity: weather.weather_aemet
-            forecast_type: daily
+            forecast_type: hourly
             round_temperature: true
+          - show_current: false
+            show_forecast: true
+            type: weather-forecast
+            entity: weather.weather_aemet
+            forecast_type: daily
           - type: gauge
-            entity: sensor.air_waqi_pm2_5
             severity:
               green: 0
               yellow: 50
@@ -287,6 +291,7 @@ views:
               columns: 3
               rows: auto
             name: Воздух
+            entity: sensor.weather_waqi_pm2_5
     subview: true
     cards: []
   - type: sections

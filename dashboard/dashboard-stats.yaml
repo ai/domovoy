@@ -67,7 +67,7 @@ views:
                 name:
                   type: area
                 color: deep-purple
-              - entity: sensor.air_waqi_pm2_5
+              - entity: sensor.weather_waqi_pm2_5
                 name: Улица
                 color: grey
             title: PM2.5

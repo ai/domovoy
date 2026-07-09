@@ -29,17 +29,35 @@
                 entity_id: switch.wall_switch_bathroom_l2
   mode: single
 
-- id: automation.presence_power_save
-  alias: Сохранение батареи датчика присутствия
+- id: automation.kitchen_fan_auto_off
+  alias: Авто-выключение вентилятора на кухне
+  triggers:
+    - trigger: state
+      entity_id: switch.wall_switch_kitchen_fan
+      to: 'on'
+      for:
+        hours: 2
+  conditions:
+    - condition: state
+      entity_id: input_boolean.stop
+      state: 'off'
+  actions:
+    - action: switch.turn_off
+      target:
+        entity_id: switch.wall_switch_kitchen_fan
+  mode: single
+
+- id: automation.co2_ventilation
+  alias: Вентиляция для снижения CO²
   triggers:
     - trigger: state
       entity_id: input_boolean.empty_home
+      to: 'off'
+      id: occupied
     - trigger: state
-      entity_id: input_boolean.cat_alone
-    - trigger: time
-      at: input_datetime.night_start
-    - trigger: time
-      at: input_datetime.night_end
+      entity_id: input_boolean.empty_home
+      to: 'on'
+      id: empty
   conditions:
     - condition: state
       entity_id: input_boolean.stop
@@ -47,27 +65,17 @@
   actions:
     - choose:
         - conditions:
-            - condition: or
-              conditions:
-                - condition: state
-                  entity_id: input_boolean.empty_home
-                  state: 'on'
-                - condition: state
-                  entity_id: input_boolean.cat_alone
-                  state: 'on'
-                - condition: time
-                  after: input_datetime.night_start
-                  before: input_datetime.night_end
+            - condition: trigger
+              id: occupied
           sequence:
-            - action: select.select_option
+            - action: switch.turn_on
               target:
-                entity_id: select.presence_toilet_motion_detection_mode
-              data:
-                option: only_pir
-      default:
-        - action: select.select_option
-          target:
-            entity_id: select.presence_toilet_motion_detection_mode
-          data:
-            option: pir_and_radar
+                entity_id: switch.wall_switch_toilet_l2
+        - conditions:
+            - condition: trigger
+              id: empty
+          sequence:
+            - action: switch.turn_off
+              target:
+                entity_id: switch.wall_switch_toilet_l2
   mode: single

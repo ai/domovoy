@@ -93,11 +93,40 @@
     - trigger: state
       entity_id: input_boolean.empty_home
       to: 'on'
-      id: 'on'
+  conditions:
+    - condition: state
+      entity_id: input_boolean.stop
+      state: 'off'
+  actions:
+    - if:
+        - condition: numeric_state
+          entity_id: sun.sun
+          attribute: elevation
+          above: 12
+      then:
+        - action: cover.close_cover
+          target:
+            entity_id: cover.shutter_andrey
+        - action: cover.close_cover
+          target:
+            entity_id: cover.shutter_lounge
+    - action: cover.close_cover
+      target:
+        entity_id: cover.shutter_bedroom
+    - action: script.turn_off_everything
+  mode: single
+
+- id: automation.presence_power_save
+  alias: Сохранение батареи датчика присутствия
+  triggers:
     - trigger: state
       entity_id: input_boolean.empty_home
-      to: 'off'
-      id: 'off'
+    - trigger: state
+      entity_id: input_boolean.cat_alone
+    - trigger: time
+      at: input_datetime.night_start
+    - trigger: time
+      at: input_datetime.night_end
   conditions:
     - condition: state
       entity_id: input_boolean.stop
@@ -105,33 +134,27 @@
   actions:
     - choose:
         - conditions:
-            - condition: trigger
-              id: 'on'
+            - condition: or
+              conditions:
+                - condition: state
+                  entity_id: input_boolean.empty_home
+                  state: 'on'
+                - condition: state
+                  entity_id: input_boolean.cat_alone
+                  state: 'on'
+                - condition: time
+                  after: input_datetime.night_start
+                  before: input_datetime.night_end
           sequence:
-            - if:
-                - condition: numeric_state
-                  entity_id: sun.sun
-                  attribute: elevation
-                  above: 12
-              then:
-                - action: cover.close_cover
-                  target:
-                    entity_id: cover.shutter_andrey
-                - action: cover.close_cover
-                  target:
-                    entity_id: cover.shutter_lounge
-            - action: cover.close_cover
+            - action: select.select_option
               target:
-                entity_id: cover.shutter_bedroom
-            - action: switch.turn_off
-              target:
-                entity_id: switch.wall_switch_toilet_l2
-            - action: script.turn_off_everything
-        - conditions:
-            - condition: trigger
-              id: 'off'
-          sequence:
-            - action: switch.turn_on
-              target:
-                entity_id: switch.wall_switch_toilet_l2
+                entity_id: select.presence_toilet_motion_detection_mode
+              data:
+                option: only_pir
+      default:
+        - action: select.select_option
+          target:
+            entity_id: select.presence_toilet_motion_detection_mode
+          data:
+            option: pir_and_radar
   mode: single

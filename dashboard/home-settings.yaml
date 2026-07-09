@@ -142,7 +142,7 @@ views:
           - type: tile
             entity: switch.wall_switch_toilet_l2
             name: Общий
-            icon: mdi:fan
+            icon: mdi:air-filter
             vertical: false
             tap_action:
               action: toggle
@@ -154,6 +154,17 @@ views:
             name:
               type: area
             icon: mdi:bathtub
+            vertical: false
+            tap_action:
+              action: toggle
+            icon_tap_action:
+              action: none
+            features_position: bottom
+          - type: tile
+            entity: switch.wall_switch_kitchen_fan
+            name:
+              type: area
+            icon: mdi:pot-steam
             vertical: false
             tap_action:
               action: toggle

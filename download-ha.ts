@@ -14,7 +14,8 @@ const SLUGS: Record<string, string> = {
   Уведомления: 'notifications',
   Режимы: 'modes',
   Климат: 'climate',
-  Шторы: 'cover'
+  Шторы: 'cover',
+  Вентиляция: 'ventilation'
 }
 
 interface Domain {
@@ -312,8 +313,13 @@ async function download(
       friendlyName: s.attributes?.friendly_name
     }))
     .filter(
-      (a): a is { entityId: string; id: string; friendlyName: string | undefined } =>
-        Boolean(a.id)
+      (
+        a
+      ): a is {
+        entityId: string
+        id: string
+        friendlyName: string | undefined
+      } => Boolean(a.id)
     )
 
   if (!items.length) {

@@ -75,3 +75,12 @@
           target:
             entity_id: switch.adaptive_lighting_service_sleep_mode
   mode: single
+
+- id: automation.vykliuchatel_sveta_v_spalne
+  alias: Выключатель света в спальне
+  use_blueprint:
+    path: domovoy/wall-switch.yaml
+    input:
+      wall_switch: 99c1a100b8881fff10f026b7a073b75c
+      light_group: light.light_group_bedroom
+      adaptive_switch: switch.adaptive_lighting_private

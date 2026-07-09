@@ -4,7 +4,7 @@
 // reads the first bulb state on press, waits, and reads it again.
 // If nothing changed (HA is down), it drives the bulbs directly.
 
-let DEBUG = true // Print debug output to the script console
+let DEBUG = false // Print debug output to the script console
 
 // Z2M: Devices -> bulb -> Network address (e.g. 0x1A2B)
 let LIGHTS = [0xcd99, 0x2a4b]

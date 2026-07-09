@@ -91,6 +91,13 @@ views:
             tap_action:
               action: toggle
             features_position: bottom
+          - type: tile
+            entity: switch.wall_switch_bedroom
+            name:
+              type: area
+            icon: mdi:bed
+            vertical: false
+            features_position: bottom
       - type: grid
         cards:
           - type: heading

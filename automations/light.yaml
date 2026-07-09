@@ -36,3 +36,13 @@
       light_group: light.light_group_toilet
       adaptive_switch: switch.adaptive_lighting_service
       manual_flag: input_boolean.stop_toilet
+
+- id: automation.autolight_toiltet
+  alias: Авто-включение света в туалете
+  use_blueprint:
+    path: domovoy/presence.yaml
+    input:
+      presence_sensor: binary_sensor.presence_toilet_presence
+      light:
+        entity_id: light.light_group_toilet
+      manual_flag: input_boolean.stop_toilet

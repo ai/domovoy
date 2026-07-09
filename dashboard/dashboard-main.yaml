@@ -22,6 +22,22 @@ views:
             tap_action:
               action: navigate
               navigation_path: /dashboard-main/street
+          - graph: line
+            type: sensor
+            entity: sensor.weather_aemet_temperature_feeling
+            detail: 1
+            name: Ощущается как
+          - type: tile
+            grid_options:
+              columns: 6
+              rows: 2
+            entity: sensor.weather_aemet_rain_probability
+            name: Вероятность дождя
+            icon: mdi:weather-pouring
+            vertical: false
+            features:
+              - type: bar-gauge
+            features_position: bottom
       - type: grid
         cards:
           - type: heading

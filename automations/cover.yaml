@@ -19,7 +19,7 @@
   mode: single
 
 - id: automation.andrey_shutter
-  alias: Прикрыть штору Андрея от солнца
+  alias: Штора Андрея
   triggers:
     - trigger: numeric_state
       entity_id: sun.sun
@@ -30,12 +30,27 @@
       entity_id: input_boolean.empty_home
       to: 'off'
       id: home
+    - trigger: state
+      entity_id: input_boolean.empty_home
+      to: 'on'
+      id: leave
   conditions:
     - condition: state
       entity_id: input_boolean.stop
       state: 'off'
   actions:
     - choose:
+        - conditions:
+            - condition: trigger
+              id: leave
+            - condition: numeric_state
+              entity_id: sun.sun
+              attribute: elevation
+              above: 12
+          sequence:
+            - action: cover.close_cover
+              target:
+                entity_id: cover.shutter_andrey
         - conditions:
             - condition: or
               conditions:
@@ -75,7 +90,7 @@
   mode: single
 
 - id: automation.lounge_shutter
-  alias: Прикрыть штору гостиной от солнца
+  alias: Штора гостиной
   triggers:
     - trigger: numeric_state
       entity_id: sun.sun
@@ -91,12 +106,27 @@
       entity_id: input_boolean.empty_home
       to: 'off'
       id: home
+    - trigger: state
+      entity_id: input_boolean.empty_home
+      to: 'on'
+      id: leave
   conditions:
     - condition: state
       entity_id: input_boolean.stop
       state: 'off'
   actions:
     - choose:
+        - conditions:
+            - condition: trigger
+              id: leave
+            - condition: numeric_state
+              entity_id: sun.sun
+              attribute: elevation
+              above: 12
+          sequence:
+            - action: cover.close_cover
+              target:
+                entity_id: cover.shutter_lounge
         - conditions:
             - condition: trigger
               id: propose
@@ -155,7 +185,7 @@
   mode: single
 
 - id: automation.bedroom_shutter
-  alias: Штора спальни утром
+  alias: Штора спальни
   triggers:
     - trigger: time
       at:
@@ -171,12 +201,23 @@
       entity_id: input_boolean.empty_home
       to: 'off'
       id: home
+    - trigger: state
+      entity_id: input_boolean.empty_home
+      to: 'on'
+      id: leave
   conditions:
     - condition: state
       entity_id: input_boolean.stop
       state: 'off'
   actions:
     - choose:
+        - conditions:
+            - condition: trigger
+              id: leave
+          sequence:
+            - action: cover.close_cover
+              target:
+                entity_id: cover.shutter_bedroom
         - conditions:
             - condition: or
               conditions:

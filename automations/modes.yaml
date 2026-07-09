@@ -88,7 +88,7 @@
   mode: single
 
 - id: automation.empty_home_devices
-  alias: Реакция дома на «Пустой дом»
+  alias: Выключить всё в пустом доме
   triggers:
     - trigger: state
       entity_id: input_boolean.empty_home
@@ -98,21 +98,6 @@
       entity_id: input_boolean.stop
       state: 'off'
   actions:
-    - if:
-        - condition: numeric_state
-          entity_id: sun.sun
-          attribute: elevation
-          above: 12
-      then:
-        - action: cover.close_cover
-          target:
-            entity_id: cover.shutter_andrey
-        - action: cover.close_cover
-          target:
-            entity_id: cover.shutter_lounge
-    - action: cover.close_cover
-      target:
-        entity_id: cover.shutter_bedroom
     - action: script.turn_off_everything
   mode: single
 

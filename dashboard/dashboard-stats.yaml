@@ -9,6 +9,7 @@ views:
           - type: statistics-graph
             entities:
               - entity: sensor.weather_aemet_temperature
+                name: Улица
                 color: grey
               - entity: sensor.air_bathroom_temperature
                 name:
@@ -89,7 +90,7 @@ views:
                 name:
                   type: area
                 color: deep-purple
-              - entity: sensor.air_waqi_humidity
+              - entity: sensor.weather_waqi_humidity
                 name: Улица
                 color: grey
               - entity: sensor.temperature_andrey_humidity

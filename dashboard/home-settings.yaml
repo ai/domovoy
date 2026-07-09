@@ -28,6 +28,15 @@ views:
             features_position: bottom
           - type: tile
             entity: input_boolean.cat_alone
+          - type: tile
+            entity: switch.adaptive_lighting_service_sleep_mode
+            name: Ночной режим
+            vertical: false
+            tap_action:
+              action: toggle
+            icon_tap_action:
+              action: toggle
+            features_position: bottom
       - type: grid
         cards:
           - type: heading

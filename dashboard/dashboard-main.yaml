@@ -81,6 +81,43 @@ views:
             visibility:
               - condition: state
                 state: 'on'
+          - type: tile
+            entity: vacuum.vacuum_q7_max
+            name: Пылесос
+            vertical: false
+            features_position: bottom
+      - type: grid
+        cards:
+          - type: heading
+            heading: Кабинет Андрея
+            heading_style: title
+            badges:
+              - type: entity
+                show_state: true
+                show_icon: true
+                entity: sensor.temperature_andrey_temperature
+              - type: entity
+                show_state: true
+                show_icon: true
+                entity: sensor.presence_apollo_msr_2_co2
+            tap_action:
+              action: navigate
+              navigation_path: /dashboard-main/andrey
+          - type: tile
+            entity: light.light_group_andrey
+            name: Свет
+            vertical: false
+            features_position: bottom
+          - type: tile
+            entity: cover.shutter_andrey
+            name: Персиана
+            vertical: false
+            features_position: bottom
+          - type: tile
+            entity: climate.ac_andrey
+            name: Климат
+            vertical: false
+            features_position: bottom
       - type: grid
         cards:
           - type: heading
@@ -126,38 +163,6 @@ views:
           - type: tile
             entity: cover.shutter_lounge
             name: Персиана
-            vertical: false
-            features_position: bottom
-      - type: grid
-        cards:
-          - type: heading
-            heading: Кабинет Андрея
-            heading_style: title
-            badges:
-              - type: entity
-                show_state: true
-                show_icon: true
-                entity: sensor.temperature_andrey_temperature
-              - type: entity
-                show_state: true
-                show_icon: true
-                entity: sensor.presence_apollo_msr_2_co2
-            tap_action:
-              action: navigate
-              navigation_path: /dashboard-main/andrey
-          - type: tile
-            entity: light.light_group_andrey
-            name: Свет
-            vertical: false
-            features_position: bottom
-          - type: tile
-            entity: cover.shutter_andrey
-            name: Персиана
-            vertical: false
-            features_position: bottom
-          - type: tile
-            entity: climate.ac_andrey
-            name: Климат
             vertical: false
             features_position: bottom
       - type: grid
@@ -216,11 +221,6 @@ views:
       - type: grid
         cards:
           - type: heading
-            heading: Прихожая
-            heading_style: title
-      - type: grid
-        cards:
-          - type: heading
             heading: Ванная
             heading_style: title
             badges:
@@ -257,6 +257,11 @@ views:
             name: Свет
             vertical: false
             features_position: bottom
+      - type: grid
+        cards:
+          - type: heading
+            heading: Прихожая
+            heading_style: title
     max_columns: 3
     title: Общее
     cards: []
@@ -382,6 +387,21 @@ views:
             features_position: bottom
             vertical: false
             show_entity_picture": true
+      - type: grid
+        cards:
+          - type: heading
+            heading: Пылесос
+            heading_style: title
+          - type: tile
+            entity: vacuum.vacuum_q7_max
+            name: Пылесос
+            vertical: false
+            features:
+              - type: vacuum-commands
+            features_position: bottom
+            grid_options:
+              columns: 12
+              rows: 2
     cards: []
   - type: sections
     max_columns: 4
@@ -390,7 +410,21 @@ views:
     title: Спальня
     sections:
       - type: grid
-        cards: []
+        cards:
+          - type: heading
+            icon: ''
+            heading: Свет
+            heading_style: title
+          - type: tile
+            entity: light.light_black_lamp
+            name: Чёрная лампа
+            icon: mdi:lamp
+            vertical: false
+            features:
+              - type: toggle
+              - type: light-brightness
+              - type: light-color-temp
+            features_position: bottom
     cards: []
   - type: sections
     max_columns: 4
@@ -399,7 +433,21 @@ views:
     title: Кабинет Андрея
     sections:
       - type: grid
-        cards: []
+        cards:
+          - type: heading
+            icon: ''
+            heading: Свет
+            heading_style: title
+          - type: tile
+            entity: light.light_andrey_desk
+            name: Лампа на столе
+            icon: mdi:desk-lamp
+            vertical: false
+            features:
+              - type: toggle
+              - type: light-brightness
+              - type: light-color-temp
+            features_position: bottom
   - type: sections
     max_columns: 4
     title: Кабинет Кати
@@ -407,7 +455,31 @@ views:
     subview: true
     sections:
       - type: grid
-        cards: []
+        cards:
+          - type: heading
+            icon: ''
+            heading: Свет
+            heading_style: title
+          - type: tile
+            entity: light.light_gray_floor_lamp_1
+            name: Напольная лампа 1
+            icon: mdi:floor-lamp-dual
+            vertical: false
+            features:
+              - type: toggle
+              - type: light-brightness
+              - type: light-color-temp
+            features_position: bottom
+          - type: tile
+            entity: light.light_gray_floor_lamp_2
+            name: Напольная лампа 2
+            icon: mdi:floor-lamp-dual
+            vertical: false
+            features:
+              - type: toggle
+              - type: light-brightness
+              - type: light-color-temp
+            features_position: bottom
   - type: sections
     max_columns: 4
     title: Детская
@@ -415,7 +487,21 @@ views:
     subview: true
     sections:
       - type: grid
-        cards: []
+        cards:
+          - type: heading
+            icon: ''
+            heading: Свет
+            heading_style: title
+          - type: tile
+            entity: light.light_children_shelving
+            name: Лампа на шкафу
+            icon: mdi:desk-lamp
+            vertical: false
+            features:
+              - type: toggle
+              - type: light-brightness
+              - type: light-color-temp
+            features_position: bottom
   - type: sections
     max_columns: 4
     title: Кухня
@@ -423,7 +509,29 @@ views:
     subview: true
     sections:
       - type: grid
-        cards: []
+        cards:
+          - type: heading
+            icon: ''
+            heading: Свет
+            heading_style: title
+          - type: tile
+            entity: light.light_kitchen_worktop_1
+            name: Слева
+            icon: mdi:led-strip-variant
+            vertical: false
+            features_position: bottom
+            features:
+              - type: toggle
+              - type: light-brightness
+          - type: tile
+            entity: light.light_kitchen_worktop_2
+            name: Справа
+            icon: mdi:led-strip-variant
+            vertical: false
+            features_position: bottom
+            features:
+              - type: toggle
+              - type: light-brightness
   - type: sections
     max_columns: 4
     subview: true
@@ -431,4 +539,36 @@ views:
     title: Туалет
     sections:
       - type: grid
-        cards: []
+        cards:
+          - type: heading
+            icon: ''
+            heading: Свет
+            heading_style: title
+          - type: tile
+            entity: light.light_toilet_1
+            name: Дальний
+            icon: mdi:light-recessed
+            vertical: false
+            features_position: bottom
+            features:
+              - type: toggle
+              - type: light-brightness
+              - type: light-color-temp
+          - type: tile
+            entity: light.light_toilet_2
+            name: Ближний
+            icon: mdi:light-recessed
+            vertical: false
+            features_position: bottom
+            features:
+              - type: toggle
+              - type: light-brightness
+              - type: light-color-temp
+          - type: tile
+            entity: binary_sensor.presence_toilet_presence
+            name: Датчик присутствия
+            icon: mdi:motion-sensor
+            vertical: false
+            features_position: bottom
+          - type: tile
+            entity: input_boolean.stop_toilet

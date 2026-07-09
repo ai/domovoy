@@ -40,7 +40,7 @@ views:
       - type: grid
         cards:
           - type: heading
-            heading: Питание ламп
+            heading: Питание
             heading_style: title
           - type: tile
             entity: switch.wall_switch_andrey
@@ -71,6 +71,22 @@ views:
             name:
               type: area
             icon: mdi:ideogram-cjk
+            vertical: false
+            tap_action:
+              action: toggle
+            features_position: bottom
+          - type: tile
+            entity: switch.plug_dishwasher
+            name: Посудомойка
+            icon: mdi:dishwasher
+            vertical: false
+            tap_action:
+              action: toggle
+            features_position: bottom
+          - type: tile
+            entity: switch.plug_washing_machine
+            name: Стиральная машина
+            icon: mdi:washing-machine
             vertical: false
             tap_action:
               action: toggle

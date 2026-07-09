@@ -41,7 +41,7 @@
         duration: '00:30:00'
 
 - id: script.zigbee_reset
-  alias: Zigbee reset
+  alias: Сброс ламп Kajplats на Zigbee-режим
   use_blueprint:
     path: bonesderdritte/ikea_kajplats_zigbee_pairing_mode_power_cycle.yaml
     input:

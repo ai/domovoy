@@ -35,6 +35,8 @@ views:
             name: Вероятность дождя
             icon: mdi:weather-pouring
             vertical: false
+            tap_action:
+              action: more-info
             features:
               - type: bar-gauge
             features_position: bottom
@@ -52,10 +54,6 @@ views:
             hide_state: true
             vertical: false
             tap_action:
-              action: perform-action
-              perform_action: script.turn_off_everything
-              target: {}
-            icon_tap_action:
               action: perform-action
               perform_action: script.turn_off_everything
               target: {}
@@ -77,26 +75,12 @@ views:
           - type: tile
             visibility:
               - condition: state
-                entity: input_boolean.empty_home
-                state: 'off'
-            entity: script.empty_home
-            name: Мы ушли
-            hide_state: true
-            vertical: false
-            tap_action:
-              action: perform-action
-              perform_action: script.empty_home
-              target: {}
-            icon_tap_action:
-              action: perform-action
-              perform_action: script.empty_home
-              target: {}
-            features_position: bottom
-          - type: tile
-            entity: input_boolean.empty_home
-            visibility:
-              - condition: state
                 state: 'on'
+            entity: input_boolean.empty_home
+            vertical: false
+            icon_tap_action:
+              action: none
+            features_position: bottom
           - type: tile
             entity: vacuum.vacuum_q7_max
             name: Пылесос
@@ -259,6 +243,10 @@ views:
             name: Вентилятор
             icon: mdi:fan
             vertical: false
+            tap_action:
+              action: toggle
+            icon_tap_action:
+              action: none
             features_position: bottom
       - type: grid
         cards:
@@ -278,6 +266,20 @@ views:
           - type: heading
             heading: Прихожая
             heading_style: title
+          - type: tile
+            visibility:
+              - condition: state
+                entity: input_boolean.empty_home
+                state: 'off'
+            entity: script.empty_home
+            name: Мы ушли
+            hide_state: true
+            vertical: false
+            tap_action:
+              action: perform-action
+              perform_action: script.empty_home
+              target: {}
+            features_position: bottom
     max_columns: 3
     title: Общее
     cards: []
@@ -428,9 +430,48 @@ views:
       - type: grid
         cards:
           - type: heading
+            heading_style: title
+            heading: Статистика
+          - type: tile
+            entity: sensor.air_bedroom_temperature
+            name:
+              type: entity
+            vertical: false
+            features:
+              - type: trend-graph
+            features_position: bottom
+          - type: tile
+            entity: sensor.air_bedroom_co2
+            name:
+              type: entity
+            vertical: false
+            features:
+              - type: trend-graph
+            features_position: bottom
+          - type: tile
+            entity: sensor.air_bedroom_pm2_5
+            name:
+              type: entity
+            vertical: false
+            features:
+              - type: trend-graph
+            features_position: bottom
+      - type: grid
+        cards:
+          - type: heading
             icon: ''
             heading: Свет
             heading_style: title
+          - type: tile
+            entity: light.light_yellow_lamp
+            name: Жёлтая лампа
+            icon: mdi:lamp
+            vertical: false
+            features:
+              - type: toggle
+              - type: light-brightness
+              - type: light-color-temp
+            features_position: bottom
           - type: tile
             entity: light.light_black_lamp
             name: Чёрная лампа
@@ -441,7 +482,20 @@ views:
               - type: light-brightness
               - type: light-color-temp
             features_position: bottom
+      - type: grid
+        cards:
+          - type: heading
+            heading: Другое
+            heading_style: title
+          - type: tile
+            entity: cover.shutter_bedroom
+            name: Персиана
+            vertical: false
+            features:
+              - type: cover-position
+            features_position: bottom
     cards: []
+    badges: []
   - type: sections
     max_columns: 4
     subview: true

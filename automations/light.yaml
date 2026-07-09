@@ -46,3 +46,31 @@
       light:
         entity_id: light.light_group_toilet
       manual_flag: input_boolean.stop_toilet
+
+- id: automation.private_lights_night_mode
+  alias: Ночной режим света в приватной зоне
+  triggers:
+    - trigger: time
+      at: input_datetime.night_start
+      id: start
+    - trigger: time
+      at: input_datetime.night_end
+      id: end
+  conditions:
+    - condition: state
+      entity_id: input_boolean.stop
+      state: 'off'
+  actions:
+    - choose:
+        - conditions:
+            - condition: trigger
+              id: start
+          sequence:
+            - action: switch.turn_on
+              target:
+                entity_id: switch.adaptive_lighting_private_sleep_mode
+      default:
+        - action: switch.turn_off
+          target:
+            entity_id: switch.adaptive_lighting_private_sleep_mode
+  mode: single

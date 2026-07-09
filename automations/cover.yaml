@@ -1,26 +1,80 @@
-- id: automation.andrey_shutter_sun
+- id: automation.open_shutter_on_low_sun
+  alias: Открыть шторы при низком солнце
+  triggers:
+    - trigger: numeric_state
+      entity_id:
+        - sun.sun
+      attribute: elevation
+      below: 12
+  conditions:
+    - condition: state
+      entity_id: input_boolean.stop
+      state: 'off'
+  actions:
+    - action: cover.open_cover
+      target:
+        entity_id:
+          - cover.shutter_andrey
+          - cover.shutter_lounge
+  mode: single
+
+- id: automation.andrey_shutter
   alias: Прикрыть штору Андрея от солнца
   triggers:
     - trigger: numeric_state
       entity_id: sun.sun
       attribute: azimuth
       above: 249
+      id: sun
+    - trigger: state
+      entity_id: input_boolean.empty_home
+      to: 'off'
+      id: home
   conditions:
     - condition: state
       entity_id: input_boolean.stop
       state: 'off'
-    - condition: state
-      entity_id: input_boolean.cooling
-      state: 'on'
   actions:
-    - action: cover.set_cover_position
-      target:
-        entity_id: cover.shutter_andrey
-      data:
-        position: 50
+    - choose:
+        - conditions:
+            - condition: or
+              conditions:
+                - condition: and
+                  conditions:
+                    - condition: trigger
+                      id: sun
+                    - condition: state
+                      entity_id: input_boolean.cooling
+                      state: 'on'
+                - condition: and
+                  conditions:
+                    - condition: trigger
+                      id: home
+                    - condition: state
+                      entity_id: input_boolean.cooling
+                      state: 'on'
+                    - condition: numeric_state
+                      entity_id: sun.sun
+                      attribute: elevation
+                      above: 12
+                    - condition: time
+                      after: '12:00:00'
+          sequence:
+            - action: cover.set_cover_position
+              target:
+                entity_id: cover.shutter_andrey
+              data:
+                position: 50
+        - conditions:
+            - condition: trigger
+              id: home
+          sequence:
+            - action: cover.open_cover
+              target:
+                entity_id: cover.shutter_andrey
   mode: single
 
-- id: automation.lounge_shutter_cooling_sun
+- id: automation.lounge_shutter
   alias: Прикрыть штору гостиной от солнца
   triggers:
     - trigger: numeric_state
@@ -33,6 +87,10 @@
       event_data:
         action: CLOSE_LOUNGE_SHUTTER
       id: close
+    - trigger: state
+      entity_id: input_boolean.empty_home
+      to: 'off'
+      id: home
   conditions:
     - condition: state
       entity_id: input_boolean.stop
@@ -59,8 +117,23 @@
                     - action: CLOSE_LOUNGE_SHUTTER
                       title: Прикрыть
         - conditions:
-            - condition: trigger
-              id: close
+            - condition: or
+              conditions:
+                - condition: trigger
+                  id: close
+                - condition: and
+                  conditions:
+                    - condition: trigger
+                      id: home
+                    - condition: state
+                      entity_id: input_boolean.cooling
+                      state: 'on'
+                    - condition: numeric_state
+                      entity_id: sun.sun
+                      attribute: elevation
+                      above: 12
+                    - condition: time
+                      after: '12:00:00'
           sequence:
             - action: cover.set_cover_position
               target:
@@ -72,9 +145,16 @@
                 message: clear_notification
                 data:
                   tag: lounge_shutter
+        - conditions:
+            - condition: trigger
+              id: home
+          sequence:
+            - action: cover.open_cover
+              target:
+                entity_id: cover.shutter_lounge
   mode: single
 
-- id: automation.bedroom_shutter_morning
+- id: automation.bedroom_shutter
   alias: Штора спальни утром
   triggers:
     - trigger: time
@@ -87,6 +167,10 @@
         entity_id: input_datetime.night_end
         offset: '01:00:00'
       id: close
+    - trigger: state
+      entity_id: input_boolean.empty_home
+      to: 'off'
+      id: home
   conditions:
     - condition: state
       entity_id: input_boolean.stop
@@ -94,15 +178,28 @@
   actions:
     - choose:
         - conditions:
-            - condition: trigger
-              id: open
+            - condition: or
+              conditions:
+                - condition: trigger
+                  id: open
+                - condition: and
+                  conditions:
+                    - condition: trigger
+                      id: home
+                    - condition: state
+                      entity_id: input_boolean.cooling
+                      state: 'off'
           sequence:
             - action: cover.open_cover
               target:
                 entity_id: cover.shutter_bedroom
         - conditions:
-            - condition: trigger
-              id: close
+            - condition: or
+              conditions:
+                - condition: trigger
+                  id: close
+                - condition: trigger
+                  id: home
             - condition: state
               entity_id: input_boolean.cooling
               state: 'on'
@@ -112,24 +209,4 @@
                 entity_id: cover.shutter_bedroom
               data:
                 position: 10
-  mode: single
-
-- id: automation.open_shutter_on_low_sun
-  alias: Открыть шторы при низком солнце
-  triggers:
-    - trigger: numeric_state
-      entity_id:
-        - sun.sun
-      attribute: elevation
-      below: 12
-  conditions:
-    - condition: state
-      entity_id: input_boolean.stop
-      state: 'off'
-  actions:
-    - action: cover.open_cover
-      target:
-        entity_id:
-          - cover.shutter_andrey
-          - cover.shutter_lounge
   mode: single

@@ -208,3 +208,27 @@
         title: Кухня
         message: Протечка воды
   mode: single
+
+- id: automation.cat_fountain_not_used
+  alias: Кошка не пьёт из поилки
+  triggers:
+    - trigger: time
+      at: '12:00:00'
+  conditions:
+    - condition: state
+      entity_id: input_boolean.stop
+      state: 'off'
+    - condition: numeric_state
+      entity_id: sensor.fountain_dockstream_2_today_s_total_drinking_times
+      below: 1
+    - condition: numeric_state
+      entity_id: sensor.fountain_dockstream_2_yesterday_s_total_drinking_times
+      below: 1
+  actions:
+    - action: notify.mobile_app_phone_bedoll
+      data:
+        title: Поилка кошки
+        message: Кошка не пила больше 24 часов
+        data:
+          tag: fountain_not_used
+  mode: single

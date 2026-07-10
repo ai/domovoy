@@ -22,24 +22,34 @@ views:
             tap_action:
               action: navigate
               navigation_path: /dashboard-main/street
-          - graph: line
-            type: sensor
+          - type: gauge
             entity: sensor.weather_aemet_temperature_feeling
-            detail: 1
             name: Ощущается как
-          - type: tile
             grid_options:
-              columns: 6
-              rows: 2
+              columns: 4
+              rows: auto
+            min: 5
+            max: 40
+            severity:
+              green: 0
+              yellow: 24
+              red: 30
+          - type: gauge
             entity: sensor.weather_aemet_rain_probability
-            name: Вероятность дождя
-            icon: mdi:weather-pouring
-            vertical: false
-            tap_action:
-              action: more-info
-            features:
-              - type: bar-gauge
-            features_position: bottom
+            grid_options:
+              columns: 4
+              rows: auto
+            name: Дождь
+          - type: gauge
+            entity: sensor.weather_waqi_pm2_5
+            grid_options:
+              columns: 4
+              rows: auto
+            name: Воздух
+            severity:
+              green: 0
+              yellow: 50
+              red: 0
       - type: grid
         cards:
           - type: heading
@@ -223,6 +233,10 @@ views:
             name: Вытяжка
             icon: mdi:fan
             vertical: false
+            tap_action:
+              action: toggle
+            icon_tap_action:
+              action: none
             features_position: bottom
       - type: grid
         cards:

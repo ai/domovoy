@@ -343,7 +343,7 @@ views:
     subview: true
     cards: []
   - type: sections
-    max_columns: 4
+    max_columns: 3
     subview: true
     path: home
     title: Дом
@@ -351,8 +351,30 @@ views:
       - type: grid
         cards:
           - type: heading
-            heading: Тариф на электричество
+            icon: ''
             heading_style: title
+            heading: Потребление электричества
+          - type: tile
+            grid_options:
+              columns: 6
+              rows: 2
+            entity: sensor.meter_panel_total_power
+            name: Сейчас
+            vertical: false
+            features:
+              - type: trend-graph
+            features_position: bottom
+          - type: tile
+            entity: sensor.current_cost_per_minute
+            name: Платим
+            icon: mdi:currency-eur
+            vertical: false
+            features:
+              - type: trend-graph
+            features_position: bottom
+          - type: heading
+            heading: Тариф
+            heading_style: subtitle
           - type: custom:tariff-chart-card
             visibility:
               - condition: state
@@ -407,17 +429,6 @@ views:
       - type: grid
         cards:
           - type: heading
-            icon: ''
-            heading: Подключиться к WiFi
-            heading_style: title
-          - type: picture
-            image_entity: image.network_domovoy_wifi_qr_code
-            grid_options:
-              columns: 6
-              rows: auto
-      - type: grid
-        cards:
-          - type: heading
             heading: Люди
             heading_style: title
           - type: tile
@@ -445,6 +456,17 @@ views:
             grid_options:
               columns: 12
               rows: 2
+      - type: grid
+        cards:
+          - type: heading
+            icon: ''
+            heading: Подключиться к WiFi
+            heading_style: title
+          - type: picture
+            image_entity: image.network_domovoy_wifi_qr_code
+            grid_options:
+              columns: 6
+              rows: auto
     cards: []
   - type: sections
     max_columns: 4

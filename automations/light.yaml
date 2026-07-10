@@ -1,43 +1,3 @@
-- id: automation.wall_switch_andrey
-  alias: Выключатель света в кабинете Андрея
-  conditions:
-    - condition: state
-      entity_id: input_boolean.stop
-      state: 'off'
-  use_blueprint:
-    path: domovoy/wall-switch.yaml
-    input:
-      wall_switch: 2d30ab78a44cd462ac7d142927c6e6b5
-      light_group: light.light_group_andrey
-      adaptive_switch: switch.adaptive_lighting_private
-
-- id: automation.wall_switch_kitchen
-  alias: Выключатель света на кухне
-  conditions:
-    - condition: state
-      entity_id: input_boolean.stop
-      state: 'off'
-  use_blueprint:
-    path: domovoy/wall-switch.yaml
-    input:
-      wall_switch: e97d66acdb3f1b0b4289d5d3afd14b66
-      light_group: light.light_group_kitchen
-      adaptive_switch: switch.adaptive_lighting_service
-
-- id: automation.wall_switch_toilet
-  alias: Выключатель в туалете
-  conditions:
-    - condition: state
-      entity_id: input_boolean.stop
-      state: 'off'
-  use_blueprint:
-    path: domovoy/wall-switch.yaml
-    input:
-      wall_switch: 1fe4d7f5871d1ee1f17a91a7fd2a8a5e
-      light_group: light.light_group_toilet
-      adaptive_switch: switch.adaptive_lighting_service
-      manual_flag: input_boolean.stop_toilet
-
 - id: automation.autolight_toiltet
   alias: Авто-включение света в туалете
   use_blueprint:
@@ -84,3 +44,43 @@
       wall_switch: 99c1a100b8881fff10f026b7a073b75c
       light_group: light.light_group_bedroom
       adaptive_switch: switch.adaptive_lighting_private
+
+- id: automation.wall_switch_andrey
+  alias: Выключатель света в кабинете Андрея
+  conditions:
+    - condition: state
+      entity_id: input_boolean.stop
+      state: 'off'
+  use_blueprint:
+    path: domovoy/wall-switch.yaml
+    input:
+      wall_switch: 2d30ab78a44cd462ac7d142927c6e6b5
+      light_group: light.light_group_andrey
+      adaptive_switch: switch.adaptive_lighting_private
+
+- id: automation.wall_switch_kitchen
+  alias: Выключатель света на кухне
+  conditions:
+    - condition: state
+      entity_id: input_boolean.stop
+      state: 'off'
+  use_blueprint:
+    path: domovoy/wall-switch.yaml
+    input:
+      wall_switch: e97d66acdb3f1b0b4289d5d3afd14b66
+      light_group: light.light_group_kitchen
+      adaptive_switch: switch.adaptive_lighting_service
+
+- id: automation.wall_switch_toilet
+  alias: Выключатель в туалете
+  conditions:
+    - condition: state
+      entity_id: input_boolean.stop
+      state: 'off'
+  use_blueprint:
+    path: domovoy/wall-switch.yaml
+    input:
+      wall_switch: 1fe4d7f5871d1ee1f17a91a7fd2a8a5e
+      light_group: light.light_group_toilet
+      adaptive_switch: switch.adaptive_lighting_service
+      manual_flag: input_boolean.stop_toilet

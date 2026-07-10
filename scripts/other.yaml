@@ -8,6 +8,20 @@
       target:
         entity_id: button.fountain_dockstream_2_cleaning_reset
 
+- id: script.empty_home
+  alias: Пометить дом пустым
+  icon: mdi:home-export-outline
+  mode: single
+  sequence:
+    - action: input_boolean.turn_on
+      target:
+        entity_id: input_boolean.empty_home
+    - action: timer.start
+      target:
+        entity_id: timer.empty_home
+      data:
+        duration: '00:30:00'
+
 - id: script.turn_off_everything
   alias: Выключить всё
   sequence:
@@ -25,20 +39,6 @@
       target:
         entity_id: switch.wall_switch_bathroom_l1
       data: {}
-
-- id: script.empty_home
-  alias: Пометить дом пустым
-  icon: mdi:home-export-outline
-  mode: single
-  sequence:
-    - action: input_boolean.turn_on
-      target:
-        entity_id: input_boolean.empty_home
-    - action: timer.start
-      target:
-        entity_id: timer.empty_home
-      data:
-        duration: '00:30:00'
 
 - id: script.zigbee_reset
   alias: Сброс ламп Kajplats на Zigbee-режим

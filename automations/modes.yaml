@@ -51,6 +51,20 @@
                 entity_id: vacuum.vacuum_q7_max
   mode: single
 
+- id: automation.empty_home_devices
+  alias: Выключить всё в пустом доме
+  triggers:
+    - trigger: state
+      entity_id: input_boolean.empty_home
+      to: 'on'
+  conditions:
+    - condition: state
+      entity_id: input_boolean.stop
+      state: 'off'
+  actions:
+    - action: script.turn_off_everything
+  mode: single
+
 - id: automation.empty_home_presence
   alias: Обновление «Пустой дом»
   triggers:
@@ -85,20 +99,6 @@
             - action: input_boolean.turn_on
               target:
                 entity_id: input_boolean.empty_home
-  mode: single
-
-- id: automation.empty_home_devices
-  alias: Выключить всё в пустом доме
-  triggers:
-    - trigger: state
-      entity_id: input_boolean.empty_home
-      to: 'on'
-  conditions:
-    - condition: state
-      entity_id: input_boolean.stop
-      state: 'off'
-  actions:
-    - action: script.turn_off_everything
   mode: single
 
 - id: automation.presence_power_save

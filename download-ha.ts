@@ -321,6 +321,7 @@ async function download(
         friendlyName: string | undefined
       } => Boolean(a.id)
     )
+    .sort((a, b) => a.entityId.localeCompare(b.entityId))
 
   if (!items.length) {
     console.info(`No UI-managed ${domain.outputDir} found.`)

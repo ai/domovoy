@@ -29,24 +29,6 @@
                 entity_id: switch.wall_switch_bathroom_l2
   mode: single
 
-- id: automation.kitchen_fan_auto_off
-  alias: Авто-выключение вентилятора на кухне
-  triggers:
-    - trigger: state
-      entity_id: switch.wall_switch_kitchen_fan
-      to: 'on'
-      for:
-        hours: 2
-  conditions:
-    - condition: state
-      entity_id: input_boolean.stop
-      state: 'off'
-  actions:
-    - action: switch.turn_off
-      target:
-        entity_id: switch.wall_switch_kitchen_fan
-  mode: single
-
 - id: automation.co2_ventilation
   alias: Вентиляция для снижения CO²
   triggers:
@@ -78,4 +60,22 @@
             - action: switch.turn_off
               target:
                 entity_id: switch.wall_switch_toilet_l2
+  mode: single
+
+- id: automation.kitchen_fan_auto_off
+  alias: Авто-выключение вентилятора на кухне
+  triggers:
+    - trigger: state
+      entity_id: switch.wall_switch_kitchen_fan
+      to: 'on'
+      for:
+        hours: 2
+  conditions:
+    - condition: state
+      entity_id: input_boolean.stop
+      state: 'off'
+  actions:
+    - action: switch.turn_off
+      target:
+        entity_id: switch.wall_switch_kitchen_fan
   mode: single

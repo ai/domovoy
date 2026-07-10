@@ -58,6 +58,11 @@ views:
             tap_action:
               action: navigate
               navigation_path: /dashboard-main/home
+            badges:
+              - type: entity
+                show_state: true
+                show_icon: true
+                entity: sensor.meter_panel_total_power
           - type: tile
             entity: script.turn_off_everything
             icon: mdi:lightbulb-off

@@ -3,10 +3,10 @@
   triggers:
     - trigger: template
       id: high
-      value_template: "{% set b = states('sensor.air_bathroom_humidity')|float(none) %}{% set vals = ['sensor.temperature_kitchen_humidity', 'sensor.temperature_lounge_humidity', 'sensor.temperature_children_humidity']|map('states')|map('float', none)|reject('none')|list %}{% set k = (vals|sum / vals|length) if vals|length > 0 else none %}{{ b is not none and k is not none and (b - k) >= 5 }}"
+      value_template: "{% set b = states('sensor.air_bathroom_humidity')|float(none) %}{% set vals = ['sensor.temperature_kitchen_humidity', 'sensor.temperature_lounge_humidity', 'sensor.temperature_children_humidity']|map('states')|map('float', none)|reject('none')|list %}{% set k = vals|max if vals|length > 0 else none %}{{ b is not none and k is not none and (b - k) >= 5 }}"
     - trigger: template
       id: normal
-      value_template: "{% set b = states('sensor.air_bathroom_humidity')|float(none) %}{% set vals = ['sensor.temperature_kitchen_humidity', 'sensor.temperature_lounge_humidity', 'sensor.temperature_children_humidity']|map('states')|map('float', none)|reject('none')|list %}{% set k = (vals|sum / vals|length) if vals|length > 0 else none %}{{ b is not none and k is not none and (b - k) < 3 }}"
+      value_template: "{% set b = states('sensor.air_bathroom_humidity')|float(none) %}{% set vals = ['sensor.temperature_kitchen_humidity', 'sensor.temperature_lounge_humidity', 'sensor.temperature_children_humidity']|map('states')|map('float', none)|reject('none')|list %}{% set k = vals|max if vals|length > 0 else none %}{{ b is not none and k is not none and (b - k) < 3 }}"
   conditions:
     - condition: state
       entity_id: input_boolean.stop

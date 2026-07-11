@@ -1,3 +1,8 @@
+- id: input_boolean.auto_andrey_desk
+  name: Связь монитора Андрея и датчика присутствия
+  room: andrey
+  icon: mdi:monitor
+
 - id: input_boolean.cat_alone
   name: Кошка одна
   icon: mdi:cat

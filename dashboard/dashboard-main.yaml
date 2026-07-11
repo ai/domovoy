@@ -620,6 +620,12 @@ views:
             features:
               - type: cover-open-close
               - type: cover-position
+          - type: tile
+            entity: binary_sensor.presence_apollo_msr_2_radar_target
+            name: Датчик присутствия
+            icon: mdi:motion-sensor
+            vertical: false
+            features_position: bottom
     cards: []
   - type: sections
     max_columns: 4

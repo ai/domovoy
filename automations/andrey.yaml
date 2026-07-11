@@ -1,0 +1,64 @@
+- id: automation.lock_screen_on_andrey_leaving
+  alias: Блокировка ноутбука Андрея при его уходе
+  room: andrey
+  triggers:
+    - trigger: state
+      entity_id: person.andrey
+      to:
+        - not_home
+        - home
+  conditions:
+    - condition: state
+      entity_id: input_boolean.stop
+      state: 'off'
+  actions:
+    - if:
+        - condition: state
+          entity_id: person.andrey
+          state: home
+      then:
+        - action: input_boolean.turn_on
+          target:
+            entity_id: input_boolean.auto_andrey_desk
+      else:
+        - action: mqtt.publish
+          data:
+            payload: LOCK
+            topic: ai_laptop
+            retain: true
+        - action: input_boolean.turn_off
+          target:
+            entity_id: input_boolean.auto_andrey_desk
+  mode: restart
+
+- id: automation.start_screen_on_presence
+  alias: Включение монитора Андрея по датчику присутствия
+  room: andrey
+  triggers:
+    - trigger: state
+      entity_id: binary_sensor.presence_apollo_msr_2_radar_target
+      to: 'on'
+  conditions:
+    - condition: state
+      entity_id: input_boolean.stop
+      state: 'off'
+    - condition: state
+      entity_id: person.andrey
+      state: home
+    - condition: state
+      entity_id: input_boolean.auto_andrey_desk
+      state: 'on'
+    - condition: time
+      after: '06:00:00'
+      before: '01:00:00'
+  actions:
+    - if:
+        - condition: state
+          entity_id: device_tracker.ip_savoia_ethernet
+          state: home
+      then:
+        - action: mqtt.publish
+          data:
+            payload: WAKE
+            topic: ai_laptop
+  mode: restart

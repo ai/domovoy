@@ -1,0 +1,35 @@
+- id: input_boolean.cat_alone
+  name: Кошка одна
+  icon: mdi:cat
+
+- id: input_boolean.cooling
+  name: Охлаждение
+  icon: mdi:snowflake-thermometer
+
+- id: input_boolean.empty_home
+  name: Пустой дом
+  icon: mdi:home-export-outline
+
+- id: input_boolean.heating
+  name: Обогрев
+  icon: mdi:sun-thermometer
+
+- id: input_boolean.stop
+  name: Стоп
+  icon: mdi:pause-octagon
+
+- id: input_boolean.stop_toilet
+  name: Блокиратор авто-включения света в туалете
+  icon: mdi:ideogram-cjk
+
+- id: input_datetime.night_end
+  name: Конец ночи
+  has_date: false
+  has_time: true
+  icon: mdi:white-balance-sunny
+
+- id: input_datetime.night_start
+  name: Начало ночи
+  has_time: true
+  has_date: false
+  icon: mdi:power-sleep

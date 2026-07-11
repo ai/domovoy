@@ -1,0 +1,23 @@
+- id: binary_sensor.workday
+  name: Рабочий день
+  state: '{{ now().weekday() < 5 }}'
+
+- id: sensor.ac_multisplit_energy
+  name: AC Multisplit Energy
+  state: "{{ (states('sensor.ac_andrey_energy_consumed')|float(0) + states('sensor.ac_lounge_energy_consumed')|float(0)) | round(2) }}"
+  unit_of_measurement: kWh
+  device_class: energy
+  state_class: total_increasing
+  availability: "{{ has_value('sensor.ac_andrey_energy_consumed') and has_value('sensor.ac_lounge_energy_consumed') }}"
+
+- id: sensor.current_cost_per_minute
+  name: Current Cost Per Minute
+  state: "{{ (states('sensor.pepeenergy_price')|float(0) * states('sensor.meter_panel_total_power')|float(0) / 60000) | round(5) }}"
+  unit_of_measurement: €/min
+  state_class: measurement
+
+- id: sensor.pepeenergy_price
+  name: Pepeenergy Price
+  state: "{% set h = now().hour %}{% if is_state('binary_sensor.workday','off') or h < 8 %}0.1501{% elif (10 <= h < 14) or (18 <= h < 22) %}0.2731{% else %}0.1888{% endif %}"
+  unit_of_measurement: €/kWh
+  state_class: measurement

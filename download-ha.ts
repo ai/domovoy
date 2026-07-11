@@ -59,6 +59,8 @@ interface Category {
 interface EntityEntry {
   entity_id: string
   unique_id?: string
+  platform?: string
+  config_entry_id?: string | null
   entity_category?: string | null
   area_id?: string | null
   device_id?: string | null
@@ -99,6 +101,26 @@ async function api<T>(path: string): Promise<T> {
   })
   if (!res.ok) {
     throw new Error(`GET /api/${path} failed: ${res.status} ${res.statusText}`)
+  }
+  return res.json() as Promise<T>
+}
+
+async function apiSend<T>(
+  method: string,
+  path: string,
+  body?: unknown
+): Promise<T> {
+  let res = await fetch(`${HOST}/api/${path}`, {
+    method,
+    headers: {
+      'Authorization': `Bearer ${process.env.HOMEASSISTANT_TOKEN}`,
+      'Content-Type': 'application/json'
+    },
+    body: body === undefined ? undefined : JSON.stringify(body),
+    signal: AbortSignal.timeout(30000)
+  })
+  if (!res.ok) {
+    throw new Error(`${method} /api/${path} failed: ${res.status} ${res.statusText}`)
   }
   return res.json() as Promise<T>
 }
@@ -495,6 +517,27 @@ function isNoise(meta: EntityEntry | undefined): boolean {
   )
 }
 
+// Sensors created from a user-defined template helper, not from a device
+function isCustomSensor(entityId: string, meta: EntityEntry | undefined): boolean {
+  return /^(binary_)?sensor\./.test(entityId) && meta?.platform === 'template'
+}
+
+function isInput(entityId: string): boolean {
+  return entityId.startsWith('input_')
+}
+
+function describe(s: HassState): string {
+  let a = s.attributes
+  let parts = [a.friendly_name ?? s.entity_id]
+  if (s.state.length <= 40) {
+    parts.push(
+      a.unit_of_measurement ? `${s.state} ${a.unit_of_measurement}` : s.state
+    )
+  }
+  if (a.device_class) parts.push(a.device_class)
+  return parts.join(' · ')
+}
+
 function writeEntities(states: HassState[], registry: Registry): void {
   let metaById: Record<string, EntityEntry> = {}
   for (let e of registry.entities) metaById[e.entity_id] = e
@@ -504,21 +547,13 @@ function writeEntities(states: HassState[], registry: Registry): void {
     if (EXCLUDE_ENTITIES.some(re => re.test(s.entity_id))) continue
     let meta = metaById[s.entity_id]
     if (isNoise(meta)) continue
+    if (isInput(s.entity_id) || isCustomSensor(s.entity_id, meta)) continue
 
     let areaId =
       meta?.area_id ??
       (meta?.device_id ? registry.deviceArea[meta.device_id] : undefined)
     let area = (areaId && registry.areaById[areaId]) || NO_AREA
-
-    let a = s.attributes
-    let parts = [a.friendly_name ?? s.entity_id]
-    if (s.state.length <= 40) {
-      parts.push(
-        a.unit_of_measurement ? `${s.state} ${a.unit_of_measurement}` : s.state
-      )
-    }
-    if (a.device_class) parts.push(a.device_class)
-    ;(areas[area] ||= {})[s.entity_id] = parts.join(' · ')
+    ;(areas[area] ||= {})[s.entity_id] = describe(s)
   }
 
   let order = (x: string, y: string) =>
@@ -546,6 +581,170 @@ function writeEntities(states: HassState[], registry: Registry): void {
   console.log(`Saved ${count} entities to home/entities.yaml`)
 }
 
+function writeDump(file: string, entries: unknown[], label: string): void {
+  let dir = join(import.meta.dirname, 'home')
+  mkdirSync(dir, { recursive: true })
+  let yaml = entries.map(entry => toYaml([entry])).join('\n')
+  writeFileSync(join(dir, file), yaml)
+  console.log(`Saved ${entries.length} ${label} to home/${file}`)
+}
+
+// UI input helpers list their config by their original object id (unique_id),
+// which stays fixed even after the entity is renamed to an English entity_id.
+function writeInputs(
+  helpers: InputHelper[],
+  registry: Registry
+): void {
+  let entityByUnique: Record<string, string> = {}
+  for (let e of registry.entities) {
+    if (e.platform?.startsWith('input_') && e.unique_id) {
+      entityByUnique[`${e.platform}.${e.unique_id}`] = e.entity_id
+    }
+  }
+
+  let entries = helpers
+    .map(({ domain, item }) => {
+      let { id, name, ...rest } = item
+      let entityId = entityByUnique[`${domain}.${id}`] ?? `${domain}.${id}`
+      return { id: entityId, ...(name !== undefined && { name }), ...rest }
+    })
+    .sort((a, b) => a.id.localeCompare(b.id))
+
+  writeDump('inputs.yaml', entries, 'input helpers')
+}
+
+function writeSensors(
+  templates: TemplateSensor[],
+  states: HassState[],
+  registry: Registry
+): void {
+  let entityByEntry: Record<string, string> = {}
+  for (let e of registry.entities) {
+    if (e.config_entry_id) entityByEntry[e.config_entry_id] = e.entity_id
+  }
+  let nameById: Record<string, string> = {}
+  for (let s of states) {
+    if (s.attributes.friendly_name) nameById[s.entity_id] = s.attributes.friendly_name
+  }
+
+  let entries = templates
+    .map(({ entryId, config }) => {
+      let entityId = entityByEntry[entryId]
+      if (!entityId || !/^(binary_)?sensor\./.test(entityId)) return null
+      let name = nameById[entityId]
+      return { id: entityId, ...(name !== undefined && { name }), ...config }
+    })
+    .filter((e): e is { id: string } & Record<string, unknown> => e !== null)
+    .sort((a, b) => a.id.localeCompare(b.id))
+
+  writeDump('sensors.yaml', entries, 'custom sensors')
+}
+
+interface InputHelper {
+  domain: string
+  item: { id: string; name?: string } & Record<string, unknown>
+}
+
+interface TemplateSensor {
+  entryId: string
+  config: Record<string, unknown>
+}
+
+interface SchemaField {
+  name?: string
+  type?: string
+  schema?: SchemaField[]
+  description?: { suggested_value?: unknown }
+}
+
+function fetchInputHelpers(domains: string[]): Promise<InputHelper[]> {
+  return new Promise((resolve, reject) => {
+    if (!domains.length) {
+      resolve([])
+      return
+    }
+    let ws = new WebSocket(WS)
+    let seq = 0
+    let pending: Record<number, string> = {}
+    let out: InputHelper[] = []
+    let got = 0
+
+    let send = (domain: string) => {
+      let id = ++seq
+      pending[id] = domain
+      ws.send(JSON.stringify({ id, type: `${domain}/list` }))
+    }
+
+    ws.onmessage = (ev: MessageEvent) => {
+      let msg = JSON.parse(ev.data)
+      if (msg.type === 'auth_required') {
+        ws.send(
+          JSON.stringify({
+            type: 'auth',
+            access_token: process.env.HOMEASSISTANT_TOKEN
+          })
+        )
+      } else if (msg.type === 'auth_invalid') {
+        reject(new Error('WebSocket auth failed: check HOMEASSISTANT_TOKEN'))
+      } else if (msg.type === 'auth_ok') {
+        for (let d of domains) send(d)
+      } else if (msg.type === 'result') {
+        let domain = pending[msg.id]!
+        if (msg.success) {
+          for (let item of msg.result as InputHelper['item'][]) {
+            out.push({ domain, item })
+          }
+        }
+        if (++got === domains.length) {
+          ws.close()
+          resolve(out)
+        }
+      }
+    }
+    ws.onerror = () => reject(new Error(`Cannot connect to ${WS}`))
+  })
+}
+
+// UI template helpers keep their config in the config entry, which the API
+// hides. An options flow echoes the current values back as suggested_value.
+function collectSuggested(
+  schema: SchemaField[],
+  out: Record<string, unknown>
+): void {
+  for (let field of schema) {
+    if (field.type === 'expandable' && field.schema) {
+      collectSuggested(field.schema, out)
+    } else if (field.name) {
+      let value = field.description?.suggested_value
+      if (value !== undefined && value !== '') out[field.name] = value
+    }
+  }
+}
+
+async function fetchTemplateSensors(): Promise<TemplateSensor[]> {
+  let entries = await api<{ entry_id: string; domain: string }[]>(
+    'config/config_entries/entry'
+  )
+  let result: TemplateSensor[] = []
+  for (let entry of entries) {
+    if (entry.domain !== 'template') continue
+    try {
+      let flow = await apiSend<{ flow_id: string; data_schema: SchemaField[] }>(
+        'POST',
+        'config/config_entries/options/flow',
+        { handler: entry.entry_id }
+      )
+      let config: Record<string, unknown> = {}
+      collectSuggested(flow.data_schema, config)
+      await apiSend('DELETE', `config/config_entries/options/flow/${flow.flow_id}`)
+      result.push({ entryId: entry.entry_id, config })
+    } catch {
+      console.error(styleText('red', `  ! skipped template ${entry.entry_id}`))
+    }
+  }
+  return result
+}
+
 try {
   console.info(`Fetching entities from ${HOST} …`)
   let states = await api<HassState[]>('states')
@@ -554,6 +753,17 @@ try {
     await download(domain, states, registry)
   }
   writeEntities(states, registry)
+
+  let inputDomains = [
+    ...new Set(
+      registry.entities
+        .filter(e => e.platform?.startsWith('input_'))
+        .map(e => e.platform!)
+    )
+  ]
+  writeInputs(await fetchInputHelpers(inputDomains), registry)
+  writeSensors(await fetchTemplateSensors(), states, registry)
+
   await downloadDashboards()
 } catch (err) {
   console.error(err instanceof Error ? err.message : String(err))

@@ -174,6 +174,9 @@ views:
                 show_state: true
                 show_icon: true
                 entity: sensor.temperature_lounge_temperature
+            tap_action:
+              action: navigate
+              navigation_path: /dashboard-main/lounge
           - type: tile
             entity: climate.ac_lounge
             name: Климат
@@ -261,6 +264,9 @@ views:
                 show_state: true
                 show_icon: true
                 entity: sensor.air_bathroom_humidity
+            tap_action:
+              action: navigate
+              navigation_path: /dashboard-main/bathroom
           - type: tile
             entity: switch.wall_switch_bathroom_l1
             name: Свет
@@ -605,11 +611,19 @@ views:
             name: Климат
             vertical: false
             features_position: bottom
+            features:
+              - type: climate-hvac-modes
+              - type: target-temperature
+              - type: climate-fan-modes
+                style: dropdown
           - type: tile
             entity: cover.shutter_andrey
             name: Персиана
             vertical: false
             features_position: bottom
+            features:
+              - type: cover-open-close
+              - type: cover-position
     cards: []
   - type: sections
     max_columns: 4
@@ -666,11 +680,24 @@ views:
               - type: light-color-temp
             features_position: bottom
   - type: sections
-    max_columns: 4
+    max_columns: 3
     title: Кухня
     path: kitchen
     subview: true
     sections:
+      - type: grid
+        cards:
+          - type: heading
+            heading: Статистика
+            heading_style: title
+          - type: tile
+            entity: sensor.temperature_kitchen_temperature
+            name:
+              type: entity
+            vertical: false
+            features:
+              - type: trend-graph
+            features_position: bottom
       - type: grid
         cards:
           - type: heading
@@ -695,6 +722,20 @@ views:
             features:
               - type: toggle
               - type: light-brightness
+      - type: grid
+        cards:
+          - type: heading
+            heading: Другое
+            heading_style: title
+          - type: tile
+            entity: switch.wall_switch_kitchen_fan
+            name: Вытяжка
+            icon: mdi:fan
+            vertical: false
+            features:
+              - type: toggle
+            features_position: bottom
+    cards: []
   - type: sections
     max_columns: 4
     subview: true
@@ -735,3 +776,101 @@ views:
             features_position: bottom
           - type: tile
             entity: input_boolean.stop_toilet
+  - type: sections
+    max_columns: 3
+    title: Зал
+    path: lounge
+    subview: true
+    sections:
+      - type: grid
+        cards:
+          - type: heading
+            heading: Статистика
+            heading_style: title
+          - type: tile
+            entity: sensor.temperature_lounge_temperature
+            name:
+              type: entity
+            vertical: false
+            features:
+              - type: trend-graph
+            features_position: bottom
+      - type: grid
+        cards:
+          - type: heading
+            icon: ''
+            heading: Свет
+            heading_style: title
+      - type: grid
+        cards:
+          - type: heading
+            heading: Другое
+            heading_style: title
+          - type: tile
+            entity: climate.ac_lounge
+            features:
+              - type: climate-hvac-modes
+              - type: target-temperature
+              - type: climate-fan-modes
+                style: dropdown
+          - type: tile
+            entity: cover.shutter_lounge
+            features:
+              - type: cover-open-close
+              - type: cover-position
+    cards: []
+  - type: sections
+    max_columns: 3
+    title: Ванная
+    path: bathroom
+    subview: true
+    sections:
+      - type: grid
+        cards:
+          - type: heading
+            icon: ''
+            heading: Статистика
+            heading_style: title
+          - type: tile
+            entity: sensor.air_bathroom_temperature
+            name:
+              type: entity
+            vertical: false
+            features:
+              - type: trend-graph
+            features_position: bottom
+          - type: tile
+            entity: sensor.air_bathroom_humidity
+            name:
+              type: entity
+            vertical: false
+            features:
+              - type: trend-graph
+            features_position: bottom
+      - type: grid
+        cards:
+          - type: heading
+            heading: Свет
+            heading_style: title
+          - type: tile
+            entity: switch.wall_switch_bathroom_l1
+            name: Свет
+            icon: mdi:wall-sconce-round
+            vertical: false
+            features:
+              - type: toggle
+            features_position: bottom
+      - type: grid
+        cards:
+          - type: heading
+            heading: Другое
+            heading_style: title
+          - type: tile
+            entity: switch.wall_switch_bathroom_l2
+            name: Вытяжка
+            icon: mdi:fan
+            vertical: false
+            features:
+              - type: toggle
+            features_position: bottom
+    cards: []

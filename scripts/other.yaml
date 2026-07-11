@@ -39,6 +39,11 @@
       target:
         entity_id: switch.wall_switch_bathroom_l1
       data: {}
+    - action: climate.turn_off
+      metadata: {}
+      target:
+        entity_id: climate.ac_andrey
+      data: {}
 
 - id: script.zigbee_reset
   alias: Сброс ламп Kajplats на Zigbee-режим

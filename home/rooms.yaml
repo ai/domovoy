@@ -1,0 +1,35 @@
+- id: andrey
+  name: Кабинет Андрея
+  icon: mdi:penguin
+
+- id: bathroom
+  name: Ванная
+  icon: mdi:shower
+
+- id: bedroom
+  name: Спальня
+  icon: mdi:bed-queen
+
+- id: children
+  name: Детская
+  icon: mdi:rabbit-variant
+
+- id: entrance
+  name: Прихожая
+  icon: mdi:door
+
+- id: kate
+  name: Кабинет Кати
+  icon: mdi:face-woman-shimmer
+
+- id: kitchen
+  name: Кухня
+  icon: mdi:fridge
+
+- id: lounge
+  name: Зал
+  icon: mdi:sofa
+
+- id: toilet
+  name: Туалет
+  icon: mdi:ideogram-cjk

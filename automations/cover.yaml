@@ -1,5 +1,6 @@
 - id: automation.andrey_shutter
   alias: Штора Андрея
+  room: andrey
   triggers:
     - trigger: numeric_state
       entity_id: sun.sun
@@ -71,6 +72,7 @@
 
 - id: automation.bedroom_shutter
   alias: Штора спальни
+  room: bedroom
   triggers:
     - trigger: time
       at:
@@ -139,6 +141,7 @@
 
 - id: automation.lounge_shutter
   alias: Штора гостиной
+  room: lounge
   triggers:
     - trigger: numeric_state
       entity_id: sun.sun

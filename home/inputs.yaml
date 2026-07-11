@@ -20,6 +20,7 @@
 
 - id: input_boolean.stop_toilet
   name: Блокиратор авто-включения света в туалете
+  room: toilet
   icon: mdi:ideogram-cjk
 
 - id: input_datetime.night_end

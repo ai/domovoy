@@ -1,5 +1,6 @@
 - id: automation.bathroom_fan_humidity
   alias: Вентилятор в ванной по влажности
+  room: bathroom
   triggers:
     - trigger: template
       id: high
@@ -64,6 +65,7 @@
 
 - id: automation.kitchen_fan_auto_off
   alias: Авто-выключение вентилятора на кухне
+  room: kitchen
   triggers:
     - trigger: state
       entity_id: switch.wall_switch_kitchen_fan
@@ -82,6 +84,7 @@
 
 - id: automation.kitchen_fan_stove
   alias: Вентилятор на кухне при готовке
+  room: kitchen
   triggers:
     - trigger: numeric_state
       entity_id: sensor.meter_panel_stove_power

@@ -72,6 +72,7 @@ interface EntityEntry {
 interface Area {
   area_id: string
   name: string
+  icon?: string | null
 }
 
 interface Device {
@@ -129,8 +130,10 @@ interface Registry {
   categoryByEntity: Record<string, string>
   uniqueIdByEntity: Record<string, string>
   entities: EntityEntry[]
+  areas: Area[]
   areaById: Record<string, string>
   deviceArea: Record<string, string>
+  entityArea: Record<string, string>
 }
 
 function fetchRegistry(scopes: string[]): Promise<Registry> {
@@ -142,6 +145,7 @@ function fetchRegistry(scopes: string[]): Promise<Registry> {
     let entityCategory: Record<string, { scope: string; id: string }> = {}
     let uniqueIdByEntity: Record<string, string> = {}
     let entities: EntityEntry[] = []
+    let areas: Area[] = []
     let areaById: Record<string, string> = {}
     let deviceArea: Record<string, string> = {}
     let got = 0
@@ -179,7 +183,10 @@ function fetchRegistry(scopes: string[]): Promise<Registry> {
           let map = (byScope[req.scope!] ||= {})
           for (let c of msg.result as Category[]) map[c.category_id] = c.name
         } else if (req.type === 'config/area_registry/list') {
-          for (let a of msg.result as Area[]) areaById[a.area_id] = a.name
+          for (let a of msg.result as Area[]) {
+            areas.push(a)
+            areaById[a.area_id] = a.name
+          }
         } else if (req.type === 'config/device_registry/list') {
           for (let d of msg.result as Device[]) {
             if (d.area_id) deviceArea[d.id] = d.area_id
@@ -200,12 +207,20 @@ function fetchRegistry(scopes: string[]): Promise<Registry> {
             let name = byScope[scope]?.[id]
             if (name) categoryByEntity[entity] = name
           }
+          let entityArea: Record<string, string> = {}
+          for (let e of entities) {
+            let areaId =
+              e.area_id ?? (e.device_id ? deviceArea[e.device_id] : undefined)
+            if (areaId) entityArea[e.entity_id] = areaId
+          }
           resolve({
             categoryByEntity,
             uniqueIdByEntity,
             entities,
+            areas,
             areaById,
-            deviceArea
+            deviceArea,
+            entityArea
           })
         }
       }
@@ -377,10 +392,11 @@ async function download(
         )
       )
     }
+    let room = registry.entityArea[entityId]
     let entry =
       alias === undefined
-        ? { id: entityId, ...rest }
-        : { id: entityId, alias, ...rest }
+        ? { id: entityId, ...(room && { room }), ...rest }
+        : { id: entityId, alias, ...(room && { room }), ...rest }
     ;(groups[category] ||= []).push(entry)
     console.error(`  - [${category}] ${entityId}`)
   }
@@ -589,6 +605,13 @@ function writeDump(file: string, entries: unknown[], label: string): void {
   console.log(`Saved ${entries.length} ${label} to home/${file}`)
 }
 
+function writeRooms(registry: Registry): void {
+  let entries = registry.areas
+    .map(a => ({ id: a.area_id, name: a.name, ...(a.icon && { icon: a.icon }) }))
+    .sort((a, b) => a.id.localeCompare(b.id))
+  writeDump('rooms.yaml', entries, 'rooms')
+}
+
 // UI input helpers list their config by their original object id (unique_id),
 // which stays fixed even after the entity is renamed to an English entity_id.
 function writeInputs(
@@ -606,7 +629,13 @@ function writeInputs(
     .map(({ domain, item }) => {
       let { id, name, ...rest } = item
       let entityId = entityByUnique[`${domain}.${id}`] ?? `${domain}.${id}`
-      return { id: entityId, ...(name !== undefined && { name }), ...rest }
+      let room = registry.entityArea[entityId]
+      return {
+        id: entityId,
+        ...(name !== undefined && { name }),
+        ...(room && { room }),
+        ...rest
+      }
     })
     .sort((a, b) => a.id.localeCompare(b.id))
 
@@ -753,6 +782,7 @@ try {
     await download(domain, states, registry)
   }
   writeEntities(states, registry)
+  writeRooms(registry)
 
   let inputDomains = [
     ...new Set(

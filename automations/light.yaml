@@ -1,5 +1,6 @@
 - id: automation.autolight_toiltet
   alias: Авто-включение света в туалете
+  room: toilet
   use_blueprint:
     path: domovoy/presence.yaml
     input:
@@ -38,6 +39,7 @@
 
 - id: automation.vykliuchatel_sveta_v_spalne
   alias: Выключатель света в спальне
+  room: bedroom
   use_blueprint:
     path: domovoy/wall-switch.yaml
     input:
@@ -47,6 +49,7 @@
 
 - id: automation.wall_switch_andrey
   alias: Выключатель света в кабинете Андрея
+  room: andrey
   conditions:
     - condition: state
       entity_id: input_boolean.stop
@@ -60,6 +63,7 @@
 
 - id: automation.wall_switch_kitchen
   alias: Выключатель света на кухне
+  room: kitchen
   conditions:
     - condition: state
       entity_id: input_boolean.stop
@@ -73,6 +77,7 @@
 
 - id: automation.wall_switch_toilet
   alias: Выключатель в туалете
+  room: toilet
   conditions:
     - condition: state
       entity_id: input_boolean.stop

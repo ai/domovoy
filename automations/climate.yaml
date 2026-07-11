@@ -1,5 +1,6 @@
 - id: automation.ac_andrey_night_off
   alias: Выключить кондиционер Андрея ночью
+  room: andrey
   triggers:
     - trigger: time
       at: '20:00:00'

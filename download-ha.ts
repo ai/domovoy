@@ -661,7 +661,13 @@ function writeSensors(
       let entityId = entityByEntry[entryId]
       if (!entityId || !/^(binary_)?sensor\./.test(entityId)) return null
       let name = nameById[entityId]
-      return { id: entityId, ...(name !== undefined && { name }), ...config }
+      let room = registry.entityArea[entityId]
+      return {
+        id: entityId,
+        ...(name !== undefined && { name }),
+        ...(room && { room }),
+        ...config
+      }
     })
     .filter((e): e is { id: string } & Record<string, unknown> => e !== null)
     .sort((a, b) => a.id.localeCompare(b.id))

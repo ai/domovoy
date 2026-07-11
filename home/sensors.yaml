@@ -2,19 +2,20 @@
   name: Рабочий день
   state: '{{ now().weekday() < 5 }}'
 
-- id: sensor.ac_multisplit_energy
-  name: AC Multisplit Energy
+- id: sensor.current_cost_per_minute
+  name: Current Cost Per Minute
+  state: "{{ (states('sensor.pepeenergy_price')|float(0) * states('sensor.meter_flashes_power')|float(0) / 60000) | round(5) }}"
+  unit_of_measurement: €/min
+  state_class: measurement
+
+- id: sensor.meter_ac_energy
+  name: Meter / AC Energy
+  room: lounge
   state: "{{ (states('sensor.ac_andrey_energy_consumed')|float(0) + states('sensor.ac_lounge_energy_consumed')|float(0)) | round(2) }}"
   unit_of_measurement: kWh
   device_class: energy
   state_class: total_increasing
   availability: "{{ has_value('sensor.ac_andrey_energy_consumed') and has_value('sensor.ac_lounge_energy_consumed') }}"
-
-- id: sensor.current_cost_per_minute
-  name: Current Cost Per Minute
-  state: "{{ (states('sensor.pepeenergy_price')|float(0) * states('sensor.meter_panel_total_power')|float(0) / 60000) | round(5) }}"
-  unit_of_measurement: €/min
-  state_class: measurement
 
 - id: sensor.pepeenergy_price
   name: Pepeenergy Price

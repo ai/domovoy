@@ -10,11 +10,11 @@ views:
               - type: entity
                 show_state: true
                 show_icon: true
-                entity: sensor.weather_aemet_temperature
+                entity: sensor.weather_waqi_temperature
               - type: entity
                 show_state: true
                 show_icon: true
-                entity: sensor.weather_aemet_humidity
+                entity: sensor.weather_waqi_humidity
               - type: entity
                 show_state: true
                 show_icon: true
@@ -34,12 +34,42 @@ views:
               green: 0
               yellow: 24
               red: 30
+            visibility:
+              - condition: state
+                entity: weather.weather_aemet
+                state_not:
+                  - unavailable
+                  - unknown
+          - type: gauge
+            entity: sensor.weather_meteo_france_les_corts_temperature
+            name: Температура
+            grid_options:
+              columns: 4
+              rows: auto
+            min: 5
+            max: 40
+            severity:
+              green: 0
+              yellow: 24
+              red: 30
+            visibility:
+              - condition: state
+                entity: weather.weather_aemet
+                state:
+                  - unavailable
+                  - unknown
           - type: gauge
             entity: sensor.weather_aemet_rain_probability
             grid_options:
               columns: 4
               rows: auto
             name: Дождь
+            visibility:
+              - condition: state
+                entity: weather.weather_aemet
+                state_not:
+                  - unavailable
+                  - unknown
           - type: gauge
             entity: sensor.weather_waqi_pm2_5
             grid_options:
@@ -331,11 +361,46 @@ views:
             entity: weather.weather_aemet
             forecast_type: hourly
             round_temperature: true
+            visibility:
+              - condition: state
+                entity: weather.weather_aemet
+                state_not:
+                  - unavailable
+                  - unknown
           - show_current: false
             show_forecast: true
             type: weather-forecast
             entity: weather.weather_aemet
             forecast_type: daily
+            visibility:
+              - condition: state
+                entity: weather.weather_aemet
+                state_not:
+                  - unavailable
+                  - unknown
+          - show_current: true
+            show_forecast: true
+            type: weather-forecast
+            entity: weather.weather_meteo_france_les_corts
+            forecast_type: hourly
+            round_temperature: true
+            visibility:
+              - condition: state
+                entity: weather.weather_aemet
+                state:
+                  - unavailable
+                  - unknown
+          - show_current: false
+            show_forecast: true
+            type: weather-forecast
+            entity: weather.weather_meteo_france_les_corts
+            forecast_type: daily
+            visibility:
+              - condition: state
+                entity: weather.weather_aemet
+                state:
+                  - unavailable
+                  - unknown
           - type: gauge
             severity:
               green: 0

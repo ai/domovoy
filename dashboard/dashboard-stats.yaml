@@ -8,7 +8,7 @@ views:
             heading_style: title
           - type: statistics-graph
             entities:
-              - entity: sensor.weather_aemet_temperature
+              - entity: sensor.weather_waqi_temperature
                 name: Улица
                 color: grey
               - entity: sensor.air_bathroom_temperature

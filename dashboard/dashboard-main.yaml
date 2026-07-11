@@ -62,10 +62,6 @@ views:
               - type: entity
                 show_state: true
                 show_icon: true
-                entity: sensor.meter_panel_total_power
-              - type: entity
-                show_state: true
-                show_icon: true
                 entity: sensor.meter_flashes_power
           - type: tile
             entity: script.turn_off_everything

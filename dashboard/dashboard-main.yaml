@@ -451,7 +451,7 @@ views:
             entity: person.kate
             features_position: bottom
             vertical: false
-            show_entity_picture": true
+            show_entity_picture: true
       - type: grid
         cards:
           - type: heading

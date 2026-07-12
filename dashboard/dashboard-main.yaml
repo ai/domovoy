@@ -317,6 +317,15 @@ views:
             tap_action:
               action: navigate
               navigation_path: /dashboard-main/toilet
+            badges:
+              - type: entity
+                show_state: true
+                show_icon: true
+                entity: sensor.presence_toilet_temperature
+              - type: entity
+                show_state: true
+                show_icon: true
+                entity: sensor.presence_toilet_humidity
           - type: tile
             entity: light.light_group_toilet
             name: Свет

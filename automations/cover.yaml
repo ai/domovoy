@@ -82,7 +82,7 @@
     - trigger: time
       at:
         entity_id: input_datetime.night_end
-        offset: '01:00:00'
+        offset: '02:00:00'
       id: close
     - trigger: state
       entity_id: input_boolean.empty_home

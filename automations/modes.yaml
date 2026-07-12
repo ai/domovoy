@@ -64,6 +64,11 @@
       state: 'off'
   actions:
     - action: script.turn_off_everything
+    - action: climate.turn_off
+      metadata: {}
+      target:
+        entity_id: climate.ac_andrey
+      data: {}
   mode: single
 
 - id: automation.empty_home_presence

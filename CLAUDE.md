@@ -1,6 +1,6 @@
 Repo with automations/scripts from smart home on Home Assistant.
 
-- Use `Home Assistant` or HTTP API `https://domovoy.local` (with custom CA installed in the system) and use `HOMEASSISTANT_TOKEN` from `.env`.
+- Use `Home Assistant` MCP or HTTP API `https://domovoy.local` (with custom CA installed in the system) and use `HOMEASSISTANT_TOKEN` from `.env`.
 - Before writing automations, consult `home/entities.yaml` for the list of home entities.
 - Create automations/scripts on the server and copy them back by calling `./download-ha.ts`.
 - Push automation edits to the server without asking.

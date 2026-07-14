@@ -216,12 +216,16 @@
                       above: 12
                     - condition: time
                       after: '12:00:00'
+            - condition: numeric_state
+              entity_id: cover.shutter_lounge
+              attribute: current_position
+              above: 80
           sequence:
             - action: cover.set_cover_position
               target:
                 entity_id: cover.shutter_lounge
               data:
-                position: 30
+                position: 40
             - action: notify.mobile_app_phone_bedoll
               data:
                 message: clear_notification

@@ -34,6 +34,7 @@
           - light.light_group_andrey
           - light.light_group_toilet
           - light.light_group_kitchen
+          - light.light_group_bedroom
     - action: switch.turn_off
       metadata: {}
       target:

@@ -1,3 +1,8 @@
+- id: binary_sensor.heating_sun
+  name: Heating sun
+  state: "{% set condition = states('weather.weather_aemet') %}\n{% if condition in ['unavailable', 'unknown'] %}\n  {% set condition = states('weather.weather_meteo_france_les_corts') %}\n{% endif %}\n{{ condition in ['sunny', 'partlycloudy', 'windy', 'windy-variant', 'clear-night', 'unavailable', 'unknown'] }}"
+  device_class: heat
+
 - id: binary_sensor.workday
   name: Рабочий день
   state: '{{ now().weekday() < 5 }}'

@@ -55,6 +55,9 @@
                       above: 12
                     - condition: time
                       after: '12:00:00'
+            - condition: state
+              entity_id: binary_sensor.heating_sun
+              state: 'on'
           sequence:
             - action: cover.set_cover_position
               target:
@@ -188,6 +191,9 @@
             - condition: state
               entity_id: person.andrey
               state: home
+            - condition: state
+              entity_id: binary_sensor.heating_sun
+              state: 'on'
           sequence:
             - action: notify.mobile_app_phone_bedoll
               data:
@@ -216,6 +222,9 @@
                       above: 12
                     - condition: time
                       after: '12:00:00'
+                    - condition: state
+                      entity_id: binary_sensor.heating_sun
+                      state: 'on'
             - condition: numeric_state
               entity_id: cover.shutter_lounge
               attribute: current_position

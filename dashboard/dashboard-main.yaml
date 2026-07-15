@@ -410,16 +410,12 @@ views:
                 state:
                   - unavailable
                   - unknown
-          - type: gauge
-            severity:
-              green: 0
-              yellow: 50
-              red: 100
-            grid_options:
-              columns: 3
-              rows: auto
-            name: Воздух
-            entity: sensor.weather_waqi_pm2_5
+      - type: grid
+        cards:
+          - type: heading
+            heading: Солнце
+            heading_style: title
+          - type: custom:horizon-card
     subview: true
     cards: []
   - type: sections

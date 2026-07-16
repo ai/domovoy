@@ -226,6 +226,80 @@
     missing: "{% set ns = namespace(names=[]) %}{% for s in states | selectattr('state', '==', 'unavailable') | rejectattr('domain', 'in', ['group', 'scene', 'script', 'automation', 'button', 'input_button', 'update']) %}{% if (now() - s.last_changed).total_seconds() > 30 * 60 %}{% set did = device_id(s.entity_id) %}{% set name = (device_attr(did, 'name_by_user') or device_attr(did, 'name')) if did else s.name %}{% if name and name not in ns.names %}{% set ns.names = ns.names + [name] %}{% endif %}{% endif %}{% endfor %}{{ ns.names | join(', ') }}"
   mode: single
 
+- id: automation.notify_door_open_too_long
+  alias: Уведомить о двери открытой слишком долго
+  room: entrance
+  triggers:
+    - trigger: state
+      entity_id: binary_sensor.door_main_dver
+      from: 'off'
+      to: 'on'
+      for:
+        minutes: 10
+  conditions:
+    - condition: state
+      entity_id: input_boolean.notifications
+      state: 'on'
+    - condition: state
+      entity_id: input_boolean.stop
+      state: 'off'
+  actions:
+    - action: notify.mobile_app_phone_bedoll
+      data:
+        title: Дверь
+        message: Открыта более 10 минут
+    - if:
+        - condition: state
+          entity_id: person.kate
+          state: home
+      then:
+        - action: notify.mobile_app_phone_pixel_9
+          data:
+            title: Дверь
+            message: Открыта более 10 минут
+
+- id: automation.notify_door_opened
+  alias: Уведомить об открытии двери
+  room: entrance
+  triggers:
+    - trigger: state
+      entity_id: binary_sensor.door_main_dver
+      from: 'off'
+      to: 'on'
+  conditions:
+    - condition: state
+      entity_id: input_boolean.notifications
+      state: 'on'
+    - condition: state
+      entity_id: input_boolean.other_people
+      state: 'off'
+    - condition: state
+      entity_id: input_boolean.stop
+      state: 'off'
+  actions:
+    - if:
+        - condition: not
+          conditions:
+            - condition: state
+              entity_id: person.andrey
+              state: home
+      then:
+        - action: notify.mobile_app_phone_bedoll
+          data:
+            title: Дверь
+            message: Открыта
+    - if:
+        - condition: not
+          conditions:
+            - condition: state
+              entity_id: person.kate
+              state: home
+      then:
+        - action: notify.mobile_app_phone_pixel_9
+          data:
+            title: Дверь
+            message: Открыта
+
 - id: automation.toilet_water_leak
   alias: Протечка воды в туалете
   room: toilet

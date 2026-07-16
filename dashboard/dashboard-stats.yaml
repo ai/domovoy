@@ -130,6 +130,7 @@ views:
               - entity: person.andrey
               - entity: person.kate
               - entity: sun.sun
+                name: Солнце
             title: Дома
             hours_to_show: 24
           - type: heading

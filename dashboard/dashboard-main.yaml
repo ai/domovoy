@@ -706,6 +706,15 @@ views:
               - type: light-brightness
               - type: light-color-temp
             features_position: bottom
+          - type: tile
+            entity: light.light_andrey_bookcase
+            name: На шкафе
+            vertical: false
+            features:
+              - type: toggle
+              - type: light-color-temp
+              - type: light-brightness
+            features_position: bottom
       - type: grid
         cards:
           - type: heading

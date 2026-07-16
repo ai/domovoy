@@ -343,6 +343,12 @@ views:
             heading: Прихожая
             heading_style: title
           - type: tile
+            entity: binary_sensor.door_main_dver
+            name: Дверь
+            state_content:
+              - state
+              - last-changed
+          - type: tile
             visibility:
               - condition: state
                 entity: input_boolean.empty_home

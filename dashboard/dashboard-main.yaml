@@ -419,6 +419,26 @@ views:
             heading: Солнце
             heading_style: title
           - type: custom:horizon-card
+      - type: grid
+        cards:
+          - type: heading
+            heading: Воздух
+            heading_style: title
+          - type: statistics-graph
+            entities:
+              - entity: sensor.weather_waqi_pm2_5
+                name:
+                  type: entity
+              - entity: sensor.weather_waqi_pm10
+                name:
+                  type: entity
+            days_to_show: 3
+            period: hour
+            chart_type: line
+            stat_types:
+              - mean
+            min_y_axis: 0
+            max_y_axis: 100
     subview: true
     cards: []
   - type: sections

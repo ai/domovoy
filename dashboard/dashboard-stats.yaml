@@ -69,9 +69,12 @@ views:
                   type: area
                 color: deep-purple
               - entity: sensor.weather_waqi_pm2_5
-                name: Улица
+                name: Улица PM2.5
                 color: grey
-            title: PM2.5
+              - entity: sensor.weather_waqi_pm10
+                name: Улица PM10
+                color: light-grey
+            title: Загрязнение воздуха
             days_to_show: 1
             period: hour
             chart_type: line

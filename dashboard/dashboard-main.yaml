@@ -15,10 +15,6 @@ views:
                 show_state: true
                 show_icon: true
                 entity: sensor.weather_waqi_humidity
-              - type: entity
-                show_state: true
-                show_icon: true
-                entity: sensor.weather_waqi_pm2_5
             tap_action:
               action: navigate
               navigation_path: /dashboard-main/street
@@ -93,6 +89,16 @@ views:
                 show_state: true
                 show_icon: true
                 entity: sensor.meter_flashes_power
+          - type: tile
+            entity: sensor.air_bedroom_pm2_5
+            name: В спальне плохой воздух
+            icon: mdi:home-alert
+            color: red
+            vertical: false
+            features_position: bottom
+            visibility:
+              - condition: numeric_state
+                above: 20
           - type: tile
             entity: script.turn_off_everything
             icon: mdi:lightbulb-off
@@ -364,52 +370,43 @@ views:
             icon: ''
             heading: Погода
             heading_style: title
-          - show_current: true
-            show_forecast: true
-            type: weather-forecast
+          - type: custom:weather-chart-card
             entity: weather.weather_aemet
-            forecast_type: hourly
-            round_temperature: true
-            visibility:
-              - condition: state
-                entity: weather.weather_aemet
-                state_not:
-                  - unavailable
-                  - unknown
-          - show_current: false
-            show_forecast: true
-            type: weather-forecast
-            entity: weather.weather_aemet
-            forecast_type: daily
-            visibility:
-              - condition: state
-                entity: weather.weather_aemet
-                state_not:
-                  - unavailable
-                  - unknown
-          - show_current: true
-            show_forecast: true
-            type: weather-forecast
-            entity: weather.weather_meteo_france_les_corts
-            forecast_type: hourly
-            round_temperature: true
-            visibility:
-              - condition: state
-                entity: weather.weather_aemet
-                state:
-                  - unavailable
-                  - unknown
-          - show_current: false
-            show_forecast: true
-            type: weather-forecast
-            entity: weather.weather_meteo_france_les_corts
-            forecast_type: daily
-            visibility:
-              - condition: state
-                entity: weather.weather_aemet
-                state:
-                  - unavailable
-                  - unknown
+            show_main: true
+            show_temperature: true
+            show_current_condition: false
+            show_attributes: false
+            show_time: false
+            show_time_seconds: false
+            show_day: false
+            show_date: false
+            show_humidity: true
+            show_pressure: true
+            show_wind_direction: true
+            show_wind_speed: true
+            show_sun: true
+            show_feels_like: false
+            show_dew_point: false
+            show_wind_gust_speed: false
+            show_visibility: false
+            show_last_changed: false
+            use_12hour_format: false
+            icons_size: 25
+            animated_icons: false
+            icon_style: style1
+            autoscroll: false
+            forecast:
+              precipitation_type: rainfall
+              show_probability: false
+              labels_font_size: '11'
+              precip_bar_size: '100'
+              style: style1
+              show_wind_forecast: true
+              condition_icons: true
+              round_temp: false
+              type: daily
+              number_of_forecasts: '0'
+              disable_animation: false
       - type: grid
         cards:
           - type: heading

@@ -133,6 +133,20 @@ views:
               action: none
             features_position: bottom
           - type: tile
+            visibility:
+              - condition: state
+                entity: input_boolean.empty_home
+                state: 'off'
+            entity: script.empty_home
+            name: Мы ушли
+            hide_state: true
+            vertical: false
+            tap_action:
+              action: perform-action
+              perform_action: script.empty_home
+              target: {}
+            features_position: bottom
+          - type: tile
             entity: vacuum.vacuum_q7_max
             name: Пылесос
             vertical: false
@@ -348,19 +362,7 @@ views:
             state_content:
               - state
               - last-changed
-          - type: tile
-            visibility:
-              - condition: state
-                entity: input_boolean.empty_home
-                state: 'off'
-            entity: script.empty_home
-            name: Мы ушли
-            hide_state: true
             vertical: false
-            tap_action:
-              action: perform-action
-              perform_action: script.empty_home
-              target: {}
             features_position: bottom
     max_columns: 3
     title: Общее

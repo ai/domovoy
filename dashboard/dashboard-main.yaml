@@ -611,6 +611,15 @@ views:
             icon: ''
             heading: Свет
             heading_style: title
+            badges:
+              - type: entity
+                show_state: true
+                show_icon: true
+                entity: light.light_group_bedroom
+                tap_action:
+                  action: toggle
+                state_content: state
+                color: state
           - type: tile
             entity: light.light_yellow_lamp
             name: Жёлтая лампа
@@ -678,6 +687,15 @@ views:
             icon: ''
             heading: Свет
             heading_style: title
+            badges:
+              - type: entity
+                show_state: true
+                show_icon: true
+                entity: light.light_group_andrey
+                tap_action:
+                  action: toggle
+                state_content: state
+                color: state
           - type: tile
             entity: light.light_andrey_desk
             name: Лампа на столе
@@ -730,6 +748,15 @@ views:
             icon: ''
             heading: Свет
             heading_style: title
+            badges:
+              - type: entity
+                show_state: true
+                show_icon: true
+                entity: light.light_group_kate
+                tap_action:
+                  action: toggle
+                state_content: state
+                color: state
           - type: tile
             entity: light.light_gray_floor_lamp_1
             name: Напольная лампа 1
@@ -762,6 +789,15 @@ views:
             icon: ''
             heading: Свет
             heading_style: title
+            badges:
+              - type: entity
+                show_state: true
+                show_icon: true
+                entity: light.light_group_children
+                tap_action:
+                  action: toggle
+                state_content: state
+                color: state
           - type: tile
             entity: light.light_children_shelving
             name: Лампа на шкафу
@@ -797,6 +833,15 @@ views:
             icon: ''
             heading: Свет
             heading_style: title
+            badges:
+              - type: entity
+                show_state: true
+                show_icon: true
+                entity: light.light_group_kitchen
+                tap_action:
+                  action: toggle
+                state_content: state
+                color: state
           - type: tile
             entity: light.light_kitchen_worktop_1
             name: Слева
@@ -841,6 +886,15 @@ views:
             icon: ''
             heading: Свет
             heading_style: title
+            badges:
+              - type: entity
+                show_state: true
+                show_icon: true
+                entity: light.light_group_toilet
+                tap_action:
+                  action: toggle
+                state_content: state
+                color: state
           - type: tile
             entity: light.light_toilet_1
             name: Дальний
@@ -945,6 +999,7 @@ views:
           - type: heading
             heading: Свет
             heading_style: title
+            badges: []
           - type: tile
             entity: switch.wall_switch_bathroom_l1
             name: Свет

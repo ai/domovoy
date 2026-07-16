@@ -129,6 +129,9 @@ views:
             entities:
               - entity: person.andrey
               - entity: person.kate
+              - entity: binary_sensor.door_main
+                name:
+                  type: entity
               - entity: sun.sun
                 name: Солнце
             title: Дома

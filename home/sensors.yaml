@@ -1,6 +1,6 @@
 - id: binary_sensor.heating_sun
   name: Heating sun
-  state: "{% set sunny = ['sunny', 'partlycloudy', 'windy', 'windy-variant', 'clear-night', 'unavailable', 'unknown'] %}\n{% set aemet = states('weather.weather_aemet') %}\n{% set mf = states('weather.weather_meteo_france_les_corts') %}\n{{ aemet in sunny and mf in sunny }}"
+  state: "{% set sunny = ['sunny', 'partlycloudy', 'windy', 'windy-variant', 'clear-night', 'unavailable', 'unknown'] %}\n{% set aemet = states('weather.weather_aemet') %}\n{% set mf = states('weather.weather_meteo_france_les_corts') %}\n{% if aemet in ['unavailable', 'unknown'] %}{{ mf in sunny }}{% else %}{{ aemet in sunny }}{% endif %}"
   device_class: heat
 
 - id: binary_sensor.workday

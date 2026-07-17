@@ -10,11 +10,11 @@ views:
               - type: entity
                 show_state: true
                 show_icon: true
-                entity: sensor.weather_waqi_temperature
+                entity: sensor.weather_aemet_temperature
               - type: entity
                 show_state: true
                 show_icon: true
-                entity: sensor.weather_waqi_humidity
+                entity: sensor.weather_aemet_humidity
             tap_action:
               action: navigate
               navigation_path: /dashboard-main/street
@@ -93,6 +93,14 @@ views:
                 show_state: true
                 show_icon: true
                 entity: sensor.meter_flashes_power
+              - type: entity
+                show_state: true
+                show_icon: true
+                entity: sensor.average_temperature
+              - type: entity
+                show_state: true
+                show_icon: true
+                entity: sensor.average_humidity
           - type: tile
             entity: sensor.air_bedroom_pm2_5
             name: В спальне плохой воздух

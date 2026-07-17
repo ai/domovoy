@@ -7,6 +7,22 @@
   name: Рабочий день
   state: '{{ now().weekday() < 5 }}'
 
+- id: sensor.average_humidity
+  name: Средняя влажность
+  state: "{% set entities = ['sensor.temperature_andrey_humidity', 'sensor.air_bathroom_humidity', 'sensor.air_bedroom_humidity', 'sensor.temperature_children_humidity', 'sensor.temperature_kitchen_humidity', 'sensor.temperature_lounge_humidity', 'sensor.presence_toilet_humidity'] %}\n{% set values = entities | map('states') | select('is_number') | map('float') | list %}\n{{ (values | average) | round(1) if values | count > 0 else none }}"
+  unit_of_measurement: '%'
+  device_class: humidity
+  state_class: measurement
+  availability: "{{ ['sensor.temperature_andrey_humidity', 'sensor.air_bathroom_humidity', 'sensor.air_bedroom_humidity', 'sensor.temperature_children_humidity', 'sensor.temperature_kitchen_humidity', 'sensor.temperature_lounge_humidity', 'sensor.presence_toilet_humidity'] | map('states') | select('is_number') | list | count > 0 }}"
+
+- id: sensor.average_temperature
+  name: Средняя температура
+  state: "{% set entities = ['sensor.temperature_andrey_temperature', 'sensor.air_bathroom_temperature', 'sensor.air_bedroom_temperature', 'sensor.temperature_children_temperature', 'sensor.temperature_kitchen_temperature', 'sensor.temperature_lounge_temperature', 'sensor.presence_toilet_temperature'] %}\n{% set values = entities | map('states') | select('is_number') | map('float') | list %}\n{{ (values | average) | round(1) if values | count > 0 else none }}"
+  unit_of_measurement: °C
+  device_class: temperature
+  state_class: measurement
+  availability: "{{ ['sensor.temperature_andrey_temperature', 'sensor.air_bathroom_temperature', 'sensor.air_bedroom_temperature', 'sensor.temperature_children_temperature', 'sensor.temperature_kitchen_temperature', 'sensor.temperature_lounge_temperature', 'sensor.presence_toilet_temperature'] | map('states') | select('is_number') | list | count > 0 }}"
+
 - id: sensor.current_cost_per_minute
   name: Current Cost Per Minute
   state: "{{ (states('sensor.pepeenergy_price')|float(0) * states('sensor.meter_flashes_power')|float(0) / 60000) | round(5) }}"

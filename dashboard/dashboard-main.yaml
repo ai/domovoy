@@ -253,11 +253,6 @@ views:
             tap_action:
               action: navigate
               navigation_path: /dashboard-main/katya
-          - type: tile
-            entity: light.light_group_kate
-            name: Свет
-            vertical: false
-            features_position: bottom
       - type: grid
         cards:
           - type: heading

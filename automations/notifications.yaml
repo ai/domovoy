@@ -102,6 +102,32 @@
           tag: fountain_not_used
   mode: single
 
+- id: automation.hide_doorbell_notification
+  alias: Скрыть уведомление о звонке при открытии двери
+  room: entrance
+  triggers:
+    - trigger: state
+      entity_id: binary_sensor.door_main
+      to: 'on'
+  conditions:
+    - condition: state
+      entity_id: input_boolean.stop
+      state: 'off'
+    - condition: template
+      value_template: "{{ state_attr('automation.notify_doorbell', 'last_triggered') is not none and now() - state_attr('automation.notify_doorbell', 'last_triggered') < timedelta(minutes=5) }}"
+  actions:
+    - action: notify.mobile_app_phone_bedoll
+      data:
+        message: clear_notification
+        data:
+          tag: doorbell
+    - action: notify.mobile_app_phone_pixel_9
+      data:
+        message: clear_notification
+        data:
+          tag: doorbell
+  mode: single
+
 - id: automation.high_co2_notification_andrey
   alias: Высокий уровень CO² у Андрея
   room: andrey
@@ -307,10 +333,14 @@
       data:
         title: Дверь
         message: Звонок в дверь
+        data:
+          tag: doorbell
     - action: notify.mobile_app_phone_pixel_9
       data:
         title: Дверь
         message: Звонок в дверь
+        data:
+          tag: doorbell
   mode: single
 
 - id: automation.toilet_water_leak

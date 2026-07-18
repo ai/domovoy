@@ -300,6 +300,31 @@
             title: Дверь
             message: Открыта
 
+- id: automation.notify_doorbell
+  alias: Уведомить о звонке в дверь
+  room: entrance
+  triggers:
+    - trigger: state
+      entity_id: binary_sensor.wall_switch_doorbell_input_0
+      to: 'on'
+  conditions:
+    - condition: state
+      entity_id: input_boolean.notifications
+      state: 'on'
+    - condition: state
+      entity_id: input_boolean.stop
+      state: 'off'
+  actions:
+    - action: notify.mobile_app_phone_bedoll
+      data:
+        title: Дверь
+        message: Звонок в дверь
+    - action: notify.mobile_app_phone_pixel_9
+      data:
+        title: Дверь
+        message: Звонок в дверь
+  mode: single
+
 - id: automation.toilet_water_leak
   alias: Протечка воды в туалете
   room: toilet

@@ -31,8 +31,8 @@
             entity_id: input_boolean.auto_andrey_desk
   mode: restart
 
-- id: automation.pause_laptop_on_intercom_call
-  alias: Пауза музыки на ноутбуке Андрея при звонке в домофон
+- id: automation.pause_laptop_on_bell
+  alias: Пауза музыки на ноутбуке Андрея при звонке в дверь или домофон
   room: andrey
   triggers:
     - trigger: state
@@ -40,6 +40,9 @@
       not_to:
         - unavailable
         - unknown
+    - trigger: state
+      entity_id: binary_sensor.wall_switch_doorbell_input_0
+      to: 'on'
   conditions:
     - condition: state
       entity_id: input_boolean.stop

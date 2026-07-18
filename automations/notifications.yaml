@@ -231,15 +231,12 @@
   room: entrance
   triggers:
     - trigger: state
-      entity_id: binary_sensor.door_main_dver
+      entity_id: binary_sensor.door_main
       from: 'off'
       to: 'on'
       for:
         minutes: 10
   conditions:
-    - condition: state
-      entity_id: input_boolean.notifications
-      state: 'on'
     - condition: state
       entity_id: input_boolean.stop
       state: 'off'
@@ -263,16 +260,10 @@
   room: entrance
   triggers:
     - trigger: state
-      entity_id: binary_sensor.door_main_dver
+      entity_id: binary_sensor.door_main
       from: 'off'
       to: 'on'
   conditions:
-    - condition: state
-      entity_id: input_boolean.notifications
-      state: 'on'
-    - condition: state
-      entity_id: input_boolean.other_people
-      state: 'off'
     - condition: state
       entity_id: input_boolean.stop
       state: 'off'
@@ -308,9 +299,6 @@
       entity_id: binary_sensor.wall_switch_doorbell_input_0
       to: 'on'
   conditions:
-    - condition: state
-      entity_id: input_boolean.notifications
-      state: 'on'
     - condition: state
       entity_id: input_boolean.stop
       state: 'off'

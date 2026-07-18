@@ -31,6 +31,29 @@
             entity_id: input_boolean.auto_andrey_desk
   mode: restart
 
+- id: automation.pause_laptop_on_intercom_call
+  alias: Пауза музыки на ноутбуке Андрея при звонке в домофон
+  room: andrey
+  triggers:
+    - trigger: state
+      entity_id: event.intercom_ring_ding
+      not_to:
+        - unavailable
+        - unknown
+  conditions:
+    - condition: state
+      entity_id: input_boolean.stop
+      state: 'off'
+    - condition: state
+      entity_id: person.andrey
+      state: home
+  actions:
+    - action: mqtt.publish
+      data:
+        payload: PAUSE
+        topic: ai_laptop
+  mode: single
+
 - id: automation.start_screen_on_presence
   alias: Включение монитора Андрея по датчику присутствия
   room: andrey

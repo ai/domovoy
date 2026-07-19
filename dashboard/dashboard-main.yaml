@@ -253,6 +253,11 @@ views:
             tap_action:
               action: navigate
               navigation_path: /dashboard-main/katya
+          - type: tile
+            entity: light.light_group_kate
+            name: Свет
+            vertical: false
+            features_position: bottom
       - type: grid
         cards:
           - type: heading
@@ -724,26 +729,6 @@ views:
               - type: light-color-temp
               - type: light-brightness
             features_position: bottom
-          - type: tile
-            entity: light.light_gray_floor_lamp_1
-            name: Напольная лампа 1
-            icon: mdi:floor-lamp-dual
-            vertical: false
-            features:
-              - type: toggle
-              - type: light-brightness
-              - type: light-color-temp
-            features_position: bottom
-          - type: tile
-            entity: light.light_gray_floor_lamp_2
-            name: Напольная лампа 2
-            icon: mdi:floor-lamp-dual
-            vertical: false
-            features:
-              - type: toggle
-              - type: light-brightness
-              - type: light-color-temp
-            features_position: bottom
       - type: grid
         cards:
           - type: heading
@@ -795,6 +780,26 @@ views:
                   action: toggle
                 state_content: state
                 color: state
+          - type: tile
+            entity: light.light_gray_floor_lamp_1
+            name: Напольная лампа 1
+            icon: mdi:floor-lamp-dual
+            vertical: false
+            features:
+              - type: toggle
+              - type: light-brightness
+              - type: light-color-temp
+            features_position: bottom
+          - type: tile
+            entity: light.light_gray_floor_lamp_2
+            name: Напольная лампа 2
+            icon: mdi:floor-lamp-dual
+            vertical: false
+            features:
+              - type: toggle
+              - type: light-brightness
+              - type: light-color-temp
+            features_position: bottom
   - type: sections
     max_columns: 4
     title: Детская

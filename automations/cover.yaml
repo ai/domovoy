@@ -27,7 +27,7 @@
             - condition: numeric_state
               entity_id: sun.sun
               attribute: elevation
-              above: 12
+              above: 15
           sequence:
             - action: cover.close_cover
               target:
@@ -87,14 +87,6 @@
         entity_id: input_datetime.night_end
         offset: '02:00:00'
       id: close
-    - trigger: state
-      entity_id: input_boolean.empty_home
-      to: 'off'
-      id: home
-    - trigger: state
-      entity_id: input_boolean.empty_home
-      to: 'on'
-      id: leave
   conditions:
     - condition: state
       entity_id: input_boolean.stop
@@ -103,34 +95,14 @@
     - choose:
         - conditions:
             - condition: trigger
-              id: leave
-          sequence:
-            - action: cover.close_cover
-              target:
-                entity_id: cover.shutter_bedroom
-        - conditions:
-            - condition: or
-              conditions:
-                - condition: trigger
-                  id: open
-                - condition: and
-                  conditions:
-                    - condition: trigger
-                      id: home
-                    - condition: state
-                      entity_id: input_boolean.cooling
-                      state: 'off'
+              id: open
           sequence:
             - action: cover.open_cover
               target:
                 entity_id: cover.shutter_bedroom
         - conditions:
-            - condition: or
-              conditions:
-                - condition: trigger
-                  id: close
-                - condition: trigger
-                  id: home
+            - condition: trigger
+              id: close
             - condition: state
               entity_id: input_boolean.cooling
               state: 'on'
@@ -177,7 +149,7 @@
             - condition: numeric_state
               entity_id: sun.sun
               attribute: elevation
-              above: 12
+              above: 15
           sequence:
             - action: cover.close_cover
               target:

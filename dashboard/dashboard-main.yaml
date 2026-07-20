@@ -253,6 +253,15 @@ views:
             tap_action:
               action: navigate
               navigation_path: /dashboard-main/katya
+            badges:
+              - type: entity
+                show_state: true
+                show_icon: true
+                entity: sensor.air_kate_temperature
+              - type: entity
+                show_state: true
+                show_icon: true
+                entity: sensor.air_kate_co2
           - type: tile
             entity: light.light_group_kate
             name: Свет
@@ -765,6 +774,27 @@ views:
     path: katya
     subview: true
     sections:
+      - type: grid
+        cards:
+          - type: heading
+            heading: Статистика
+            heading_style: title
+          - type: tile
+            entity: sensor.air_kate_temperature
+            name:
+              type: entity
+            vertical: false
+            features:
+              - type: trend-graph
+            features_position: bottom
+          - type: tile
+            entity: sensor.air_kate_co2
+            name:
+              type: entity
+            vertical: false
+            features:
+              - type: trend-graph
+            features_position: bottom
       - type: grid
         cards:
           - type: heading

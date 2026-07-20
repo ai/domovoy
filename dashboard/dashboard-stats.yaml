@@ -35,6 +35,10 @@ views:
                 name:
                   type: area
                 color: brown
+              - entity: sensor.air_kate_temperature
+                name:
+                  type: area
+                color: pink
             title: Температура
             days_to_show: 1
             period: 5minute
@@ -51,6 +55,10 @@ views:
                 name:
                   type: area
                 color: green
+              - entity: sensor.air_kate_co2
+                name:
+                  type: area
+                color: pink
             title: CO²
             days_to_show: 1
             period: 5minute
@@ -74,6 +82,10 @@ views:
               - entity: sensor.weather_waqi_pm10
                 name: Улица PM10
                 color: light-grey
+              - entity: sensor.air_kate_pm2_5
+                name:
+                  type: area
+                color: pink
             title: Загрязнение воздуха
             days_to_show: 1
             period: hour
@@ -112,6 +124,10 @@ views:
                 name:
                   type: area
                 color: brown
+              - entity: sensor.air_kate_humidity
+                name:
+                  type: area
+                color: pink
             title: Влажность
             days_to_show: 1
             period: 5minute

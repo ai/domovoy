@@ -8,6 +8,7 @@
       light:
         entity_id: light.light_group_toilet
       manual_flag: input_boolean.stop_toilet
+      adaptive_switch: switch.adaptive_lighting_service
 
 - id: automation.service_lights_night_mode
   alias: Ночной режим света в технической зоне

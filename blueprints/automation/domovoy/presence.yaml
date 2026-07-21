@@ -41,6 +41,21 @@ blueprint:
         entity:
           filter:
             - domain: input_boolean
+    adaptive_switch:
+      name: Adaptive lighting
+      description: >-
+        When set, the light is turned on through Adaptive Lighting so it starts
+        at the correct color temperature instead of flashing its last value
+      default: ''
+      selector:
+        entity:
+          filter:
+            - domain: switch
+              integration: adaptive_lighting
+
+variables:
+  adaptive_switch: !input adaptive_switch
+  light_target: !input light
 
 mode: restart
 
@@ -63,8 +78,19 @@ conditions:
 
 actions:
   - sequence: !input before_on
-  - action: light.turn_on
-    target: !input light
+  - if:
+      - condition: template
+        value_template: "{{ adaptive_switch != '' }}"
+    then:
+      - action: adaptive_lighting.apply
+        data:
+          entity_id: !input adaptive_switch
+          lights: "{{ light_target.entity_id }}"
+          turn_on_lights: true
+          transition: 0
+    else:
+      - action: light.turn_on
+        target: !input light
   - wait_for_trigger:
       trigger: state
       entity_id: !input presence_sensor

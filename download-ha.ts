@@ -643,10 +643,13 @@ function writeInputs(
   writeDump('inputs.yaml', entries, 'input helpers')
 }
 
-function writeSensors(
+function writeTemplateDump(
   templates: TemplateSensor[],
   states: HassState[],
-  registry: Registry
+  registry: Registry,
+  match: RegExp,
+  file: string,
+  label: string
 ): void {
   let entityByEntry: Record<string, string> = {}
   for (let e of registry.entities) {
@@ -660,7 +663,7 @@ function writeSensors(
   let entries = templates
     .map(({ entryId, config }) => {
       let entityId = entityByEntry[entryId]
-      if (!entityId || !/^(binary_)?sensor\./.test(entityId)) return null
+      if (!entityId || !match.test(entityId)) return null
       let name = nameById[entityId]
       let room = registry.entityArea[entityId]
       return {
@@ -673,7 +676,24 @@ function writeSensors(
     .filter((e): e is { id: string } & Record<string, unknown> => e !== null)
     .sort((a, b) => a.id.localeCompare(b.id))
 
-  writeDump('sensors.yaml', entries, 'custom sensors')
+  writeDump(file, entries, label)
+}
+
+function writeSensors(
+  templates: TemplateSensor[],
+  states: HassState[],
+  registry: Registry
+): void {
+  let match = /^(binary_)?sensor\./
+  writeTemplateDump(templates, states, registry, match, 'sensors.yaml', 'custom sensors')
+}
+
+function writeCovers(
+  templates: TemplateSensor[],
+  states: HassState[],
+  registry: Registry
+): void {
+  writeTemplateDump(templates, states, registry, /^cover\./, 'covers.yaml', 'custom covers')
 }
 
 interface InputHelper {
@@ -799,7 +819,9 @@ try {
     )
   ]
   writeInputs(await fetchInputHelpers(inputDomains), registry)
-  writeSensors(await fetchTemplateSensors(), states, registry)
+  let templateHelpers = await fetchTemplateSensors()
+  writeSensors(templateHelpers, states, registry)
+  writeCovers(templateHelpers, states, registry)
 
   await downloadDashboards()
 } catch (err) {

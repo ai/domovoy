@@ -180,5 +180,21 @@ views:
             entity: input_datetime.night_start
           - type: tile
             entity: input_datetime.night_end
+      - type: grid
+        cards:
+          - type: heading
+            heading: Другое
+            heading_style: title
+          - type: tile
+            entity: cover.valve_main
+            name: Вода
+            icon: mdi:pipe-valve
+            hide_state: false
+            state_content: state
+            vertical: false
+            tap_action:
+              action: toggle
+            features_position: bottom
+            color: blue
     max_columns: 3
     cards: []

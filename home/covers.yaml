@@ -1,0 +1,12 @@
+- id: cover.valve_main
+  name: Valve / Main
+  room: toilet
+  state: "{% if is_state('switch.valve_main_shelly_open', 'on') %}{% if is_state('binary_sensor.valve_main_shelly_openned', 'on') %}open{% else %}opening{% endif %}{% else %}{% if is_state('binary_sensor.valve_main_shelly_closed', 'on') %}closed{% else %}closing{% endif %}{% endif %}"
+  open_cover:
+    - action: switch.turn_on
+      target:
+        entity_id: switch.valve_main_shelly_open
+  close_cover:
+    - action: switch.turn_off
+      target:
+        entity_id: switch.valve_main_shelly_open

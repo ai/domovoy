@@ -82,12 +82,20 @@ actions:
       - condition: template
         value_template: "{{ adaptive_switch != '' }}"
     then:
-      - action: adaptive_lighting.apply
+      # Turn on instantly at Adaptive Lighting's current values (explicit
+      # properties bypass its intercept, so no extra transition), then hand
+      # control back so it keeps adapting the light over time
+      - action: light.turn_on
+        target: !input light
+        data:
+          brightness_pct: "{{ state_attr(adaptive_switch, 'brightness_pct') | int(100) }}"
+          color_temp_kelvin: "{{ state_attr(adaptive_switch, 'color_temp_kelvin') | int(2700) }}"
+          transition: 0
+      - action: adaptive_lighting.set_manual_control
         data:
           entity_id: !input adaptive_switch
           lights: "{{ light_target.entity_id }}"
-          turn_on_lights: true
-          transition: 0
+          manual_control: false
     else:
       - action: light.turn_on
         target: !input light

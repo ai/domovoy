@@ -91,6 +91,8 @@ actions:
     else:
       - action: light.turn_on
         target: !input light
+        data:
+          transition: 0
   - wait_for_trigger:
       trigger: state
       entity_id: !input presence_sensor
@@ -106,4 +108,6 @@ actions:
     then:
       - action: light.turn_off
         target: !input light
+        data:
+          transition: 0
       - sequence: !input after_off

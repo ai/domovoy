@@ -85,7 +85,7 @@ actions:
                 target:
                   entity_id: !input light_group
                 data:
-                  transition: 1
+                  transition: 0
             else:
               # No Adaptive Lighting: override night mode brightness
               # remembered by bulbs from the previous cycle
@@ -94,7 +94,7 @@ actions:
                   entity_id: !input light_group
                 data:
                   brightness: 255
-                  transition: 1
+                  transition: 0
           - if:
               - condition: template
                 value_template: "{{ manual_flag != '' }}"
@@ -107,7 +107,7 @@ actions:
             target:
               entity_id: !input light_group
             data:
-              transition: 1
+              transition: 0
           - if:
               - condition: template
                 value_template: "{{ manual_flag != '' }}"
@@ -147,6 +147,7 @@ actions:
                   entity_id: !input light_group
                 data:
                   brightness: 255
+                  transition: 0
         else:
           # Night mode: the explicit brightness disable Adaptive Lighting
           - action: light.turn_on
@@ -155,9 +156,7 @@ actions:
             data:
               brightness: 1
               color_temp_kelvin: "{{ state_attr(light_group, 'min_color_temp_kelvin') | int(2202) }}"
-              # Transition from "off" makes bulbs flash at the previous
-              # brightness before dimming down
-              transition: "{{ 1 if is_state(light_group, 'on') else 0 }}"
+              transition: 0
       - if:
           - condition: template
             value_template: "{{ manual_flag != '' }}"

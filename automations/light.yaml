@@ -62,6 +62,20 @@
       light_group: light.light_group_andrey
       adaptive_switch: switch.adaptive_lighting_private
 
+- id: automation.wall_switch_kate
+  alias: Выключатель света в кабинете Кати
+  room: kate
+  conditions:
+    - condition: state
+      entity_id: input_boolean.stop
+      state: 'off'
+  use_blueprint:
+    path: domovoy/wall-switch.yaml
+    input:
+      wall_switch: 8a38260aea17211d016281d21fbb5b70
+      light_group: light.light_group_kate
+      adaptive_switch: switch.adaptive_lighting_private
+
 - id: automation.wall_switch_kitchen
   alias: Выключатель света на кухне
   room: kitchen

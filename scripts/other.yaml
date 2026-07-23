@@ -26,8 +26,6 @@
   alias: Выключить всё
   sequence:
     - action: light.turn_off
-      metadata: {}
-      data: {}
       target:
         entity_id:
           - light.light_group_kate
@@ -35,8 +33,9 @@
           - light.light_group_toilet
           - light.light_group_kitchen
           - light.light_group_bedroom
+      data:
+        transition: 0
     - action: switch.turn_off
-      metadata: {}
       target:
         entity_id: switch.wall_switch_bathroom_l1
       data: {}

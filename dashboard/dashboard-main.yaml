@@ -1074,4 +1074,12 @@ views:
             features:
               - type: toggle
             features_position: bottom
+          - type: tile
+            entity: switch.floor_bathroom
+            name: Тёплый пол
+            icon: mdi:waves-arrow-up
+            vertical: false
+            features:
+              - type: toggle
+            features_position: bottom
     cards: []

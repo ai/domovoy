@@ -183,18 +183,18 @@ views:
       - type: grid
         cards:
           - type: heading
-            heading: Другое
+            heading: Тёплый пол
             heading_style: title
           - type: tile
-            entity: cover.valve_main
-            name: Вода
-            icon: mdi:pipe-valve
-            hide_state: false
-            state_content: state
+            entity: switch.floor_bathroom
+            name:
+              type: area
+            icon: mdi:bathtub
             vertical: false
             tap_action:
               action: toggle
+            icon_tap_action:
+              action: none
             features_position: bottom
-            color: blue
     max_columns: 3
     cards: []

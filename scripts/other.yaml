@@ -37,7 +37,9 @@
         transition: 0
     - action: switch.turn_off
       target:
-        entity_id: switch.wall_switch_bathroom_l1
+        entity_id:
+          - switch.wall_switch_bathroom_l1
+          - switch.floor_bathroom
       data: {}
 
 - id: script.zigbee_reset

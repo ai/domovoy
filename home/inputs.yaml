@@ -1,3 +1,13 @@
+- id: input_boolean.ac_andrey
+  name: Кондиционер Андрея
+  room: andrey
+  icon: mdi:air-conditioner
+
+- id: input_boolean.ac_lounge
+  name: Кондиционер зала
+  room: lounge
+  icon: mdi:air-conditioner
+
 - id: input_boolean.auto_andrey_desk
   name: Связь монитора Андрея и датчика присутствия
   room: andrey

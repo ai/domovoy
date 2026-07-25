@@ -34,6 +34,115 @@
         entity_id: climate.ac_andrey
   mode: single
 
+- id: automation.ac_andrey_toggle
+  alias: Тумблер кондиционера Андрея
+  room: andrey
+  triggers:
+    - trigger: state
+      entity_id: input_boolean.ac_andrey
+      to: 'on'
+      id: 'on'
+    - trigger: state
+      entity_id: input_boolean.ac_andrey
+      to: 'off'
+      id: 'off'
+  conditions:
+    - condition: state
+      entity_id: input_boolean.stop
+      state: 'off'
+  actions:
+    - choose:
+        - conditions:
+            - condition: trigger
+              id: 'on'
+          sequence:
+            - action: climate.set_hvac_mode
+              target:
+                entity_id: climate.ac_andrey
+              data:
+                hvac_mode: "{{ 'heat' if is_state('input_boolean.heating', 'on') else 'cool' }}"
+        - conditions:
+            - condition: trigger
+              id: 'off'
+          sequence:
+            - action: climate.turn_off
+              target:
+                entity_id: climate.ac_andrey
+  mode: restart
+
+- id: automation.ac_lounge_toggle
+  alias: Тумблер кондиционера зала
+  room: lounge
+  triggers:
+    - trigger: state
+      entity_id: input_boolean.ac_lounge
+      to: 'on'
+      id: 'on'
+    - trigger: state
+      entity_id: input_boolean.ac_lounge
+      to: 'off'
+      id: 'off'
+  conditions:
+    - condition: state
+      entity_id: input_boolean.stop
+      state: 'off'
+  actions:
+    - choose:
+        - conditions:
+            - condition: trigger
+              id: 'on'
+          sequence:
+            - action: climate.set_hvac_mode
+              target:
+                entity_id: climate.ac_lounge
+              data:
+                hvac_mode: "{{ 'heat' if is_state('input_boolean.heating', 'on') else 'cool' }}"
+        - conditions:
+            - condition: trigger
+              id: 'off'
+          sequence:
+            - action: climate.turn_off
+              target:
+                entity_id: climate.ac_lounge
+  mode: restart
+
+- id: automation.ac_toggle_sync
+  alias: Синхронизация тумблеров кондиционеров
+  triggers:
+    - trigger: state
+      entity_id:
+        - climate.ac_lounge
+        - climate.ac_andrey
+    - trigger: homeassistant
+      event: start
+  conditions:
+    - condition: state
+      entity_id: input_boolean.stop
+      state: 'off'
+  actions:
+    - repeat:
+        for_each:
+          - climate: climate.ac_lounge
+            toggle: input_boolean.ac_lounge
+          - climate: climate.ac_andrey
+            toggle: input_boolean.ac_andrey
+        sequence:
+          - choose:
+              - conditions:
+                  - "{{ states(repeat.item.climate) in ['unavailable', 'unknown'] }}"
+                sequence: []
+              - conditions:
+                  - "{{ is_state(repeat.item.climate, 'off') }}"
+                sequence:
+                  - action: input_boolean.turn_off
+                    target:
+                      entity_id: '{{ repeat.item.toggle }}'
+            default:
+              - action: input_boolean.turn_on
+                target:
+                  entity_id: '{{ repeat.item.toggle }}'
+  mode: restart
+
 - id: automation.heating_cooling_interlock
   alias: Взаимоблокировка обогрева и охлаждения
   triggers:

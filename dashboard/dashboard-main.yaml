@@ -190,11 +190,68 @@ views:
             name: Персиана
             vertical: false
             features_position: bottom
-          - type: tile
-            entity: climate.ac_andrey
-            name: Климат
-            vertical: false
-            features_position: bottom
+          - type: conditional
+            conditions:
+              - condition: state
+                entity: climate.ac_andrey
+                state: cool
+            card:
+              type: tile
+              entity: input_boolean.ac_andrey
+              name: Кондиционер
+              icon: mdi:snowflake-thermometer
+              color: blue
+              vertical: false
+              tap_action:
+                action: toggle
+              icon_tap_action:
+                action: none
+              features_position: bottom
+            grid_options:
+              columns: 6
+              rows: auto
+          - type: conditional
+            conditions:
+              - condition: state
+                entity: climate.ac_andrey
+                state: heat
+            card:
+              type: tile
+              entity: input_boolean.ac_andrey
+              name: Кондиционер
+              icon: mdi:sun-thermometer
+              color: deep-orange
+              vertical: false
+              tap_action:
+                action: toggle
+              icon_tap_action:
+                action: none
+              features_position: bottom
+            grid_options:
+              columns: 6
+              rows: auto
+          - type: conditional
+            conditions:
+              - condition: state
+                entity: climate.ac_andrey
+                state_not: cool
+              - condition: state
+                entity: climate.ac_andrey
+                state_not: heat
+            card:
+              type: tile
+              entity: input_boolean.ac_andrey
+              name: Кондиционер
+              icon: mdi:thermometer-off
+              vertical: false
+              tap_action:
+                action: toggle
+              icon_tap_action:
+                action: none
+              features_position: bottom
+            grid_options:
+              columns: 6
+              rows: auto
       - type: grid
         cards:
           - type: heading
@@ -236,15 +293,72 @@ views:
               action: navigate
               navigation_path: /dashboard-main/lounge
           - type: tile
-            entity: climate.ac_lounge
-            name: Климат
-            vertical: false
-            features_position: bottom
-          - type: tile
             entity: cover.shutter_lounge
             name: Персиана
             vertical: false
             features_position: bottom
+          - type: conditional
+            conditions:
+              - condition: state
+                entity: climate.ac_lounge
+                state: cool
+            card:
+              type: tile
+              entity: input_boolean.ac_lounge
+              name: Кондиционер
+              icon: mdi:snowflake-thermometer
+              color: blue
+              vertical: false
+              tap_action:
+                action: toggle
+              icon_tap_action:
+                action: none
+              features_position: bottom
+            grid_options:
+              columns: 6
+              rows: auto
+          - type: conditional
+            conditions:
+              - condition: state
+                entity: climate.ac_lounge
+                state: heat
+            card:
+              type: tile
+              entity: input_boolean.ac_lounge
+              name: Кондиционер
+              icon: mdi:sun-thermometer
+              color: deep-orange
+              vertical: false
+              tap_action:
+                action: toggle
+              icon_tap_action:
+                action: none
+              features_position: bottom
+            grid_options:
+              columns: 6
+              rows: auto
+          - type: conditional
+            conditions:
+              - condition: state
+                entity: climate.ac_lounge
+                state_not: cool
+              - condition: state
+                entity: climate.ac_lounge
+                state_not: heat
+            card:
+              type: tile
+              entity: input_boolean.ac_lounge
+              name: Кондиционер
+              icon: mdi:thermometer-off
+              vertical: false
+              tap_action:
+                action: toggle
+              icon_tap_action:
+                action: none
+              features_position: bottom
+            grid_options:
+              columns: 6
+              rows: auto
       - type: grid
         cards:
           - type: heading

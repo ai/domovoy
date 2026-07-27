@@ -40,6 +40,8 @@
         entity_id:
           - switch.wall_switch_bathroom_l1
           - switch.floor_bathroom
+          - switch.floor_lounge
+          - switch.floor_toilet
       data: {}
 
 - id: script.zigbee_reset

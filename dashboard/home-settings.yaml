@@ -203,5 +203,12 @@ views:
             icon: mdi:sofa
             vertical: false
             features_position: bottom
+          - type: tile
+            entity: switch.floor_toilet
+            name:
+              type: area
+            icon: mdi:ideogram-cjk
+            vertical: false
+            features_position: bottom
     max_columns: 3
     cards: []

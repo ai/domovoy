@@ -228,7 +228,7 @@
       entity_id:
         - sun.sun
       attribute: elevation
-      below: 12
+      below: 13
   conditions:
     - condition: state
       entity_id: input_boolean.stop

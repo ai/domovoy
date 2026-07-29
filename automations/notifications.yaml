@@ -300,6 +300,9 @@
             - condition: state
               entity_id: person.andrey
               state: home
+            - condition: zone
+              entity_id: person.andrey
+              zone: zone.near_home
       then:
         - action: notify.mobile_app_phone_bedoll
           data:
@@ -311,6 +314,9 @@
             - condition: state
               entity_id: person.kate
               state: home
+            - condition: zone
+              entity_id: person.kate
+              zone: zone.near_home
       then:
         - action: notify.mobile_app_phone_pixel_9
           data:

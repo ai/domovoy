@@ -183,6 +183,29 @@
           importance: low
   mode: single
 
+- id: automation.high_co2_notification_kate
+  alias: Высокий уровень CO² у Кати
+  room: kate
+  triggers:
+    - trigger: numeric_state
+      entity_id: sensor.air_kate_co2
+      above: 1000
+  conditions:
+    - condition: state
+      entity_id: person.kate
+      state: home
+    - condition: state
+      entity_id: input_boolean.stop
+      state: 'off'
+  actions:
+    - action: notify.mobile_app_phone_pixel_9
+      data:
+        title: Кабинет Кати
+        message: "Высокий уровень CO²: {{ states('sensor.air_kate_co2') }}"
+        data:
+          tag: co2_kate
+  mode: single
+
 - id: automation.kitchen_water_leak
   alias: Протечка воды на кухне
   room: kitchen

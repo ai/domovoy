@@ -50,3 +50,4 @@
     path: bonesderdritte/ikea_kajplats_zigbee_pairing_mode_power_cycle.yaml
     input:
       target_switch: switch.plug_washing_machine
+      cycles: 12

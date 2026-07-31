@@ -758,18 +758,8 @@ views:
                 state_content: state
                 color: state
           - type: tile
-            entity: light.light_yellow_lamp
-            name: Жёлтая лампа
-            icon: mdi:lamp
-            vertical: false
-            features:
-              - type: toggle
-              - type: light-brightness
-              - type: light-color-temp
-            features_position: bottom
-          - type: tile
-            entity: light.light_black_lamp
-            name: Чёрная лампа
+            entity: light.light_yellow_lamp_1
+            name: Слева
             icon: mdi:lamp
             vertical: false
             features:
@@ -846,6 +836,26 @@ views:
           - type: tile
             entity: light.light_andrey_bookcase
             name: На шкафе
+            vertical: false
+            features:
+              - type: toggle
+              - type: light-color-temp
+              - type: light-brightness
+            features_position: bottom
+          - type: tile
+            entity: light.light_andrey_floor_lamp_1_2
+            name: Напольная сверху
+            icon: mdi:floor-lamp
+            vertical: false
+            features:
+              - type: toggle
+              - type: light-color-temp
+              - type: light-brightness
+            features_position: bottom
+          - type: tile
+            entity: light.light_andrey_floor_lamp_2_2
+            name: Напольная снизу
+            icon: mdi:floor-lamp
             vertical: false
             features:
               - type: toggle
@@ -969,6 +979,16 @@ views:
             entity: light.light_children_shelving
             name: Лампа на шкафу
             icon: mdi:desk-lamp
+            vertical: false
+            features:
+              - type: toggle
+              - type: light-brightness
+              - type: light-color-temp
+            features_position: bottom
+          - type: tile
+            entity: light.light_black_lamp
+            name: Чёрная лампа
+            icon: mdi:lamp
             vertical: false
             features:
               - type: toggle

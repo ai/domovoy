@@ -613,6 +613,10 @@ function writeRooms(registry: Registry): void {
   writeDump('rooms.yaml', entries, 'rooms')
 }
 
+function isHelperPlatform(platform: string | null | undefined): boolean {
+  return platform === 'timer' || (platform?.startsWith('input_') ?? false)
+}
+
 // UI input helpers list their config by their original object id (unique_id),
 // which stays fixed even after the entity is renamed to an English entity_id.
 function writeInputs(
@@ -621,7 +625,7 @@ function writeInputs(
 ): void {
   let entityByUnique: Record<string, string> = {}
   for (let e of registry.entities) {
-    if (e.platform?.startsWith('input_') && e.unique_id) {
+    if (isHelperPlatform(e.platform) && e.unique_id) {
       entityByUnique[`${e.platform}.${e.unique_id}`] = e.entity_id
     }
   }
@@ -814,7 +818,7 @@ try {
   let inputDomains = [
     ...new Set(
       registry.entities
-        .filter(e => e.platform?.startsWith('input_'))
+        .filter(e => isHelperPlatform(e.platform))
         .map(e => e.platform!)
     )
   ]

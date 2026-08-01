@@ -53,3 +53,20 @@
   has_time: true
   has_date: false
   icon: mdi:power-sleep
+
+- id: timer.ac_andrey
+  name: AC Andrey
+  duration: '0:00:06'
+  icon: mdi:timer-sand
+  restore: false
+
+- id: timer.ac_lounge
+  name: AC Lounge
+  duration: '0:00:06'
+  icon: mdi:timer-sand
+  restore: false
+
+- id: timer.empty_home
+  name: Когда дом стал пустым
+  duration: '0:30:00'
+  restore: false

@@ -96,6 +96,16 @@
         - conditions:
             - condition: trigger
               id: open
+            - condition: time
+              weekday:
+                - mon
+                - tue
+                - wed
+                - thu
+                - fri
+            - condition: state
+              entity_id: input_boolean.holidays
+              state: 'off'
           sequence:
             - action: cover.open_cover
               target:

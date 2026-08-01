@@ -29,6 +29,10 @@
   name: Обогрев
   icon: mdi:sun-thermometer
 
+- id: input_boolean.holidays
+  name: Каникулы
+  icon: mdi:seesaw
+
 - id: input_boolean.stop
   name: Стоп
   icon: mdi:pause-octagon

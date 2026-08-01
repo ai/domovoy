@@ -44,11 +44,21 @@ blueprint:
         entity:
           filter:
             - domain: sensor
+    night_brightness:
+      name: Night mode brightness
+      description: >-
+        Lamps emit no light at all below their own threshold, raise it per room
+      default: 5
+      selector:
+        number:
+          min: 1
+          max: 50
 
 variables:
   light_group: !input light_group
   manual_flag: !input manual_flag
   color_temp: !input color_temp
+  night_brightness: !input night_brightness
   # Clamped to the group, as its lamps may not share the same range
   color_temp_kelvin: >-
     {{ [[states(color_temp) | int(0),
@@ -118,7 +128,7 @@ actions:
           - condition: template
             value_template: >-
               {{ is_state(light_group, 'on') and
-                 state_attr(light_group, 'brightness') | int(0) <= 2 }}
+                 state_attr(light_group, 'brightness') | int(0) <= night_brightness }}
         then:
           # Leave night mode at full brightness
           - action: light.turn_on
@@ -131,7 +141,7 @@ actions:
             target:
               entity_id: !input light_group
             data:
-              brightness: 1
+              brightness: "{{ night_brightness }}"
               color_temp_kelvin: "{{ state_attr(light_group, 'min_color_temp_kelvin') | int(2202) }}"
       - if:
           - condition: template

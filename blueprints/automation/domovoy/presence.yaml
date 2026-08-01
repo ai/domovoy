@@ -41,21 +41,18 @@ blueprint:
         entity:
           filter:
             - domain: input_boolean
-    adaptive_switch:
-      name: Adaptive lighting
+    color_temp:
+      name: Color temperature
       description: >-
-        When set, the light is turned on through Adaptive Lighting so it starts
-        at the correct color temperature instead of flashing its last value
+        Sensor with the color temperature in K to turn the light on with
       default: ''
       selector:
         entity:
           filter:
-            - domain: switch
-              integration: adaptive_lighting
+            - domain: sensor
 
 variables:
-  adaptive_switch: !input adaptive_switch
-  light_target: !input light
+  color_temp: !input color_temp
 
 mode: restart
 
@@ -78,29 +75,11 @@ conditions:
 
 actions:
   - sequence: !input before_on
-  - if:
-      - condition: template
-        value_template: "{{ adaptive_switch != '' }}"
-    then:
-      # Turn on instantly at Adaptive Lighting's current values (explicit
-      # properties bypass its intercept, so no extra transition), then hand
-      # control back so it keeps adapting the light over time
-      - action: light.turn_on
-        target: !input light
-        data:
-          brightness_pct: "{{ state_attr(adaptive_switch, 'brightness_pct') | int(100) }}"
-          color_temp_kelvin: "{{ state_attr(adaptive_switch, 'color_temp_kelvin') | int(2700) }}"
-          transition: 0
-      - action: adaptive_lighting.set_manual_control
-        data:
-          entity_id: !input adaptive_switch
-          lights: "{{ light_target.entity_id }}"
-          manual_control: false
-    else:
-      - action: light.turn_on
-        target: !input light
-        data:
-          transition: 0
+  - action: light.turn_on
+    target: !input light
+    data: >-
+      {{ {} if color_temp == '' else
+         { 'color_temp_kelvin': states(color_temp) | int(2700) } }}
   - wait_for_trigger:
       trigger: state
       entity_id: !input presence_sensor
@@ -116,6 +95,4 @@ actions:
     then:
       - action: light.turn_off
         target: !input light
-        data:
-          transition: 0
       - sequence: !input after_off

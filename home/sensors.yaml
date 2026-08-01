@@ -29,6 +29,12 @@
   unit_of_measurement: €/min
   state_class: measurement
 
+- id: sensor.light_color_temp
+  name: Light color temp
+  state: '{% set elev = state_attr("sun.sun", "elevation") | float(0) %}{{ 4000 if elev >= 10 else (2202 if elev <= -10 else (2202 + 89.9 * (elev + 10)) | round | int) }}'
+  unit_of_measurement: K
+  state_class: measurement
+
 - id: sensor.meter_ac_energy
   name: Meter / AC Energy
   room: lounge

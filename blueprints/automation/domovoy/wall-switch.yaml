@@ -26,14 +26,6 @@ blueprint:
         entity:
           filter:
             - domain: light
-    adaptive_switch:
-      name: Adaptive lighting
-      default: ''
-      selector:
-        entity:
-          filter:
-            - domain: switch
-              integration: adaptive_lighting
     manual_flag:
       name: Manual flag
       description: >-
@@ -43,11 +35,25 @@ blueprint:
         entity:
           filter:
             - domain: input_boolean
+    color_temp:
+      name: Color temperature
+      description: >-
+        Sensor with the color temperature in K to turn the light on with
+      default: ''
+      selector:
+        entity:
+          filter:
+            - domain: sensor
 
 variables:
   light_group: !input light_group
-  adaptive_switch: !input adaptive_switch
   manual_flag: !input manual_flag
+  color_temp: !input color_temp
+  # Clamped to the group, as its lamps may not share the same range
+  color_temp_kelvin: >-
+    {{ [[states(color_temp) | int(0),
+         state_attr(light_group, 'min_color_temp_kelvin') | int(2202)] | max,
+        state_attr(light_group, 'max_color_temp_kelvin') | int(6535)] | min }}
 
 mode: single
 
@@ -77,35 +83,16 @@ actions:
             entity_id: !input light_group
             state: 'off'
         then:
-          - if:
-              - condition: template
-                value_template: "{{ adaptive_switch != '' }}"
-            then:
-              # Turn on instantly at Adaptive Lighting's current values
-              # (explicit properties bypass its intercept, so no extra
-              # transition), then hand control back so it keeps adapting
-              - action: light.turn_on
-                target:
-                  entity_id: !input light_group
-                data:
-                  brightness_pct: "{{ state_attr(adaptive_switch, 'brightness_pct') | int(100) }}"
-                  color_temp_kelvin: "{{ state_attr(adaptive_switch, 'color_temp_kelvin') | int(2700) }}"
-                  transition: 0
-              - action: adaptive_lighting.set_manual_control
-                data:
-                  entity_id: !input adaptive_switch
-                  lights:
-                    - !input light_group
-                  manual_control: false
-            else:
-              # No Adaptive Lighting: override night mode brightness
-              # remembered by bulbs from the previous cycle
-              - action: light.turn_on
-                target:
-                  entity_id: !input light_group
-                data:
-                  brightness: 255
-                  transition: 0
+          # Override the brightness the bulbs remember, otherwise the light
+          # comes back at night mode level. No transition key: it would make
+          # Zigbee2MQTT ramp instead of switching (the lamps still have a
+          # ~0.3s hardware soft-start that nothing can turn off)
+          - action: light.turn_on
+            target:
+              entity_id: !input light_group
+            data: >-
+              {{ { 'brightness': 255 } if color_temp == '' else
+                 { 'brightness': 255, 'color_temp_kelvin': color_temp_kelvin } }}
           - if:
               - condition: template
                 value_template: "{{ manual_flag != '' }}"
@@ -114,11 +101,11 @@ actions:
                 target:
                   entity_id: '{{ manual_flag }}'
         else:
+          # Without transition this is a plain Zigbee Off command; with one
+          # it becomes a dim-to-zero ramp
           - action: light.turn_off
             target:
               entity_id: !input light_group
-            data:
-              transition: 0
           - if:
               - condition: template
                 value_template: "{{ manual_flag != '' }}"
@@ -133,43 +120,19 @@ actions:
               {{ is_state(light_group, 'on') and
                  state_attr(light_group, 'brightness') | int(0) <= 2 }}
         then:
-          - if:
-              - condition: template
-                value_template: "{{ adaptive_switch != '' }}"
-            then:
-              # Leaving night mode with Adaptive Lighting: jump instantly to
-              # its current values (explicit properties bypass the intercept),
-              # then hand control back so it keeps adapting
-              - action: light.turn_on
-                target:
-                  entity_id: !input light_group
-                data:
-                  brightness_pct: "{{ state_attr(adaptive_switch, 'brightness_pct') | int(100) }}"
-                  color_temp_kelvin: "{{ state_attr(adaptive_switch, 'color_temp_kelvin') | int(2700) }}"
-                  transition: 0
-              - action: adaptive_lighting.set_manual_control
-                data:
-                  entity_id: !input adaptive_switch
-                  lights:
-                    - !input light_group
-                  manual_control: false
-            else:
-              # No Adaptive Lighting: leave night mode at full brightness
-              - action: light.turn_on
-                target:
-                  entity_id: !input light_group
-                data:
-                  brightness: 255
-                  transition: 0
+          # Leave night mode at full brightness
+          - action: light.turn_on
+            target:
+              entity_id: !input light_group
+            data:
+              brightness: 255
         else:
-          # Night mode: the explicit brightness disable Adaptive Lighting
           - action: light.turn_on
             target:
               entity_id: !input light_group
             data:
               brightness: 1
               color_temp_kelvin: "{{ state_attr(light_group, 'min_color_temp_kelvin') | int(2202) }}"
-              transition: 0
       - if:
           - condition: template
             value_template: "{{ manual_flag != '' }}"

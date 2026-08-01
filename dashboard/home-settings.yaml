@@ -43,8 +43,7 @@ views:
               action: none
             features_position: bottom
           - type: tile
-            entity: switch.adaptive_lighting_service_sleep_mode
-            name: Ночной режим
+            entity: input_boolean.holidays
             vertical: false
             tap_action:
               action: toggle

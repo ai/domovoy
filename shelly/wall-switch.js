@@ -1,29 +1,24 @@
 // Script for Shelly Gen4 relays (Shelly 1PM Mini or Shelly 2PM)
-// Fallback for the HA wall switch blueprint: HA sees the same button press
-// over WiFi (Shelly integration) and toggles the light group. The script
-// reads the first bulb state on press, waits, and reads it again.
-// If nothing changed (HA is down), it drives the bulbs directly.
+// Fallback for the HA wall switch blueprint: toggles the bulbs over Zigbee
+// when HA is unreachable and cannot have handled the press itself.
 
-let DEBUG = false // Print debug output to the script console
+let DEBUG = false
 
-// Z2M: Devices -> bulb -> Network address (e.g. 0x1A2B)
+// Z2M: Devices -> bulb -> Network address (e.g. 0x1A2B). Recheck after a
+// bulb rejoins, these addresses are not stable.
 let LIGHTS = [0xcd99, 0x2a4b]
 
-// Which Shelly input drives the light. 1PM Mini has only input:0. On 2PM the
-// other button controls the fan on its own relay (Output Type "Attached") and
-// stays outside the system, so this script listens to a single input.
+// For 2PM case which have multiple buttons.
 let INPUT = 'input:0'
 
-let HA_WAIT_MS = 600
+// IP, not mDNS: the name may not resolve while the network is the broken part.
+let HA_URL = 'https://192.168.50.180/'
+let HA_TIMEOUT = 1 // seconds
 
-// Back-to-back Zigbee.SendCommand calls make the radio drop frames, so
-// per-bulb sends are spaced with timers instead of chaining RPC callbacks
-// (which may never fire)
+// Back-to-back Zigbee.SendCommand calls make the radio drop frames
 let SEND_GAP_MS = 120
 
-// Shelly is limited of how many Zigbee.SendCommand can be in waiting
-let BUSY_MS = 1000
-let busy = 0
+let generation = 0
 
 function debug(message) {
   if (DEBUG) {
@@ -31,64 +26,68 @@ function debug(message) {
   }
 }
 
-function sendCmd(addr, cmd) {
+// Never retry: a lost answer looks like a lost command, but the bulb may have
+// toggled already and a second try would put it back
+function toggleBulb(addr) {
   Shelly.call(
     'Zigbee.SendCommand',
     {
       dst_addr: addr,
-      dst_ep: 1, // endpoint 1
+      dst_ep: 1,
       cluster: 6, // On/Off
-      cmd: cmd, // 0 off, 1 on, 2 toggle
-      timeout_ms: 1000 // ZCL answer response
+      cmd: 2, // toggle
+      timeout_ms: 1000
     },
     function (res, err, msg) {
       if (err) {
         print('ZCL err:', err, msg)
       } else {
-        debug('cmd ' + cmd + ' sent to ' + addr)
+        debug('toggled ' + addr)
       }
     }
   )
 }
 
-function sendToAll(cmd) {
+function toggleAll() {
   for (let i = 0; i < LIGHTS.length; i++) {
-    let delay = i * SEND_GAP_MS
-    let light = LIGHTS[i]
-    if (delay === 0) {
-      sendCmd(light, cmd)
+    if (i === 0) {
+      toggleBulb(LIGHTS[0])
     } else {
-      Timer.set(delay, false, function () {
-        sendCmd(light, cmd)
-      })
+      Timer.set(
+        i * SEND_GAP_MS,
+        false,
+        function (light) {
+          toggleBulb(light)
+        },
+        LIGHTS[i]
+      )
     }
   }
 }
 
-// Calls back with true/false for on/off, or null if the read failed
-function readFirstBulb(cb) {
+function isHaSocketConnected() {
+  let cfg = Shelly.getComponentConfig('ws')
+  if (!cfg || !cfg.enable || !cfg.server) {
+    return false
+  }
+  let status = Shelly.getComponentStatus('ws')
+  return status && status.connected ? true : false
+}
+
+function checkHaHttp(cb) {
   Shelly.call(
-    'Zigbee.ReadAttr',
-    {
-      dst_addr: LIGHTS[0],
-      dst_ep: 1,
-      cluster: 6, // On/Off
-      attr: 0, // OnOff state
-      timeout_ms: 600
-    },
-    function (res, err, msg) {
-      if (err || !res || !res.success) {
-        print('ZCL read err:', err, msg)
-        cb(null)
+    'HTTP.GET',
+    // HA's private CA is not on the device, so the certificate is not verified.
+    { url: HA_URL, timeout: HA_TIMEOUT, ssl_ca: '*' },
+    function (res, err) {
+      if (err || !res) {
+        cb(false)
       } else {
-        cb(res.value !== '00')
+        cb(res.code > 0)
       }
     }
   )
 }
-
-let longPressed = false
-let haWaitTimer = null
 
 Shelly.addEventHandler(function (e) {
   if (e.component !== INPUT) {
@@ -97,45 +96,32 @@ Shelly.addEventHandler(function (e) {
 
   debug('event: ' + e.info.event + ' on ' + e.component)
 
-  if (e.info.event === 'long_push') {
-    longPressed = true
-  } else if (e.info.event === 'btn_up') {
-    if (!longPressed) {
-      if (haWaitTimer !== null) {
-        // The pending check compares against a stale bulb state
-        Timer.clear(haWaitTimer)
-        haWaitTimer = null
-        debug('Cancelled previous HA wait')
-      }
-      if (busy > 2) {
-        debug('Busy, skipping press')
-        return
-      }
-      busy += 1
-      Timer.set(BUSY_MS, false, function () {
-        busy -= 1
-      })
-
-      readFirstBulb(function (before) {
-        if (before === null) {
-          debug('State read failed, leaving the press to HA')
+  // The blueprint triggers on single_push too, unlike btn_up which also fires
+  // for the halves of a double press
+  if (e.info.event === 'single_push') {
+    generation += 1
+    let myGen = generation
+    if (isHaSocketConnected()) {
+      debug('HA is connected, leaving the press to it')
+      return
+    } else {
+      checkHaHttp(function (alive) {
+        if (myGen !== generation) {
+          debug('Superseded by a newer press')
           return
         }
-        haWaitTimer = Timer.set(HA_WAIT_MS, false, function () {
-          haWaitTimer = null
-          readFirstBulb(function (after) {
-            if (after === null || after !== before) {
-              debug('HA handled the press')
-              return
-            }
-            debug('No reaction from HA, sending ' + (before ? 'off' : 'on'))
-            sendToAll(before ? 0 : 1)
-          })
-        })
+        if (alive) {
+          debug('HA answered, leaving the press to it')
+          return
+        }
+        debug('HA unreachable, toggling the light')
+        toggleAll()
       })
     }
-    longPressed = false
+  } else if (e.info.event !== 'btn_down' && e.info.event !== 'btn_up') {
+    // A long or multi press supersedes a single press still being checked
+    generation += 1
   }
 })
 
-print('Started: button press -> toggle light (HA fallback)')
+print('Started: single press -> switch light when HA is unreachable')

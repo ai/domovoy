@@ -9,7 +9,7 @@
 7. Enable `Enable update to stable version`.
 8. In `Settings` set name to something like `Wall Switch / ROOM`.
 9. Go to `Home` → `Output` → `Input/Output settings` and set the light channel Input Mode to `Button` and Output Type to `Detached`.
-10. In `Scripts` create new script with [`wall-switch.js`](../shelly/wall-switch.js). Replace `LIGHTS` with light IDs from step 2. Save and Run it. Return back to `Scripts` and enable `Run on startup`.
+10. In `Scripts` create new script with [`wall-switch.js`](../shelly/wall-switch.js). Replace `LIGHTS` with light IDs from step 2 and check `HA_URL`. Save and Run it. Return back to `Scripts` and enable `Run on startup`.
 11. In `Zigbee` click `Start pairing`.
 12. Open Zigbee2MQTT and press `Permit join`.
 13. Wait until you will see new wall switch. Set the same `Wall Switch / ROOM` name.

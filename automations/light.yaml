@@ -10,15 +10,6 @@
       color_temp: sensor.light_color_temp
       brightness: sensor.light_brightness
 
-- id: automation.vykliuchatel_sveta_v_spalne
-  alias: Выключатель света в спальне
-  room: bedroom
-  use_blueprint:
-    path: domovoy/wall-switch.yaml
-    input:
-      wall_switch: 99c1a100b8881fff10f026b7a073b75c
-      light_group: light.light_group_bedroom
-
 - id: automation.wall_switch_andrey
   alias: Выключатель света в кабинете Андрея
   room: andrey
@@ -31,6 +22,15 @@
     input:
       wall_switch: 2d30ab78a44cd462ac7d142927c6e6b5
       light_group: light.light_group_andrey
+
+- id: automation.wall_switch_bedroom
+  alias: Выключатель света в спальне
+  room: bedroom
+  use_blueprint:
+    path: domovoy/wall-switch.yaml
+    input:
+      wall_switch: 99c1a100b8881fff10f026b7a073b75c
+      light_group: light.light_group_bedroom
 
 - id: automation.wall_switch_kate
   alias: Выключатель света в кабинете Кати

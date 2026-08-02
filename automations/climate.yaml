@@ -133,6 +133,13 @@
       entity_id:
         - climate.ac_lounge
         - climate.ac_andrey
+      to:
+        - 'off'
+        - heat
+        - dry
+        - cool
+        - fan_only
+        - heat_cool
     - trigger: state
       entity_id:
         - timer.ac_lounge
@@ -150,13 +157,15 @@
           - climate: climate.ac_lounge
             toggle: input_boolean.ac_lounge
             timer: timer.ac_lounge
+            automation: automation.ac_lounge_toggle
           - climate: climate.ac_andrey
             toggle: input_boolean.ac_andrey
             timer: timer.ac_andrey
+            automation: automation.ac_andrey_toggle
         sequence:
           - choose:
               - conditions:
-                  - "{{ is_state(repeat.item.timer, 'active') }}"
+                  - "{{ is_state(repeat.item.timer, 'active') or state_attr(repeat.item.automation, 'current') | int(0) > 0 }}"
                 sequence: []
               - conditions:
                   - "{{ states(repeat.item.climate) in ['unavailable', 'unknown'] }}"

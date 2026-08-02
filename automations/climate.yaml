@@ -80,6 +80,34 @@
         entity_id: timer.ac_andrey
   mode: restart
 
+- id: automation.ac_lounge_on_arrival
+  alias: Включить кондиционер зала при возвращении домой
+  room: lounge
+  triggers:
+    - trigger: zone
+      entity_id:
+        - person.andrey
+        - person.kate
+      zone: zone.near_home
+      event: enter
+  conditions:
+    - condition: state
+      entity_id: input_boolean.stop
+      state: 'off'
+    - condition: state
+      entity_id: input_boolean.cooling
+      state: 'on'
+    - condition: state
+      entity_id: input_boolean.empty_home
+      state: 'on'
+    - condition: template
+      value_template: "{{ trigger.from_state.state == 'not_home' }}"
+  actions:
+    - action: input_boolean.turn_on
+      target:
+        entity_id: input_boolean.ac_lounge
+  mode: single
+
 - id: automation.ac_lounge_toggle
   alias: Тумблер кондиционера зала
   room: lounge

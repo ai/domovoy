@@ -7,6 +7,7 @@
       presence_sensor: binary_sensor.presence_toilet_presence
       light: light.light_group_toilet
       manual_flag: input_boolean.stop_toilet
+      disable_flag: input_boolean.empty_home
       color_temp: sensor.light_color_temp
       brightness: sensor.light_brightness
 

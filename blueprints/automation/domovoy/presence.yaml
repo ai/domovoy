@@ -41,6 +41,16 @@ blueprint:
         entity:
           filter:
             - domain: input_boolean
+    disable_flag:
+      name: Disable flag
+      description: >-
+        input_boolean that blocks the automation while it is on, for instance,
+        to ignore false detections in the empty home
+      default: ''
+      selector:
+        entity:
+          filter:
+            - domain: input_boolean
     color_temp:
       name: Color temperature
       description: >-
@@ -62,6 +72,7 @@ blueprint:
 
 variables:
   light_entity: !input light
+  disable_flag: !input disable_flag
   color_temp: !input color_temp
   brightness: !input brightness
 
@@ -83,6 +94,8 @@ conditions:
   - condition: state
     entity_id: !input manual_flag
     state: 'off'
+  - condition: template
+    value_template: "{{ disable_flag == '' or is_state(disable_flag, 'off') }}"
 
 actions:
   - variables:

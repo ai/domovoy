@@ -404,7 +404,7 @@
       state: 'off'
     - condition: numeric_state
       entity_id: sensor.plug_washing_machine_power
-      above: 8
+      above: 30
   actions:
     - wait_for_trigger:
         - trigger: numeric_state

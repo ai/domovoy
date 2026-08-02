@@ -4,21 +4,15 @@
 
 let DEBUG = false
 
-// Z2M: Devices -> bulb -> Network address (e.g. 0x1A2B). Recheck after a
-// bulb rejoins, these addresses are not stable.
-let LIGHTS = [0xcd99, 0x2a4b]
+// Z2M: Devices -> bulb -> Network address (e.g. 0x1A2B). A bulb that keeps
+// genOnOff outside endpoint 1 (bulb -> Clusters) needs [address, endpoint].
+let LIGHTS = [0xcd99, [0x2a4b, 11]]
 
 // For 2PM case which have multiple buttons.
 let INPUT = 'input:0'
 
-// IP, not mDNS: the name may not resolve while the network is the broken part.
-let HA_URL = 'https://192.168.50.180/'
-let HA_TIMEOUT = 1 // seconds
-
 // Back-to-back Zigbee.SendCommand calls make the radio drop frames
 let SEND_GAP_MS = 120
-
-let generation = 0
 
 function debug(message) {
   if (DEBUG) {
@@ -28,12 +22,18 @@ function debug(message) {
 
 // Never retry: a lost answer looks like a lost command, but the bulb may have
 // toggled already and a second try would put it back
-function toggleBulb(addr) {
+function toggleBulb(light) {
+  let addr = light
+  let endpoint = 1
+  if (typeof light !== 'number') {
+    addr = light[0]
+    endpoint = light[1]
+  }
   Shelly.call(
     'Zigbee.SendCommand',
     {
       dst_addr: addr,
-      dst_ep: 1,
+      dst_ep: endpoint,
       cluster: 6, // On/Off
       cmd: 2, // toggle
       timeout_ms: 1000
@@ -74,21 +74,6 @@ function isHaSocketConnected() {
   return status && status.connected ? true : false
 }
 
-function checkHaHttp(cb) {
-  Shelly.call(
-    'HTTP.GET',
-    // HA's private CA is not on the device, so the certificate is not verified.
-    { url: HA_URL, timeout: HA_TIMEOUT, ssl_ca: '*' },
-    function (res, err) {
-      if (err || !res) {
-        cb(false)
-      } else {
-        cb(res.code > 0)
-      }
-    }
-  )
-}
-
 Shelly.addEventHandler(function (e) {
   if (e.component !== INPUT) {
     return
@@ -99,28 +84,13 @@ Shelly.addEventHandler(function (e) {
   // The blueprint triggers on single_push too, unlike btn_up which also fires
   // for the halves of a double press
   if (e.info.event === 'single_push') {
-    generation += 1
-    let myGen = generation
     if (isHaSocketConnected()) {
       debug('HA is connected, leaving the press to it')
       return
     } else {
-      checkHaHttp(function (alive) {
-        if (myGen !== generation) {
-          debug('Superseded by a newer press')
-          return
-        }
-        if (alive) {
-          debug('HA answered, leaving the press to it')
-          return
-        }
-        debug('HA unreachable, toggling the light')
-        toggleAll()
-      })
+      debug('HA unreachable, toggling the light')
+      toggleAll()
     }
-  } else if (e.info.event !== 'btn_down' && e.info.event !== 'btn_up') {
-    // A long or multi press supersedes a single press still being checked
-    generation += 1
   }
 })
 

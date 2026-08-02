@@ -29,9 +29,15 @@
   unit_of_measurement: €/min
   state_class: measurement
 
+- id: sensor.light_brightness
+  name: Light brightness
+  state: "{% set start = (state_attr('input_datetime.night_start', 'timestamp') | int(0) + 3600) % 86400 %}{% set end = state_attr('input_datetime.night_end', 'timestamp') | int(0) %}{% set now_s = now().hour * 3600 + now().minute * 60 + now().second %}{{ 5 if ((now_s >= start or now_s < end) if start > end else (start <= now_s < end)) else 100 }}"
+  unit_of_measurement: '%'
+  state_class: measurement
+
 - id: sensor.light_color_temp
   name: Light color temp
-  state: '{% set elev = state_attr("sun.sun", "elevation") | float(0) %}{{ 4000 if elev >= 10 else (2202 if elev <= -10 else (2202 + 89.9 * (elev + 10)) | round | int) }}'
+  state: '{% set elev = state_attr("sun.sun", "elevation") | float(0) %}{{ 4000 if elev >= 10 else (2380 if elev <= -10 else (2380 + 81 * (elev + 10)) | round | int) }}'
   unit_of_measurement: K
   state_class: measurement
 

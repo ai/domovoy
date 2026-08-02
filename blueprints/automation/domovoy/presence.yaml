@@ -19,9 +19,9 @@ blueprint:
     light:
       name: Light
       selector:
-        target:
-          entity:
-            domain: light
+        entity:
+          filter:
+            - domain: light
     before_on:
       name: Extra action on turn on
       default: []
@@ -50,9 +50,20 @@ blueprint:
         entity:
           filter:
             - domain: sensor
+    brightness:
+      name: Brightness
+      description: >-
+        Sensor with the brightness in % to turn the light on with
+      default: ''
+      selector:
+        entity:
+          filter:
+            - domain: sensor
 
 variables:
+  light_entity: !input light
   color_temp: !input color_temp
+  brightness: !input brightness
 
 mode: restart
 
@@ -74,12 +85,18 @@ conditions:
     state: 'off'
 
 actions:
+  - variables:
+      turning_on: "{{ is_state(light_entity, 'off') }}"
   - sequence: !input before_on
   - action: light.turn_on
-    target: !input light
+    target:
+      entity_id: !input light
     data: >-
-      {{ {} if color_temp == '' else
-         { 'color_temp_kelvin': states(color_temp) | int(2700) } }}
+      {{ {} if not turning_on else
+         (({} if color_temp == '' else
+           { 'color_temp_kelvin': states(color_temp) | int(2700) })
+          | combine({} if brightness == '' else
+                    { 'brightness_pct': states(brightness) | int(100) })) }}
   - wait_for_trigger:
       trigger: state
       entity_id: !input presence_sensor
@@ -94,5 +111,6 @@ actions:
         state: 'off'
     then:
       - action: light.turn_off
-        target: !input light
+        target:
+          entity_id: !input light
       - sequence: !input after_off

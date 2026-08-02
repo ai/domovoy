@@ -5,10 +5,10 @@
     path: domovoy/presence.yaml
     input:
       presence_sensor: binary_sensor.presence_toilet_presence
-      light:
-        entity_id: light.light_group_toilet
+      light: light.light_group_toilet
       manual_flag: input_boolean.stop_toilet
       color_temp: sensor.light_color_temp
+      brightness: sensor.light_brightness
 
 - id: automation.vykliuchatel_sveta_v_spalne
   alias: Выключатель света в спальне

@@ -9,15 +9,11 @@
 7. Enable `Enable update to stable version`.
 8. In `Settings` set name to something like `Wall Switch / ROOM`.
 9. Go to `Home` → `Output` → `Input/Output settings` and set the light channel Input Mode to `Button` and Output Type to `Detached`.
-10. Go to `Settings` → `Connectivity` → `Outbound WebSocket`, enable it, set the server to `wss://HA_IP/api/shelly/ws` and turn the certificate verification off (Home Assistant uses a private CA that the switch does not have). Reboot the switch, the setting needs it. The same over RPC:
+10. Go to `Settings` → `Connectivity` → `Outbound WebSocket`, enable it, set the server to `wss://HA_IP/api/shelly/ws` and turn the certificate verification off. Reboot the switch, the setting needs it. The same over RPC:
 
     ```sh
-    curl -X POST http://SWITCH_IP/rpc -H 'Content-Type: application/json' -d \
-      '{"id":1,"method":"WS.SetConfig","params":{"config":{"enable":true,"server":"wss://HA_IP/api/shelly/ws","ssl_ca":"*"}}}'
     curl http://SWITCH_IP/rpc/Shelly.Reboot
     ```
-
-    Check it with `curl http://SWITCH_IP/rpc/WS.GetStatus`, it should answer `{"connected":true}`.
 
 11. In `Scripts` create new script with [`wall-switch.js`](../shelly/wall-switch.js). Replace `LIGHTS` with light IDs from step 2 and check `HA_URL`. Save and Run it. Return back to `Scripts` and enable `Run on startup`.
 12. In `Zigbee` click `Start pairing`.

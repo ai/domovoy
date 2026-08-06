@@ -59,6 +59,29 @@
       wall_switch: e97d66acdb3f1b0b4289d5d3afd14b66
       light_group: light.light_group_kitchen
 
+- id: automation.wall_switch_lounge_real
+  alias: Настоящий выключатель света в зале
+  room: lounge
+  use_blueprint:
+    path: domovoy/wall-switch.yaml
+    input:
+      wall_switch: af88ab836a83c91e4db5e0c13d5290d1
+      light_group: light.light_group_lounge
+      before_on:
+        - action: light.turn_on
+          metadata: {}
+          target:
+            device_id: e99ab7283456288ab6c9d50cbf84d6b5
+          data:
+            brightness_pct: 75
+            color_temp_kelvin: 2513
+      after_off:
+        - action: light.turn_off
+          metadata: {}
+          target:
+            entity_id: light.light_chandelier
+          data: {}
+
 - id: automation.wall_switch_toilet
   alias: Выключатель в туалете
   room: toilet

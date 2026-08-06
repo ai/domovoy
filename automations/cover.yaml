@@ -19,6 +19,9 @@
     - condition: state
       entity_id: input_boolean.stop
       state: 'off'
+    - condition: state
+      entity_id: input_boolean.cat_alone
+      state: 'off'
   actions:
     - choose:
         - conditions:
@@ -91,6 +94,9 @@
     - condition: state
       entity_id: input_boolean.stop
       state: 'off'
+    - condition: state
+      entity_id: input_boolean.cat_alone
+      state: 'off'
   actions:
     - choose:
         - conditions:
@@ -150,6 +156,9 @@
   conditions:
     - condition: state
       entity_id: input_boolean.stop
+      state: 'off'
+    - condition: state
+      entity_id: input_boolean.cat_alone
       state: 'off'
   actions:
     - choose:
@@ -242,6 +251,9 @@
   conditions:
     - condition: state
       entity_id: input_boolean.stop
+      state: 'off'
+    - condition: state
+      entity_id: input_boolean.cat_alone
       state: 'off'
   actions:
     - action: cover.open_cover

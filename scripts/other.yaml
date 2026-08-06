@@ -33,6 +33,9 @@
           - light.light_group_toilet
           - light.light_group_kitchen
           - light.light_group_bedroom
+          - light.light_group_lounge
+          - light.light_group_children
+          - light.light_chandelier
       data:
         transition: 0
     - action: switch.turn_off

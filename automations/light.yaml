@@ -21,7 +21,7 @@
   use_blueprint:
     path: domovoy/wall-switch.yaml
     input:
-      wall_switch: 2d30ab78a44cd462ac7d142927c6e6b5
+      wall_switch: 0c1bea69e1a9aaea0f33bc6636979be4
       light_group: light.light_group_andrey
 
 - id: automation.wall_switch_bedroom
@@ -32,6 +32,15 @@
     input:
       wall_switch: 99c1a100b8881fff10f026b7a073b75c
       light_group: light.light_group_bedroom
+
+- id: automation.wall_switch_children
+  alias: Выключатель света в детской
+  room: children
+  use_blueprint:
+    path: domovoy/wall-switch.yaml
+    input:
+      wall_switch: ebf2a7b410a6ad849a215ae01515451a
+      light_group: light.light_group_children
 
 - id: automation.wall_switch_kate
   alias: Выключатель света в кабинете Кати
@@ -58,6 +67,33 @@
     input:
       wall_switch: e97d66acdb3f1b0b4289d5d3afd14b66
       light_group: light.light_group_kitchen
+
+- id: automation.wall_switch_lounge_extra
+  alias: Дополнительный выключатель света в зале
+  room: lounge
+  conditions:
+    - condition: state
+      entity_id: input_boolean.stop
+      state: 'off'
+  use_blueprint:
+    input:
+      after_off:
+        - action: light.turn_off
+          data: {}
+          metadata: {}
+          target:
+            entity_id: light.light_chandelier
+      before_on:
+        - action: light.turn_on
+          data:
+            brightness_pct: 75
+            color_temp_kelvin: 2513
+          metadata: {}
+          target:
+            device_id: e99ab7283456288ab6c9d50cbf84d6b5
+      light_group: light.light_group_lounge
+      wall_switch: 1ea952a14899eaa04451a3126f8b3196
+    path: domovoy/wall-switch.yaml
 
 - id: automation.wall_switch_lounge_real
   alias: Настоящий выключатель света в зале

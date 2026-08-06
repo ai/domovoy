@@ -51,3 +51,5 @@
     input:
       target_switch: switch.plug_washing_machine
       cycles: 12
+      off_time: 1
+      on_time: 1

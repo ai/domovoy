@@ -3,9 +3,10 @@
   room: andrey
   triggers:
     - trigger: numeric_state
-      entity_id: sun.sun
+      entity_id:
+        - sun.sun
       attribute: azimuth
-      above: 249
+      above: 245
       id: sun
     - trigger: state
       entity_id: input_boolean.empty_home

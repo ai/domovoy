@@ -39,6 +39,10 @@ views:
                 name:
                   type: area
                 color: pink
+              - entity: sensor.tempeture_entrance_temperature
+                name:
+                  type: area
+                color: deep-orange
             title: Температура
             days_to_show: 1
             period: 5minute
@@ -128,6 +132,10 @@ views:
                 name:
                   type: area
                 color: pink
+              - entity: sensor.tempeture_entrance_humidity
+                name:
+                  type: area
+                color: deep-orange
             title: Влажность
             days_to_show: 1
             period: 5minute

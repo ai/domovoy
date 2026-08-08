@@ -496,6 +496,11 @@ views:
           - type: heading
             heading: Прихожая
             heading_style: title
+            badges:
+              - type: entity
+                show_state: true
+                show_icon: true
+                entity: sensor.tempeture_entrance_temperature
           - type: tile
             entity: binary_sensor.door_main
             name: Дверь

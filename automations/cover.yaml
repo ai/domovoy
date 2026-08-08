@@ -16,6 +16,12 @@
       entity_id: input_boolean.empty_home
       to: 'on'
       id: leave
+    - trigger: numeric_state
+      entity_id:
+        - sun.sun
+      attribute: elevation
+      below: 13
+      id: low_sun
   conditions:
     - condition: state
       entity_id: input_boolean.stop
@@ -71,6 +77,13 @@
         - conditions:
             - condition: trigger
               id: home
+          sequence:
+            - action: cover.open_cover
+              target:
+                entity_id: cover.shutter_andrey
+        - conditions:
+            - condition: trigger
+              id: low_sun
           sequence:
             - action: cover.open_cover
               target:
@@ -154,6 +167,12 @@
       entity_id: input_boolean.empty_home
       to: 'on'
       id: leave
+    - trigger: numeric_state
+      entity_id:
+        - sun.sun
+      attribute: elevation
+      below: 17
+      id: low_sun
   conditions:
     - condition: state
       entity_id: input_boolean.stop
@@ -239,27 +258,11 @@
             - action: cover.open_cover
               target:
                 entity_id: cover.shutter_lounge
-  mode: single
-
-- id: automation.open_shutter_on_low_sun
-  alias: Открыть шторы при низком солнце
-  triggers:
-    - trigger: numeric_state
-      entity_id:
-        - sun.sun
-      attribute: elevation
-      below: 13
-  conditions:
-    - condition: state
-      entity_id: input_boolean.stop
-      state: 'off'
-    - condition: state
-      entity_id: input_boolean.cat_alone
-      state: 'off'
-  actions:
-    - action: cover.open_cover
-      target:
-        entity_id:
-          - cover.shutter_andrey
-          - cover.shutter_lounge
+        - conditions:
+            - condition: trigger
+              id: low_sun
+          sequence:
+            - action: cover.open_cover
+              target:
+                entity_id: cover.shutter_lounge
   mode: single

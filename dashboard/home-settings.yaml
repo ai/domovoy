@@ -53,7 +53,7 @@ views:
       - type: grid
         cards:
           - type: heading
-            heading: Питание
+            heading: Питание света
             heading_style: title
           - type: tile
             entity: switch.wall_switch_andrey
@@ -61,18 +61,6 @@ views:
               type: area
             icon: mdi:penguin
             show_entity_picture: false
-            hide_state: false
-            vertical: false
-            tap_action:
-              action: toggle
-            icon_tap_action:
-              action: none
-            features_position: bottom
-          - type: tile
-            entity: switch.wall_switch_kitchen_worktop
-            name:
-              type: area
-            icon: mdi:fridge
             hide_state: false
             vertical: false
             tap_action:
@@ -92,10 +80,10 @@ views:
               action: none
             features_position: bottom
           - type: tile
-            entity: switch.wall_switch_toilet_l1
-            name:
-              type: area
-            icon: mdi:ideogram-cjk
+            entity: switch.wall_switch_kitchen_worktop
+            name: Фартук кухни
+            icon: mdi:countertop
+            hide_state: false
             vertical: false
             tap_action:
               action: toggle
@@ -103,19 +91,9 @@ views:
               action: none
             features_position: bottom
           - type: tile
-            entity: switch.plug_dishwasher
-            name: Посудомойка
-            icon: mdi:dishwasher
-            vertical: false
-            tap_action:
-              action: toggle
-            icon_tap_action:
-              action: none
-            features_position: bottom
-          - type: tile
-            entity: switch.plug_washing_machine
-            name: Стиральная машина
-            icon: mdi:washing-machine
+            entity: switch.wall_switch_kitchen_ceiling
+            name: Потолок кухни
+            icon: mdi:fridge
             vertical: false
             tap_action:
               action: toggle
@@ -127,6 +105,17 @@ views:
             name:
               type: area
             icon: mdi:bed
+            vertical: false
+            tap_action:
+              action: toggle
+            icon_tap_action:
+              action: none
+            features_position: bottom
+          - type: tile
+            entity: switch.wall_switch_toilet_l1
+            name:
+              type: area
+            icon: mdi:ideogram-cjk
             vertical: false
             tap_action:
               action: toggle
@@ -149,6 +138,17 @@ views:
             name:
               type: area
             icon: mdi:rabbit-variant
+            vertical: false
+            tap_action:
+              action: toggle
+            icon_tap_action:
+              action: none
+            features_position: bottom
+          - type: tile
+            entity: switch.wall_switch_entrance
+            name:
+              type: area
+            icon: mdi:door-closed
             vertical: false
             tap_action:
               action: toggle
@@ -230,6 +230,61 @@ views:
               type: area
             icon: mdi:ideogram-cjk
             vertical: false
+            features_position: bottom
+      - type: grid
+        cards:
+          - type: heading
+            heading: Питание приборов
+            heading_style: title
+          - type: tile
+            entity: switch.plug_dishwasher
+            name: Посудомойка
+            icon: mdi:dishwasher
+            vertical: false
+            tap_action:
+              action: toggle
+            icon_tap_action:
+              action: none
+            features_position: bottom
+          - type: tile
+            entity: switch.plug_washing_machine
+            name: Стиральная машина
+            icon: mdi:washing-machine
+            vertical: false
+            tap_action:
+              action: toggle
+            icon_tap_action:
+              action: none
+            features_position: bottom
+          - type: tile
+            entity: switch.plug_kettle
+            name: Чайник
+            icon: mdi:kettle
+            vertical: false
+            tap_action:
+              action: toggle
+            icon_tap_action:
+              action: none
+            features_position: bottom
+          - type: tile
+            entity: switch.plug_grill
+            name: Аэрориль
+            icon: mdi:heat-wave
+            vertical: false
+            tap_action:
+              action: toggle
+            icon_tap_action:
+              action: none
+            features_position: bottom
+          - type: tile
+            entity: switch.plug_microwave
+            name: Микроволновка
+            icon: mdi:microwave
+            vertical: false
+            tap_action:
+              action: toggle
+            icon_tap_action:
+              action: none
             features_position: bottom
     max_columns: 3
     cards: []

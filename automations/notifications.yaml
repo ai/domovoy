@@ -387,6 +387,70 @@
         message: Протечка воды
   mode: single
 
+- id: automation.vacuum_finished
+  alias: Пылесос закончил уборку
+  triggers:
+    - trigger: state
+      entity_id: vacuum.vacuum_q7_max
+      to: docked
+      not_from:
+        - unknown
+        - unavailable
+  conditions:
+    - condition: state
+      entity_id: input_boolean.stop
+      state: 'off'
+    - condition: numeric_state
+      entity_id: sensor.vacuum_q7_max_cleaning_time
+      above: 1
+  actions:
+    - action: notify.mobile_app_phone_bedoll
+      data:
+        title: Пылесос
+        message: "Уборка закончена: {{ states('sensor.vacuum_q7_max_cleaning_area') | float(0) | round }} м² за {{ states('sensor.vacuum_q7_max_cleaning_time') | float(0) | round }} мин"
+  mode: single
+
+- id: automation.vacuum_stuck
+  alias: Пылесос застрял
+  triggers:
+    - trigger: state
+      entity_id: sensor.vacuum_q7_max_vacuum_error
+      not_to:
+        - none
+        - unknown
+        - unavailable
+      id: error
+    - trigger: state
+      entity_id: sensor.vacuum_q7_max_vacuum_error
+      to: none
+      id: fixed
+  conditions:
+    - condition: state
+      entity_id: input_boolean.stop
+      state: 'off'
+  actions:
+    - choose:
+        - conditions:
+            - condition: trigger
+              id: error
+          sequence:
+            - action: notify.mobile_app_phone_bedoll
+              data:
+                title: Пылесос
+                message: "{% set rooms = {'Bedroom': 'спальне', 'Toilet': 'туалете', 'Lounge': 'гостиной', 'Children': 'детской', 'Entrance': 'прихожей', 'Kitchen': 'кухне', 'Kate': 'кабинете Кати', 'Andrey': 'кабинете Андрея', 'Bathroom': 'ванной'} %}{% set room = rooms.get(states('sensor.vacuum_q7_max_current_room')) %}{{ 'sensor.vacuum_q7_max_vacuum_error' | state_translated }}{% if room %} — в {{ room }}{% endif %}"
+                data:
+                  tag: vacuum_stuck
+        - conditions:
+            - condition: trigger
+              id: fixed
+          sequence:
+            - action: notify.mobile_app_phone_bedoll
+              data:
+                message: clear_notification
+                data:
+                  tag: vacuum_stuck
+  mode: single
+
 - id: automation.washing_machine_finished
   alias: Стирка закончилась
   room: bathroom

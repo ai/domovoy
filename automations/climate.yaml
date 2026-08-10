@@ -80,50 +80,6 @@
         entity_id: timer.ac_andrey
   mode: restart
 
-- id: automation.ac_lounge_night_max_fan
-  alias: Максимальный обдув кондиционера зала ночью
-  room: lounge
-  triggers:
-    - trigger: time
-      at: '00:00:00'
-      id: max
-    - trigger: time
-      at: '04:00:00'
-      id: restore
-  conditions:
-    - condition: state
-      entity_id: input_boolean.stop
-      state: 'off'
-    - condition: state
-      entity_id: input_boolean.cooling
-      state: 'on'
-  actions:
-    - choose:
-        - conditions:
-            - condition: trigger
-              id: max
-            - condition: state
-              entity_id: climate.ac_lounge
-              state: cool
-          sequence:
-            - action: climate.set_fan_mode
-              target:
-                entity_id: climate.ac_lounge
-              data:
-                fan_mode: '5'
-        - conditions:
-            - condition: trigger
-              id: restore
-            - condition: template
-              value_template: "{{ state_attr('climate.ac_lounge', 'fan_mode') == '5' }}"
-          sequence:
-            - action: climate.set_fan_mode
-              target:
-                entity_id: climate.ac_lounge
-              data:
-                fan_mode: auto
-  mode: single
-
 - id: automation.ac_lounge_on_arrival
   alias: Включить кондиционер зала при возвращении домой
   room: lounge

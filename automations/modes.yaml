@@ -37,6 +37,15 @@
               target:
                 entity_id:
                   - climate.ac_lounge
+            - action: switch.turn_off
+              target:
+                entity_id:
+                  - switch.plug_andrey_desk
+                  - switch.plug_dishwasher
+                  - switch.plug_grill
+                  - switch.plug_kettle
+                  - switch.plug_microwave
+                  - switch.plug_washing_machine
         - conditions:
             - condition: trigger
               id: 'off'
@@ -51,6 +60,15 @@
                 entity_id: cover.shutter_bedroom
               data:
                 position: 10
+            - action: switch.turn_on
+              target:
+                entity_id:
+                  - switch.plug_andrey_desk
+                  - switch.plug_dishwasher
+                  - switch.plug_grill
+                  - switch.plug_kettle
+                  - switch.plug_microwave
+                  - switch.plug_washing_machine
   mode: single
 
 - id: automation.empty_home_button

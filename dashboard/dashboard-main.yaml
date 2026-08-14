@@ -501,6 +501,15 @@ views:
                 show_state: true
                 show_icon: true
                 entity: sensor.tempeture_entrance_temperature
+            tap_action:
+              action: navigate
+              navigation_path: /dashboard-main/entrance
+          - type: tile
+            entity: light.light_entrance
+            name: Свет
+            icon: mdi:wall-sconce-flat
+            vertical: false
+            features_position: bottom
           - type: tile
             entity: binary_sensor.door_main
             name: Дверь
@@ -726,35 +735,6 @@ views:
       - type: grid
         cards:
           - type: heading
-            heading_style: title
-            heading: Статистика
-          - type: tile
-            entity: sensor.air_bedroom_temperature
-            name:
-              type: entity
-            vertical: false
-            features:
-              - type: trend-graph
-            features_position: bottom
-          - type: tile
-            entity: sensor.air_bedroom_co2
-            name:
-              type: entity
-            vertical: false
-            features:
-              - type: trend-graph
-            features_position: bottom
-          - type: tile
-            entity: sensor.air_bedroom_pm2_5
-            name:
-              type: entity
-            vertical: false
-            features:
-              - type: trend-graph
-            features_position: bottom
-      - type: grid
-        cards:
-          - type: heading
             icon: ''
             heading: Свет
             heading_style: title
@@ -799,6 +779,49 @@ views:
             features:
               - type: cover-position
             features_position: bottom
+      - type: grid
+        cards:
+          - type: heading
+            heading_style: title
+            heading: Статистика
+          - type: statistics-graph
+            entities:
+              - sensor.air_bedroom_temperature
+            title: Температура
+            days_to_show: 1
+            period: hour
+            chart_type: line
+            stat_types:
+              - mean
+            hide_legend: true
+            expand_legend: false
+            min_y_axis: 15
+            max_y_axis: 35
+          - type: statistics-graph
+            entities:
+              - sensor.air_bedroom_co2
+            title: CO²
+            days_to_show: 1
+            period: hour
+            chart_type: line
+            stat_types:
+              - mean
+            hide_legend: true
+            expand_legend: false
+            min_y_axis: 250
+            max_y_axis: 1500
+          - type: statistics-graph
+            entities:
+              - sensor.air_bedroom_pm2_5
+            title: Загрязнение воздуха
+            days_to_show: 1
+            period: hour
+            chart_type: line
+            stat_types:
+              - mean
+            hide_legend: true
+            min_y_axis: 0
+            max_y_axis: 50
     cards: []
     badges: []
   - type: sections
@@ -807,27 +830,6 @@ views:
     path: andrey
     title: Кабинет Андрея
     sections:
-      - type: grid
-        cards:
-          - type: heading
-            heading: Статистика
-            heading_style: title
-          - type: tile
-            entity: sensor.temperature_andrey_temperature
-            name:
-              type: entity
-            vertical: false
-            features:
-              - type: trend-graph
-            features_position: bottom
-          - type: tile
-            entity: sensor.presence_apollo_msr_2_co2
-            name:
-              type: entity
-            vertical: false
-            features:
-              - type: trend-graph
-            features_position: bottom
       - type: grid
         cards:
           - type: heading
@@ -911,6 +913,34 @@ views:
             icon: mdi:motion-sensor
             vertical: false
             features_position: bottom
+      - type: grid
+        cards:
+          - type: heading
+            heading: Статистика
+            heading_style: title
+          - type: statistics-graph
+            entities:
+              - sensor.temperature_andrey_temperature
+            title: Температура
+            days_to_show: 1
+            period: hour
+            chart_type: line
+            stat_types:
+              - mean
+            hide_legend: true
+            min_y_axis: 15
+            max_y_axis: 35
+          - type: statistics-graph
+            entities:
+              - sensor.presence_apollo_msr_2_co2
+            title: CO²
+            days_to_show: 1
+            period: hour
+            chart_type: line
+            stat_types:
+              - mean
+            min_y_axis: 250
+            max_y_axis: 1500
     cards: []
   - type: sections
     max_columns: 4
@@ -918,27 +948,6 @@ views:
     path: katya
     subview: true
     sections:
-      - type: grid
-        cards:
-          - type: heading
-            heading: Статистика
-            heading_style: title
-          - type: tile
-            entity: sensor.air_kate_temperature
-            name:
-              type: entity
-            vertical: false
-            features:
-              - type: trend-graph
-            features_position: bottom
-          - type: tile
-            entity: sensor.air_kate_co2
-            name:
-              type: entity
-            vertical: false
-            features:
-              - type: trend-graph
-            features_position: bottom
       - type: grid
         cards:
           - type: heading
@@ -974,25 +983,40 @@ views:
               - type: light-brightness
               - type: light-color-temp
             features_position: bottom
+      - type: grid
+        cards:
+          - type: heading
+            heading: Статистика
+            heading_style: title
+          - type: statistics-graph
+            entities:
+              - sensor.air_kate_temperature
+            title: Температура
+            days_to_show: 1
+            period: hour
+            chart_type: line
+            stat_types:
+              - mean
+            min_y_axis: 15
+            max_y_axis: 35
+          - type: statistics-graph
+            entities:
+              - sensor.air_kate_co2
+            title: CO²
+            days_to_show: 1
+            period: hour
+            chart_type: line
+            stat_types:
+              - mean
+            hide_legend: true
+            min_y_axis: 250
+            max_y_axis: 1500
   - type: sections
     max_columns: 4
     title: Детская
     path: children
     subview: true
     sections:
-      - type: grid
-        cards:
-          - type: heading
-            heading_style: title
-            heading: Статистика
-          - type: tile
-            entity: sensor.temperature_children_temperature
-            name:
-              type: entity
-            vertical: false
-            features:
-              - type: trend-graph
-            features_position: bottom
       - type: grid
         cards:
           - type: heading
@@ -1048,25 +1072,29 @@ views:
               - type: light-brightness
               - type: light-color-temp
             features_position: bottom
+      - type: grid
+        cards:
+          - type: heading
+            heading_style: title
+            heading: Статистика
+          - type: statistics-graph
+            entities:
+              - sensor.temperature_children_temperature
+            title: Температура
+            days_to_show: 1
+            period: hour
+            chart_type: line
+            stat_types:
+              - mean
+            hide_legend: true
+            min_y_axis: 15
+            max_y_axis: 35
   - type: sections
     max_columns: 3
     title: Кухня
     path: kitchen
     subview: true
     sections:
-      - type: grid
-        cards:
-          - type: heading
-            heading: Статистика
-            heading_style: title
-          - type: tile
-            entity: sensor.temperature_kitchen_temperature
-            name:
-              type: entity
-            vertical: false
-            features:
-              - type: trend-graph
-            features_position: bottom
       - type: grid
         cards:
           - type: heading
@@ -1113,6 +1141,23 @@ views:
             features:
               - type: toggle
             features_position: bottom
+      - type: grid
+        cards:
+          - type: heading
+            heading: Статистика
+            heading_style: title
+          - type: statistics-graph
+            entities:
+              - sensor.temperature_kitchen_temperature
+            title: Температура
+            days_to_show: 1
+            period: hour
+            chart_type: line
+            stat_types:
+              - mean
+            hide_legend: true
+            min_y_axis: 15
+            max_y_axis: 35
     cards: []
   - type: sections
     max_columns: 4
@@ -1185,19 +1230,6 @@ views:
       - type: grid
         cards:
           - type: heading
-            heading: Статистика
-            heading_style: title
-          - type: tile
-            entity: sensor.temperature_lounge_temperature
-            name:
-              type: entity
-            vertical: false
-            features:
-              - type: trend-graph
-            features_position: bottom
-      - type: grid
-        cards:
-          - type: heading
             icon: ''
             heading: Свет
             heading_style: title
@@ -1245,6 +1277,23 @@ views:
             features:
               - type: toggle
             features_position: bottom
+      - type: grid
+        cards:
+          - type: heading
+            heading: Статистика
+            heading_style: title
+          - type: statistics-graph
+            entities:
+              - sensor.temperature_lounge_temperature
+            title: Температура
+            days_to_show: 1
+            period: hour
+            chart_type: line
+            stat_types:
+              - mean
+            hide_legend: true
+            min_y_axis: 15
+            max_y_axis: 35
     cards: []
   - type: sections
     max_columns: 3
@@ -1252,28 +1301,6 @@ views:
     path: bathroom
     subview: true
     sections:
-      - type: grid
-        cards:
-          - type: heading
-            icon: ''
-            heading: Статистика
-            heading_style: title
-          - type: tile
-            entity: sensor.air_bathroom_temperature
-            name:
-              type: entity
-            vertical: false
-            features:
-              - type: trend-graph
-            features_position: bottom
-          - type: tile
-            entity: sensor.air_bathroom_humidity
-            name:
-              type: entity
-            vertical: false
-            features:
-              - type: trend-graph
-            features_position: bottom
       - type: grid
         cards:
           - type: heading
@@ -1309,4 +1336,84 @@ views:
             features:
               - type: toggle
             features_position: bottom
+      - type: grid
+        cards:
+          - type: heading
+            icon: ''
+            heading: Статистика
+            heading_style: title
+          - type: statistics-graph
+            entities:
+              - sensor.air_bathroom_temperature
+            title: Температура
+            days_to_show: 1
+            period: hour
+            chart_type: line
+            stat_types:
+              - mean
+            hide_legend: true
+            min_y_axis: 15
+            max_y_axis: 35
+          - type: statistics-graph
+            entities:
+              - entity: sensor.air_bathroom_humidity
+                name: Ванная
+                color: blue
+              - entity: sensor.home_background_humidity
+                name: Фон квартиры
+                color: grey
+            title: Влажность
+            days_to_show: 1
+            period: hour
+            chart_type: line
+            stat_types:
+              - mean
+            min_y_axis: 0
+            max_y_axis: 100
+          - type: history-graph
+            entities:
+              - entity: switch.wall_switch_bathroom_l2
+                name: Вытяжка
+            hours_to_show: 24
+            grid_options:
+              columns: full
+              rows: 2
     cards: []
+  - type: sections
+    max_columns: 4
+    subview: true
+    path: entrance
+    title: Прихожая
+    sections:
+      - type: grid
+        cards:
+          - type: heading
+            heading: Свет
+            heading_style: title
+          - type: tile
+            entity: light.light_group_entrance
+            name: Потолок
+            icon: mdi:wall-sconce-flat
+            vertical: false
+            features:
+              - type: toggle
+              - type: light-color-temp
+              - type: light-brightness
+            features_position: bottom
+      - type: grid
+        cards:
+          - type: heading
+            icon: ''
+            heading: Статистика
+            heading_style: title
+          - type: statistics-graph
+            entities:
+              - sensor.tempeture_entrance_temperature
+            title: Температура
+            days_to_show: 1
+            period: hour
+            chart_type: line
+            stat_types:
+              - mean
+            hide_legend: true
+            logarithmic_scale: false

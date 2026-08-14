@@ -29,6 +29,13 @@
   unit_of_measurement: €/min
   state_class: measurement
 
+- id: sensor.home_background_humidity
+  name: Фоновая влажность квартиры
+  state: "{% set values = ['sensor.temperature_kitchen_humidity', 'sensor.temperature_lounge_humidity', 'sensor.temperature_children_humidity'] | map('states') | select('is_number') | map('float') | list %}\n{{ (values | max) | round(1) if values | count > 0 else none }}"
+  unit_of_measurement: '%'
+  device_class: humidity
+  state_class: measurement
+
 - id: sensor.light_brightness
   name: Light brightness
   state: "{% set start = (state_attr('input_datetime.night_start', 'timestamp') | int(0) + 3600) % 86400 %}{% set end = state_attr('input_datetime.night_end', 'timestamp') | int(0) %}{% set now_s = now().hour * 3600 + now().minute * 60 + now().second %}{{ 5 if ((now_s >= start or now_s < end) if start > end else (start <= now_s < end)) else 100 }}"

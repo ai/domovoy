@@ -49,6 +49,7 @@ views:
             chart_type: line
             stat_types:
               - mean
+            expand_legend: true
           - type: statistics-graph
             entities:
               - entity: sensor.air_bedroom_co2
@@ -72,7 +73,7 @@ views:
             hide_legend: false
             expand_legend: false
             logarithmic_scale: false
-            min_y_axis: 200
+            min_y_axis: 250
             max_y_axis: 1500
           - type: statistics-graph
             entities:
@@ -142,7 +143,8 @@ views:
             chart_type: line
             stat_types:
               - mean
-            min_y_axis: 15
+            expand_legend: true
+            min_y_axis: 20
             max_y_axis: 100
       - type: grid
         cards:

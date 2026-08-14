@@ -973,6 +973,19 @@ views:
       - type: grid
         cards:
           - type: heading
+            heading_style: title
+            heading: Статистика
+          - type: tile
+            entity: sensor.temperature_children_temperature
+            name:
+              type: entity
+            vertical: false
+            features:
+              - type: trend-graph
+            features_position: bottom
+      - type: grid
+        cards:
+          - type: heading
             icon: ''
             heading: Свет
             heading_style: title

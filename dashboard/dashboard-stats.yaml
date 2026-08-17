@@ -142,7 +142,7 @@ views:
             period: 5minute
             chart_type: line
             stat_types:
-              - mean
+              - max
             expand_legend: true
             min_y_axis: 20
             max_y_axis: 100

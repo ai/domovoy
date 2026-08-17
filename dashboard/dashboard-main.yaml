@@ -767,6 +767,16 @@ views:
               - type: toggle
               - type: light-brightness
               - type: light-color-temp
+          - type: tile
+            entity: light.light_bedroom_ceiling
+            name: Сверху
+            icon: mdi:wall-sconce-flat
+            vertical: false
+            features:
+              - type: toggle
+              - type: light-brightness
+              - type: light-color-temp
+            features_position: bottom
       - type: grid
         cards:
           - type: heading
@@ -1367,7 +1377,7 @@ views:
             period: hour
             chart_type: line
             stat_types:
-              - mean
+              - max
             min_y_axis: 0
             max_y_axis: 100
           - type: history-graph

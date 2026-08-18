@@ -364,6 +364,60 @@ views:
             grid_options:
               columns: 6
               rows: auto
+          - type: conditional
+            conditions:
+              - condition: state
+                entity: climate.ac_lounge
+                attribute: fan_mode
+                state: '5'
+            card:
+              type: tile
+              entity: climate.ac_lounge
+              name: Сильный обдув
+              icon: mdi:fan-plus
+              color: blue
+              state_content: fan_mode
+              vertical: false
+              tap_action:
+                action: perform-action
+                perform_action: climate.set_fan_mode
+                target:
+                  entity_id: climate.ac_lounge
+                data:
+                  fan_mode: auto
+              icon_tap_action:
+                action: none
+              features_position: bottom
+            grid_options:
+              columns: 6
+              rows: auto
+          - type: conditional
+            conditions:
+              - condition: state
+                entity: climate.ac_lounge
+                attribute: fan_mode
+                state_not: '5'
+            card:
+              type: tile
+              entity: climate.ac_lounge
+              name: Сильный обдув
+              icon: mdi:fan-auto
+              color: grey
+              state_content: fan_mode
+              vertical: false
+              tap_action:
+                action: perform-action
+                perform_action: climate.set_fan_mode
+                target:
+                  entity_id: climate.ac_lounge
+                data:
+                  fan_mode: '5'
+              icon_tap_action:
+                action: none
+              features_position: bottom
+            grid_options:
+              columns: 6
+              rows: auto
       - type: grid
         cards:
           - type: heading

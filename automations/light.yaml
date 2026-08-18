@@ -32,6 +32,18 @@
     input:
       wall_switch: 99c1a100b8881fff10f026b7a073b75c
       light_group: light.light_group_bedroom
+      before_on:
+        - action: switch.turn_on
+          metadata: {}
+          target:
+            entity_id: switch.wall_switch_bedroom
+          data: {}
+      after_off:
+        - action: switch.turn_off
+          metadata: {}
+          target:
+            entity_id: switch.wall_switch_bedroom
+          data: {}
 
 - id: automation.wall_switch_children
   alias: Выключатель света в детской

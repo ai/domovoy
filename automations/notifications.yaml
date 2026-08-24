@@ -7,10 +7,23 @@
       from: 'off'
       to: 'on'
   actions:
+    - action: switch.turn_on
+      target:
+        entity_id: switch.wall_switch_bathroom_l1
     - action: notify.notify
       data:
         title: Ванная
         message: Протечка воды
+        data:
+          channel: Water leak
+          importance: high
+          priority: high
+          ttl: 0
+          tag: water_leak_bathroom
+          color: red
+          notification_icon: mdi:water-alert
+          sticky: 'true'
+          alert_once: false
   mode: single
 
 - id: automation.cat_fountain_cleaning
@@ -215,10 +228,23 @@
       from: 'off'
       to: 'on'
   actions:
+    - action: light.turn_on
+      target:
+        entity_id: light.light_group_kitchen
     - action: notify.notify
       data:
         title: Кухня
         message: Протечка воды
+        data:
+          channel: Water leak
+          importance: high
+          priority: high
+          ttl: 0
+          tag: water_leak_kitchen
+          color: red
+          notification_icon: mdi:water-alert
+          sticky: 'true'
+          alert_once: false
   mode: single
 
 - id: automation.low_battery_notification
@@ -381,10 +407,26 @@
       from: 'off'
       to: 'on'
   actions:
+    - action: light.turn_on
+      target:
+        entity_id: light.light_group_toilet
+    - action: input_boolean.turn_on
+      target:
+        entity_id: input_boolean.stop_toilet
     - action: notify.notify
       data:
         title: Туалет
         message: Протечка воды
+        data:
+          channel: Water leak
+          importance: high
+          priority: high
+          ttl: 0
+          tag: water_leak_toilet
+          color: red
+          notification_icon: mdi:water-alert
+          sticky: 'true'
+          alert_once: false
   mode: single
 
 - id: automation.vacuum_finished

@@ -140,7 +140,7 @@
   use_blueprint:
     path: domovoy/wall-switch.yaml
     input:
-      wall_switch: 1fe4d7f5871d1ee1f17a91a7fd2a8a5e
+      wall_switch: 6c51f1e787e491b6a61f24ff8f18f374
       light_group: light.light_group_toilet
       manual_flag: input_boolean.stop_toilet
       color_temp: sensor.light_color_temp

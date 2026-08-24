@@ -71,6 +71,17 @@ views:
               action: none
             features_position: bottom
           - type: tile
+            entity: switch.wall_switch_kate
+            name:
+              type: area
+            icon: mdi:face-woman-shimmer
+            vertical: false
+            tap_action:
+              action: toggle
+            icon_tap_action:
+              action: none
+            features_position: bottom
+          - type: tile
             entity: switch.wall_switch_bathroom_l1
             name:
               type: area

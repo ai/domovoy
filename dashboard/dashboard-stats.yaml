@@ -96,7 +96,7 @@ views:
             period: hour
             chart_type: line
             stat_types:
-              - mean
+              - max
             min_y_axis: 0
             max_y_axis: 200
             energy_date_selection: false

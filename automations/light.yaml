@@ -64,8 +64,8 @@
   use_blueprint:
     path: domovoy/wall-switch.yaml
     input:
-      wall_switch: 8a38260aea17211d016281d21fbb5b70
-      light_group: light.light_group_kate
+      wall_switch: 1fdc24a1edacd09bb06e9da1242834c7
+      light_group: light.light_group_kate_ceiling
 
 - id: automation.wall_switch_kitchen
   alias: Выключатель света на кухне
@@ -77,7 +77,7 @@
   use_blueprint:
     path: domovoy/wall-switch.yaml
     input:
-      wall_switch: e97d66acdb3f1b0b4289d5d3afd14b66
+      wall_switch: 8965cf602f114e165de712f80179523e
       light_group: light.light_group_kitchen
 
 - id: automation.wall_switch_lounge_extra

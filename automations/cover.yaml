@@ -205,6 +205,10 @@
             - condition: state
               entity_id: binary_sensor.heating_sun
               state: 'on'
+            - condition: numeric_state
+              entity_id: cover.shutter_lounge
+              attribute: current_position
+              above: 60
           sequence:
             - action: notify.mobile_app_phone_bedoll
               data:
@@ -239,7 +243,7 @@
             - condition: numeric_state
               entity_id: cover.shutter_lounge
               attribute: current_position
-              above: 80
+              above: 60
           sequence:
             - action: cover.set_cover_position
               target:

@@ -1400,6 +1400,14 @@ views:
             features:
               - type: toggle
             features_position: bottom
+          - type: tile
+            entity: switch.switch_bathroom_mirror_l1
+            name: Подсветка зеркала
+            icon: mdi:mirror-rectangle
+            vertical: false
+            features:
+              - type: toggle
+            features_position: bottom
       - type: grid
         cards:
           - type: heading
@@ -1421,6 +1429,14 @@ views:
             features:
               - type: toggle
             features_position: bottom
+          - type: tile
+            entity: switch.switch_bathroom_mirror_l2
+            name: Подогрев зеркала
+            icon: mdi:mirror-rectangle
+            vertical: false
+            features_position: bottom
+            features:
+              - type: toggle
       - type: grid
         cards:
           - type: heading

@@ -24,6 +24,53 @@
       wall_switch: 0c1bea69e1a9aaea0f33bc6636979be4
       light_group: light.light_group_andrey
 
+- id: automation.wall_switch_bathroom_mirror
+  alias: Свет зеркала по выключателю в ванной
+  room: bathroom
+  triggers:
+    - trigger: device
+      id: single
+      domain: shelly
+      device_id: 17682b222003304b636f481a417703d1
+      type: single_push
+      subtype: button1
+    - trigger: device
+      id: hold
+      domain: shelly
+      device_id: 17682b222003304b636f481a417703d1
+      type: long_push
+      subtype: button1
+  conditions:
+    - condition: state
+      entity_id: input_boolean.stop
+      state: 'off'
+  actions:
+    - if:
+        - condition: trigger
+          id: hold
+      then:
+        - action: switch.toggle
+          target:
+            entity_id: switch.switch_bathroom_mirror_shelly_light
+      else:
+        - if:
+            - condition: state
+              entity_id: switch.wall_switch_bathroom_shelly_light
+              state: 'off'
+          then:
+            - action: switch.turn_on
+              target:
+                entity_id:
+                  - switch.wall_switch_bathroom_shelly_light
+                  - switch.switch_bathroom_mirror_shelly_light
+          else:
+            - action: switch.turn_off
+              target:
+                entity_id:
+                  - switch.wall_switch_bathroom_shelly_light
+                  - switch.switch_bathroom_mirror_shelly_light
+  mode: single
+
 - id: automation.wall_switch_bedroom
   alias: Выключатель света в спальне
   room: bedroom

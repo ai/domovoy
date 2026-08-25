@@ -217,7 +217,7 @@ views:
       - type: grid
         cards:
           - type: heading
-            heading: Тёплый пол
+            heading: Подогрев
             heading_style: title
           - type: tile
             entity: switch.floor_bathroom
@@ -243,6 +243,16 @@ views:
               type: area
             icon: mdi:ideogram-cjk
             vertical: false
+            features_position: bottom
+          - type: tile
+            entity: switch.switch_bathroom_mirror_l2
+            name: Зеркало в ванной
+            icon: mdi:mirror-rectangle
+            vertical: false
+            tap_action:
+              action: toggle
+            icon_tap_action:
+              action: none
             features_position: bottom
       - type: grid
         cards:

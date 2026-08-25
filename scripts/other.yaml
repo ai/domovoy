@@ -42,6 +42,8 @@
       target:
         entity_id:
           - switch.wall_switch_bathroom_l1
+          - switch.switch_bathroom_mirror_l1
+          - switch.switch_bathroom_mirror_l2
           - switch.floor_bathroom
           - switch.floor_lounge
           - switch.floor_toilet

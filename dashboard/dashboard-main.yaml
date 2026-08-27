@@ -1330,6 +1330,7 @@ views:
             features_position: bottom
           - type: tile
             entity: light.light_mushroom_yellow_2
+            name: На шкафу
             icon: mdi:floor-lamp
             vertical: false
             features:

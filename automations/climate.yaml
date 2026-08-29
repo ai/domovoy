@@ -34,6 +34,24 @@
         entity_id: climate.ac_andrey
   mode: single
 
+- id: automation.ac_andrey_off_on_leaving
+  alias: Выключить кондиционер Андрея при его уходе
+  room: andrey
+  triggers:
+    - trigger: state
+      entity_id: person.andrey
+      to: not_home
+      for: '00:15:00'
+  conditions:
+    - condition: state
+      entity_id: input_boolean.stop
+      state: 'off'
+  actions:
+    - action: input_boolean.turn_off
+      target:
+        entity_id: input_boolean.ac_andrey
+  mode: single
+
 - id: automation.ac_andrey_toggle
   alias: Тумблер кондиционера Андрея
   room: andrey

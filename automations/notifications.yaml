@@ -219,6 +219,46 @@
           tag: co2_kate
   mode: single
 
+- id: automation.high_pm25_notification
+  alias: Высокий уровень PM2.5 в доме
+  triggers:
+    - trigger: numeric_state
+      entity_id:
+        - sensor.air_kate_pm2_5
+        - sensor.air_bedroom_pm2_5
+      above: 35
+      for:
+        minutes: 1
+  conditions:
+    - condition: state
+      entity_id: input_boolean.stop
+      state: 'off'
+  actions:
+    - variables:
+        message: "PM2.5: {{ ['sensor.air_kate_pm2_5', 'sensor.air_bedroom_pm2_5'] | map('states') | map('float', 0) | max | round }} μg/m³"
+    - action: notify.mobile_app_phone_bedoll
+      data:
+        title: Качество воздуха
+        message: '{{ message }}'
+        data:
+          channel: Air quality
+          importance: high
+          tag: pm25_high
+          notification_icon: mdi:air-filter
+          color: red
+    - action: notify.mobile_app_phone_pixel_9
+      data:
+        title: Качество воздуха
+        message: '{{ message }}'
+        data:
+          channel: Air quality
+          importance: high
+          tag: pm25_high
+          notification_icon: mdi:air-filter
+          color: red
+  mode: single
+  max_exceeded: silent
+
 - id: automation.kitchen_water_leak
   alias: Протечка воды на кухне
   room: kitchen

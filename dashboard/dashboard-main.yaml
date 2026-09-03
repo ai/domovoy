@@ -566,6 +566,11 @@ views:
               action: navigate
               navigation_path: /dashboard-main/entrance
           - type: tile
+            entity: light.light_group_entrance
+            name: Свет
+            vertical: false
+            features_position: bottom
+          - type: tile
             entity: binary_sensor.door_main
             name: Дверь
             state_content:
@@ -1493,7 +1498,7 @@ views:
             heading: Свет
             heading_style: title
           - type: tile
-            entity: light.light_group_entrance
+            entity: light.light_entrance_ceiling
             name: Потолок
             icon: mdi:wall-sconce-flat
             vertical: false

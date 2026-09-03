@@ -35,7 +35,7 @@
           - light.light_group_bedroom
           - light.light_group_lounge
           - light.light_group_children
-          - light.light_chandelier
+          - light.light_group_entrance
       data:
         transition: 0
     - action: switch.turn_off
@@ -47,6 +47,7 @@
           - switch.floor_bathroom
           - switch.floor_lounge
           - switch.floor_toilet
+          - switch.wall_switch_bedroom
       data: {}
 
 - id: script.zigbee_reset

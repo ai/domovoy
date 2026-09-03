@@ -110,6 +110,19 @@
       wall_switch: ebf2a7b410a6ad849a215ae01515451a
       light_group: light.light_group_children
 
+- id: automation.wall_switch_entrance
+  alias: Выключатель света в прихожей
+  room: entrance
+  conditions:
+    - condition: state
+      entity_id: input_boolean.stop
+      state: 'off'
+  use_blueprint:
+    path: domovoy/wall-switch.yaml
+    input:
+      wall_switch: d87af418922ca571025eea140767792d
+      light_group: light.light_group_entrance
+
 - id: automation.wall_switch_kate
   alias: Выключатель света в кабинете Кати
   room: kate

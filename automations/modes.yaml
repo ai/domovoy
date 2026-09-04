@@ -173,6 +173,13 @@
         - conditions:
             - condition: trigger
               id: arrived
+            - condition: state
+              entity_id: input_boolean.empty_home
+              state: 'on'
+              for:
+                hours: 0
+                minutes: 1
+                seconds: 0
             - condition: or
               conditions:
                 - condition: state

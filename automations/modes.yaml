@@ -156,8 +156,9 @@
   room: entrance
   triggers:
     - trigger: state
-      entity_id: zone.home
-      from: '0'
+      entity_id: binary_sensor.door_main
+      from: 'off'
+      to: 'on'
       id: arrived
     - trigger: state
       entity_id: zone.home
@@ -172,6 +173,20 @@
         - conditions:
             - condition: trigger
               id: arrived
+            - condition: or
+              conditions:
+                - condition: state
+                  entity_id: person.andrey
+                  state: home
+                - condition: zone
+                  entity_id: person.andrey
+                  zone: zone.near_home
+                - condition: state
+                  entity_id: person.kate
+                  state: home
+                - condition: zone
+                  entity_id: person.kate
+                  zone: zone.near_home
           sequence:
             - action: input_boolean.turn_off
               target:

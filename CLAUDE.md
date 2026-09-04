@@ -10,3 +10,4 @@ Repo with automations/scripts from smart home on Home Assistant.
 - Try to avoid obvious comments.
 - To all automations add condition that `input_boolean.stop` is `off`.
 - Use the latest Node.js 26 API.
+- Do not make git commits.

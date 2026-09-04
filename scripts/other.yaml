@@ -37,8 +37,7 @@
           - light.light_group_lounge
           - light.light_group_children
           - light.light_group_entrance
-      data:
-        transition: 0
+      data: {}
     - action: switch.turn_off
       target:
         entity_id:

@@ -38,9 +38,8 @@
   alias: Выключить кондиционер Андрея при его уходе
   room: andrey
   triggers:
-    - trigger: state
-      entity_id: person.andrey
-      to: not_home
+    - trigger: template
+      value_template: "{{ states('person.andrey') not in ['home', 'unknown', 'unavailable'] }}"
       for: '00:15:00'
   conditions:
     - condition: state

@@ -115,6 +115,52 @@
           tag: fountain_not_used
   mode: single
 
+- id: automation.dishwasher_finished
+  alias: Посудомойка закончила
+  room: kitchen
+  triggers:
+    - trigger: numeric_state
+      entity_id: sensor.plug_dishwasher_power
+      above: 100
+    - trigger: homeassistant
+      event: start
+    - trigger: event
+      event_type: automation_reloaded
+  conditions:
+    - condition: state
+      entity_id: input_boolean.stop
+      state: 'off'
+    - condition: numeric_state
+      entity_id: sensor.plug_dishwasher_power
+      above: 30
+  actions:
+    - wait_for_trigger:
+        - trigger: numeric_state
+          entity_id: sensor.plug_dishwasher_power
+          below: 5
+          for:
+            minutes: 5
+      timeout:
+        hours: 4
+      continue_on_timeout: false
+    - condition: state
+      entity_id: input_boolean.stop
+      state: 'off'
+    - action: notify.mobile_app_phone_bedoll
+      data:
+        title: Посудомойка
+        message: Посуда помыта
+        data:
+          tag: dishwasher
+    - action: notify.mobile_app_phone_pixel_9
+      data:
+        title: Посудомойка
+        message: Посуда помыта
+        data:
+          tag: dishwasher
+  mode: single
+  max_exceeded: silent
+
 - id: automation.hide_doorbell_notification
   alias: Скрыть уведомление о звонке при открытии двери
   room: entrance

@@ -4,10 +4,10 @@
   triggers:
     - trigger: template
       id: high
-      value_template: "{% set b = states('sensor.air_bathroom_humidity')|float(none) %}{% set k = states('sensor.home_background_humidity')|float(none) %}{{ b is not none and k is not none and (b - k) >= 5 }}"
+      value_template: "{% set b = states('sensor.air_bathroom_humidity')|float(none) %}{% set k = states('sensor.home_background_humidity')|float(none) %}{% set night = now().hour >= 22 or now().hour < 8 %}{% set limit = 10 if night else 5 %}{{ b is not none and k is not none and (b - k) >= limit }}"
     - trigger: template
       id: normal
-      value_template: "{% set b = states('sensor.air_bathroom_humidity')|float(none) %}{% set k = states('sensor.home_background_humidity')|float(none) %}{{ b is not none and k is not none and (b - k) < 3 }}"
+      value_template: "{% set b = states('sensor.air_bathroom_humidity')|float(none) %}{% set k = states('sensor.home_background_humidity')|float(none) %}{% set night = now().hour >= 22 or now().hour < 8 %}{% set limit = 5 if night else 3 %}{{ b is not none and k is not none and (b - k) < limit }}"
   conditions:
     - condition: state
       entity_id: input_boolean.stop

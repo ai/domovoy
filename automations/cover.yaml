@@ -270,3 +270,36 @@
               target:
                 entity_id: cover.shutter_lounge
   mode: single
+
+- id: automation.shutter_position_sync
+  alias: Синхронизация штор
+  triggers:
+    - trigger: state
+      entity_id:
+        - cover.shutter_bedroom_wifi
+        - cover.shutter_andrey_wifi
+        - cover.shutter_lounge_wifi
+      from:
+        - opening
+        - closing
+    - trigger: time_pattern
+      minutes: /30
+    - trigger: homeassistant
+      event: start
+  conditions:
+    - condition: state
+      entity_id: input_boolean.stop
+      state: 'off'
+  actions:
+    - delay: '00:00:03'
+    - repeat:
+        for_each:
+          - Shutter / Bedroom
+          - Shutter / Andrey
+          - Shutter / Lounge
+        sequence:
+          - action: mqtt.publish
+            data:
+              topic: zigbee2mqtt/{{ repeat.item }}/get
+              payload: '{"position":""}'
+  mode: restart

@@ -79,13 +79,13 @@
       domain: mqtt
       device_id: 051afa3d576af13df00f57ac4f8a7ff6
       type: action
-      subtype: toggle_b1_down
+      subtype: toggle_b2_down
       id: set
     - trigger: device
       domain: mqtt
       device_id: 051afa3d576af13df00f57ac4f8a7ff6
       type: action
-      subtype: toggle_b2_down
+      subtype: toggle_b2_up
       id: vacuum
     - trigger: device
       domain: mqtt
@@ -97,7 +97,7 @@
       domain: mqtt
       device_id: 051afa3d576af13df00f57ac4f8a7ff6
       type: action
-      subtype: toggle_b2_up
+      subtype: toggle_b1_down
       id: turn_off
   conditions:
     - condition: state

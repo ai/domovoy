@@ -280,3 +280,95 @@
               target:
                 entity_id: input_boolean.cooling
   mode: single
+
+- id: automation.mirror_heater
+  alias: Подогрев зеркала в ванной
+  room: bathroom
+  triggers:
+    - trigger: template
+      id: steam
+      value_template: "{% set b = states('sensor.air_bathroom_humidity')|float(none) %}{% set k = states('sensor.home_background_humidity')|float(none) %}{{ b is not none and k is not none and (b - k) >= 8 }}"
+    - trigger: numeric_state
+      id: rising
+      entity_id: sensor.bathroom_humidity_trend
+      above: 1
+    - trigger: state
+      id: light
+      entity_id:
+        - switch.wall_switch_bathroom_shelly_light
+        - switch.switch_bathroom_mirror_shelly_light
+      to: 'on'
+    - trigger: state
+      id: lights_off
+      entity_id:
+        - switch.wall_switch_bathroom_shelly_light
+        - switch.switch_bathroom_mirror_shelly_light
+      to: 'off'
+    - trigger: template
+      id: dry
+      value_template: "{% set b = states('sensor.air_bathroom_humidity')|float(none) %}{% set k = states('sensor.home_background_humidity')|float(none) %}{{ b is not none and k is not none and (b - k) < 4 }}"
+      for:
+        hours: 0
+        minutes: 10
+        seconds: 0
+    - trigger: state
+      id: timeout
+      entity_id: switch.switch_bathroom_mirror_shelly_heater
+      to: 'on'
+      for:
+        hours: 1
+        minutes: 30
+        seconds: 0
+  conditions:
+    - condition: state
+      entity_id: input_boolean.stop
+      state: 'off'
+  actions:
+    - choose:
+        - conditions:
+            - condition: trigger
+              id:
+                - steam
+                - rising
+                - light
+            - condition: or
+              conditions:
+                - condition: state
+                  entity_id: switch.wall_switch_bathroom_shelly_light
+                  state: 'on'
+                - condition: state
+                  entity_id: switch.switch_bathroom_mirror_shelly_light
+                  state: 'on'
+            - condition: template
+              value_template: "{% set b = states('sensor.air_bathroom_humidity')|float(none) %}{% set k = states('sensor.home_background_humidity')|float(none) %}{% set t = states('sensor.bathroom_humidity_trend')|float(0) %}{{ (b is not none and k is not none and (b - k) >= 8) or t >= 1 }}"
+            - condition: numeric_state
+              entity_id: sensor.air_bathroom_temperature
+              below: 25
+          sequence:
+            - action: switch.turn_on
+              target:
+                entity_id: switch.switch_bathroom_mirror_shelly_heater
+        - conditions:
+            - condition: trigger
+              id:
+                - lights_off
+            - condition: state
+              entity_id: switch.wall_switch_bathroom_shelly_light
+              state: 'off'
+            - condition: state
+              entity_id: switch.switch_bathroom_mirror_shelly_light
+              state: 'off'
+          sequence:
+            - action: switch.turn_off
+              target:
+                entity_id: switch.switch_bathroom_mirror_shelly_heater
+        - conditions:
+            - condition: trigger
+              id:
+                - dry
+                - timeout
+          sequence:
+            - action: switch.turn_off
+              target:
+                entity_id: switch.switch_bathroom_mirror_shelly_heater
+  mode: single

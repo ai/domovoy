@@ -8,6 +8,10 @@
     - trigger: template
       id: normal
       value_template: "{% set b = states('sensor.air_bathroom_humidity')|float(none) %}{% set k = states('sensor.home_background_humidity')|float(none) %}{% set night = now().hour >= 22 or now().hour < 8 %}{% set limit = 5 if night else 3 %}{{ b is not none and k is not none and (b - k) < limit }}"
+    - trigger: numeric_state
+      id: rising
+      entity_id: sensor.bathroom_humidity_trend
+      above: 1
   conditions:
     - condition: state
       entity_id: input_boolean.stop
@@ -17,6 +21,17 @@
         - conditions:
             - condition: trigger
               id: high
+          sequence:
+            - action: switch.turn_on
+              target:
+                entity_id: switch.wall_switch_bathroom_l2
+        - conditions:
+            - condition: trigger
+              id:
+                - rising
+            - condition: time
+              after: '08:00:00'
+              before: '22:00:00'
           sequence:
             - action: switch.turn_on
               target:

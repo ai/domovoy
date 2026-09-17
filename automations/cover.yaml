@@ -38,6 +38,8 @@
               entity_id: sun.sun
               attribute: elevation
               above: 15
+            - condition: template
+              value_template: "{% set a = states('sensor.weather_aemet_temperature')|float(none) %}{% set m = states('sensor.weather_meteo_france_les_corts_temperature')|float(none) %}{% set t = a if a is not none else m %}{{ t is none or t <= 20 or t >= 25 }}"
           sequence:
             - action: cover.close_cover
               target:
@@ -189,6 +191,8 @@
               entity_id: sun.sun
               attribute: elevation
               above: 15
+            - condition: template
+              value_template: "{% set a = states('sensor.weather_aemet_temperature')|float(none) %}{% set m = states('sensor.weather_meteo_france_les_corts_temperature')|float(none) %}{% set t = a if a is not none else m %}{{ t is none or t <= 20 or t >= 25 }}"
           sequence:
             - action: cover.close_cover
               target:

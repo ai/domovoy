@@ -4,14 +4,30 @@
   triggers:
     - trigger: template
       id: high
-      value_template: "{% set b = states('sensor.air_bathroom_humidity')|float(none) %}{% set k = states('sensor.home_background_humidity')|float(none) %}{% set night = now().hour >= 22 or now().hour < 8 %}{% set limit = 10 if night else 5 %}{{ b is not none and k is not none and (b - k) >= limit }}"
+      value_template: "{% set b = states('sensor.air_bathroom_humidity')|float(none) %}{% set k = states('sensor.home_background_humidity')|float(none) %}{% set night = now().hour >= 22 or now().hour < 8 %}{% set limit = 12 if night else 8 %}{{ b is not none and k is not none and (b - k) >= limit }}"
     - trigger: template
       id: normal
-      value_template: "{% set b = states('sensor.air_bathroom_humidity')|float(none) %}{% set k = states('sensor.home_background_humidity')|float(none) %}{% set night = now().hour >= 22 or now().hour < 8 %}{% set limit = 5 if night else 3 %}{{ b is not none and k is not none and (b - k) < limit }}"
+      value_template: "{% set b = states('sensor.air_bathroom_humidity')|float(none) %}{% set k = states('sensor.home_background_humidity')|float(none) %}{% set night = now().hour >= 22 or now().hour < 8 %}{% set limit = 7 if night else 5 %}{{ b is not none and k is not none and (b - k) < limit }}"
     - trigger: numeric_state
       id: rising
       entity_id: sensor.bathroom_humidity_trend
       above: 1
+    - trigger: state
+      id: timeout
+      entity_id: switch.wall_switch_bathroom_l2
+      to: 'on'
+      for:
+        hours: 0
+        minutes: 45
+        seconds: 0
+    - trigger: state
+      id: stuck
+      entity_id: switch.wall_switch_bathroom_l2
+      to: 'on'
+      for:
+        hours: 2
+        minutes: 0
+        seconds: 0
   conditions:
     - condition: state
       entity_id: input_boolean.stop
@@ -21,6 +37,8 @@
         - conditions:
             - condition: trigger
               id: high
+            - condition: template
+              value_template: "{% set bt = states('sensor.air_bathroom_temperature')|float(none) %}{% set bh = states('sensor.air_bathroom_humidity')|float(none) %}{% set ot = states('sensor.weather_aemet_temperature')|float(states('sensor.weather_meteo_france_les_corts_temperature')|float(none)) %}{% set oh = states('sensor.weather_aemet_humidity')|float(states('sensor.weather_meteo_france_les_corts_humidity')|float(none)) %}{% if bt is none or bh is none or ot is none or oh is none %}true{% else %}{% set inside = bh * e ** (17.67 * bt / (bt + 243.5)) / (bt + 273.15) %}{% set outside = oh * e ** (17.67 * ot / (ot + 243.5)) / (ot + 273.15) %}{{ (inside - outside) * 13.244 > 0.5 }}{% endif %}"
           sequence:
             - action: switch.turn_on
               target:
@@ -39,6 +57,22 @@
         - conditions:
             - condition: trigger
               id: normal
+          sequence:
+            - action: switch.turn_off
+              target:
+                entity_id: switch.wall_switch_bathroom_l2
+        - conditions:
+            - condition: trigger
+              id: timeout
+            - condition: template
+              value_template: "{% set b = states('sensor.air_bathroom_humidity')|float(none) %}{% set k = states('sensor.home_background_humidity')|float(none) %}{{ b is none or k is none or (b - k) < 10 }}"
+          sequence:
+            - action: switch.turn_off
+              target:
+                entity_id: switch.wall_switch_bathroom_l2
+        - conditions:
+            - condition: trigger
+              id: stuck
           sequence:
             - action: switch.turn_off
               target:

@@ -210,8 +210,10 @@
               state: 'on'
               for:
                 hours: 0
-                minutes: 1
+                minutes: 3
                 seconds: 0
+            - condition: template
+              value_template: '{% set since = states.input_boolean.empty_home.last_changed %}{{ states.person.andrey.last_changed > since or states.person.kate.last_changed > since }}'
             - condition: or
               conditions:
                 - condition: state

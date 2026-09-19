@@ -22,6 +22,68 @@
       data:
         duration: '00:30:00'
 
+- id: script.shutter_down
+  alias: Опустить шторы
+  icon: mdi:window-shutter
+  mode: single
+  sequence:
+    - action: cover.close_cover
+      target:
+        entity_id:
+          - cover.shutter_andrey
+          - cover.shutter_bedroom
+          - cover.shutter_lounge
+
+- id: script.shutter_up
+  alias: Поднять шторы
+  icon: mdi:window-shutter-open
+  mode: single
+  sequence:
+    - choose:
+        - conditions:
+            - condition: state
+              entity_id: input_boolean.cooling
+              state: 'on'
+            - condition: numeric_state
+              entity_id: sun.sun
+              attribute: elevation
+              above: 12
+            - condition: time
+              after: '12:00:00'
+            - condition: state
+              entity_id: binary_sensor.heating_sun
+              state: 'on'
+          sequence:
+            - action: cover.set_cover_position
+              target:
+                entity_id: cover.shutter_andrey
+              data:
+                position: 50
+            - action: cover.set_cover_position
+              target:
+                entity_id: cover.shutter_lounge
+              data:
+                position: 40
+            - action: notify.mobile_app_phone_bedoll
+              data:
+                message: clear_notification
+                data:
+                  tag: lounge_shutter
+      default:
+        - action: cover.open_cover
+          target:
+            entity_id:
+              - cover.shutter_andrey
+              - cover.shutter_lounge
+    - if:
+        - condition: state
+          entity_id: input_boolean.cooling
+          state: 'off'
+      then:
+        - action: cover.open_cover
+          target:
+            entity_id: cover.shutter_bedroom
+
 - id: script.turn_off_everything
   alias: Выключить всё
   sequence:

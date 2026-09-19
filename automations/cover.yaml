@@ -8,14 +8,6 @@
       attribute: azimuth
       above: 245
       id: sun
-    - trigger: state
-      entity_id: input_boolean.empty_home
-      to: 'off'
-      id: home
-    - trigger: state
-      entity_id: input_boolean.empty_home
-      to: 'on'
-      id: leave
     - trigger: numeric_state
       entity_id:
         - sun.sun
@@ -33,40 +25,10 @@
     - choose:
         - conditions:
             - condition: trigger
-              id: leave
-            - condition: numeric_state
-              entity_id: sun.sun
-              attribute: elevation
-              above: 15
-            - condition: template
-              value_template: "{% set a = states('sensor.weather_aemet_temperature')|float(none) %}{% set m = states('sensor.weather_meteo_france_les_corts_temperature')|float(none) %}{% set t = a if a is not none else m %}{{ t is none or t <= 20 or t >= 25 }}"
-          sequence:
-            - action: cover.close_cover
-              target:
-                entity_id: cover.shutter_andrey
-        - conditions:
-            - condition: or
-              conditions:
-                - condition: and
-                  conditions:
-                    - condition: trigger
-                      id: sun
-                    - condition: state
-                      entity_id: input_boolean.cooling
-                      state: 'on'
-                - condition: and
-                  conditions:
-                    - condition: trigger
-                      id: home
-                    - condition: state
-                      entity_id: input_boolean.cooling
-                      state: 'on'
-                    - condition: numeric_state
-                      entity_id: sun.sun
-                      attribute: elevation
-                      above: 12
-                    - condition: time
-                      after: '12:00:00'
+              id: sun
+            - condition: state
+              entity_id: input_boolean.cooling
+              state: 'on'
             - condition: state
               entity_id: binary_sensor.heating_sun
               state: 'on'
@@ -76,13 +38,6 @@
                 entity_id: cover.shutter_andrey
               data:
                 position: 50
-        - conditions:
-            - condition: trigger
-              id: home
-          sequence:
-            - action: cover.open_cover
-              target:
-                entity_id: cover.shutter_andrey
         - conditions:
             - condition: trigger
               id: low_sun
@@ -161,14 +116,6 @@
       event_data:
         action: CLOSE_LOUNGE_SHUTTER
       id: close
-    - trigger: state
-      entity_id: input_boolean.empty_home
-      to: 'off'
-      id: home
-    - trigger: state
-      entity_id: input_boolean.empty_home
-      to: 'on'
-      id: leave
     - trigger: numeric_state
       entity_id:
         - sun.sun
@@ -184,19 +131,6 @@
       state: 'off'
   actions:
     - choose:
-        - conditions:
-            - condition: trigger
-              id: leave
-            - condition: numeric_state
-              entity_id: sun.sun
-              attribute: elevation
-              above: 15
-            - condition: template
-              value_template: "{% set a = states('sensor.weather_aemet_temperature')|float(none) %}{% set m = states('sensor.weather_meteo_france_les_corts_temperature')|float(none) %}{% set t = a if a is not none else m %}{{ t is none or t <= 20 or t >= 25 }}"
-          sequence:
-            - action: cover.close_cover
-              target:
-                entity_id: cover.shutter_lounge
         - conditions:
             - condition: trigger
               id: propose
@@ -224,26 +158,8 @@
                     - action: CLOSE_LOUNGE_SHUTTER
                       title: Прикрыть
         - conditions:
-            - condition: or
-              conditions:
-                - condition: trigger
-                  id: close
-                - condition: and
-                  conditions:
-                    - condition: trigger
-                      id: home
-                    - condition: state
-                      entity_id: input_boolean.cooling
-                      state: 'on'
-                    - condition: numeric_state
-                      entity_id: sun.sun
-                      attribute: elevation
-                      above: 12
-                    - condition: time
-                      after: '12:00:00'
-                    - condition: state
-                      entity_id: binary_sensor.heating_sun
-                      state: 'on'
+            - condition: trigger
+              id: close
             - condition: numeric_state
               entity_id: cover.shutter_lounge
               attribute: current_position
@@ -259,13 +175,6 @@
                 message: clear_notification
                 data:
                   tag: lounge_shutter
-        - conditions:
-            - condition: trigger
-              id: home
-          sequence:
-            - action: cover.open_cover
-              target:
-                entity_id: cover.shutter_lounge
         - conditions:
             - condition: trigger
               id: low_sun

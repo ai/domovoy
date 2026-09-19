@@ -1,6 +1,6 @@
 // Script for Shelly Gen4 relays (Shelly 1PM Mini or Shelly 2PM)
 // Fallback for the HA wall switch blueprint: toggles the bulbs over Zigbee
-// when HA is unreachable and cannot have handled the press itself.
+// when the press did not reach the lamps through Home Assistant & Z2M.
 
 let DEBUG = false
 
@@ -8,10 +8,13 @@ let DEBUG = false
 // genOnOff outside endpoint 1 (bulb -> Clusters) needs [address, endpoint].
 let LIGHTS = [0xcd99, [0x2a4b, 11]]
 
+// A message to this group that proves Z2M is alive and executing commands
+let GROUP_TOPIC = 'zigbee2mqtt/Light Group / Andrey'
+
 // For 2PM case which have multiple buttons.
 let INPUT = 'input:0'
 
-// Back-to-back Zigbee.SendCommand calls make the radio drop frames
+let HA_WAIT_MS = 1000
 let SEND_GAP_MS = 120
 
 function debug(message) {
@@ -65,14 +68,33 @@ function toggleAll() {
   }
 }
 
-function isHaSocketConnected() {
-  let cfg = Shelly.getComponentConfig('ws')
-  if (!cfg || !cfg.enable || !cfg.server) {
-    return false
-  }
-  let status = Shelly.getComponentStatus('ws')
-  return status && status.connected ? true : false
+let pressCount = 0
+let waitTimer = null
+
+function stopWaiting() {
+  Timer.clear(waitTimer)
+  waitTimer = null
+  pressCount = 0
 }
+
+function onWaitOver() {
+  // Presses in pairs cancel each other out, so one toggle covers the window
+  let odd = pressCount % 2 === 1
+  debug('Z2M stayed silent after ' + pressCount + ' press(es)')
+  waitTimer = null
+  pressCount = 0
+  if (odd) {
+    toggleAll()
+  }
+}
+
+// The window only asks whether Z2M answers at all, so any message closes it
+MQTT.subscribe(GROUP_TOPIC, function () {
+  if (waitTimer !== null) {
+    debug('Z2M reported the change, the press was handled')
+    stopWaiting()
+  }
+})
 
 Shelly.addEventHandler(function (e) {
   if (e.component !== INPUT) {
@@ -84,14 +106,16 @@ Shelly.addEventHandler(function (e) {
   // The blueprint triggers on single_push too, unlike btn_up which also fires
   // for the halves of a double press
   if (e.info.event === 'single_push') {
-    if (isHaSocketConnected()) {
-      debug('HA is connected, leaving the press to it')
-      return
-    } else {
-      debug('HA unreachable, toggling the light')
+    if (!MQTT.isConnected()) {
+      debug('No broker, nobody to wait for')
       toggleAll()
+      return
+    }
+    pressCount = pressCount + 1
+    if (waitTimer === null) {
+      waitTimer = Timer.set(HA_WAIT_MS, false, onWaitOver)
     }
   }
 })
 
-print('Started: single press -> switch light when HA is unreachable')
+print('Started: single press -> switch light when the lamps stay silent')

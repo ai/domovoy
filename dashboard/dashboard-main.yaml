@@ -1152,7 +1152,7 @@ views:
               - type: light-color-temp
             features_position: bottom
           - type: tile
-            entity: light.light_children_ceil_1
+            entity: light.light_children_ceiling_1
             name: На потолке 1
             icon: mdi:weather-sunny
             vertical: false
@@ -1162,7 +1162,7 @@ views:
               - type: light-color-temp
             features_position: bottom
           - type: tile
-            entity: light.light_children_ceil_2
+            entity: light.light_children_ceiling_2
             name: На потолке 2
             icon: mdi:weather-sunny
             vertical: false
@@ -1507,8 +1507,28 @@ views:
             heading: Свет
             heading_style: title
           - type: tile
-            entity: light.light_entrance_ceiling
-            name: Потолок
+            entity: light.light_entrance_ceiling_1
+            name: Потолок 1
+            icon: mdi:wall-sconce-flat
+            vertical: false
+            features:
+              - type: toggle
+              - type: light-color-temp
+              - type: light-brightness
+            features_position: bottom
+          - type: tile
+            entity: light.light_entrance_ceiling_2
+            name: Потолок 2
+            icon: mdi:wall-sconce-flat
+            vertical: false
+            features:
+              - type: toggle
+              - type: light-color-temp
+              - type: light-brightness
+            features_position: bottom
+          - type: tile
+            entity: light.light_entrance_ceiling_3
+            name: Потолок 3
             icon: mdi:wall-sconce-flat
             vertical: false
             features:

@@ -64,6 +64,10 @@ views:
                 name:
                   type: area
                 color: pink
+              - entity: sensor.air_children_co2
+                name:
+                  type: area
+                color: red
             title: CO²
             days_to_show: 1
             period: 5minute
@@ -91,6 +95,10 @@ views:
                 name:
                   type: area
                 color: pink
+              - entity: sensor.air_children_pm2_5
+                name:
+                  type: area
+                color: red
             title: Загрязнение воздуха
             days_to_show: 1
             period: hour

@@ -457,6 +457,10 @@ views:
                 show_state: true
                 show_icon: true
                 entity: sensor.temperature_children_temperature
+              - type: entity
+                show_state: true
+                show_icon: true
+                entity: sensor.air_children_co2
             tap_action:
               action: navigate
               navigation_path: /dashboard-main/children
@@ -1188,6 +1192,18 @@ views:
             hide_legend: true
             min_y_axis: 15
             max_y_axis: 35
+          - type: statistics-graph
+            entities:
+              - sensor.air_children_co2
+            title: CO²
+            days_to_show: 1
+            period: hour
+            chart_type: line
+            stat_types:
+              - mean
+            hide_legend: true
+            min_y_axis: 250
+            max_y_axis: 1500
   - type: sections
     max_columns: 3
     title: Кухня

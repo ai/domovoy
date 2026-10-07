@@ -36,16 +36,11 @@
   device_class: humidity
   state_class: measurement
 
-- id: sensor.light_brightness
-  name: Light brightness
-  state: "{% set start = (state_attr('input_datetime.night_start', 'timestamp') | int(0) + 3600) % 86400 %}{% set end = state_attr('input_datetime.night_end', 'timestamp') | int(0) %}{% set now_s = now().hour * 3600 + now().minute * 60 + now().second %}{{ 5 if ((now_s >= start or now_s < end) if start > end else (start <= now_s < end)) else 100 }}"
+- id: sensor.light_brightness_entrance
+  name: Light brightness entrance
+  room: entrance
+  state: "{{ [states('sensor.private_room_light_brightness') | int(100), 90] | min }}"
   unit_of_measurement: '%'
-  state_class: measurement
-
-- id: sensor.light_color_temp
-  name: Light color temp
-  state: '{% set elev = state_attr("sun.sun", "elevation") | float(0) %}{{ 4000 if elev >= 10 else (2380 if elev <= -10 else (2380 + 81 * (elev + 10)) | round | int) }}'
-  unit_of_measurement: K
   state_class: measurement
 
 - id: sensor.meter_ac_energy
@@ -61,4 +56,16 @@
   name: Pepeenergy Price
   state: "{% set h = now().hour %}{% if is_state('binary_sensor.workday','off') or h < 8 %}0.1501{% elif (10 <= h < 14) or (18 <= h < 22) %}0.2731{% else %}0.1888{% endif %}"
   unit_of_measurement: €/kWh
+  state_class: measurement
+
+- id: sensor.private_room_light_brightness
+  name: Light brightness
+  state: "{% set start = (state_attr('input_datetime.night_start', 'timestamp') | int(0) + 3600) % 86400 %}{% set end = state_attr('input_datetime.night_end', 'timestamp') | int(0) %}{% set now_s = now().hour * 3600 + now().minute * 60 + now().second %}{{ 5 if ((now_s >= start or now_s < end) if start > end else (start <= now_s < end)) else 100 }}"
+  unit_of_measurement: '%'
+  state_class: measurement
+
+- id: sensor.private_room_light_color_temp
+  name: Light color temp
+  state: '{% set elev = state_attr("sun.sun", "elevation") | float(0) %}{{ 4000 if elev >= 10 else (2380 if elev <= -10 else (2380 + 81 * (elev + 10)) | round | int) }}'
+  unit_of_measurement: K
   state_class: measurement

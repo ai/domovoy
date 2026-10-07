@@ -1323,6 +1323,8 @@ views:
             features_position: bottom
           - type: tile
             entity: input_boolean.stop_toilet
+            name: Ручной режим света
+            icon: mdi:light-switch
       - type: grid
         cards:
           - type: heading
@@ -1552,6 +1554,16 @@ views:
               - type: light-color-temp
               - type: light-brightness
             features_position: bottom
+          - type: tile
+            entity: binary_sensor.presence_entrance_presence
+            name: Датчик присутствия
+            icon: mdi:motion-sensor
+            vertical: false
+            features_position: bottom
+          - type: tile
+            entity: input_boolean.stop_entrance
+            name: Ручной режим света
+            icon: mdi:light-switch
       - type: grid
         cards:
           - type: heading

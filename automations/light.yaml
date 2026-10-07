@@ -1,3 +1,61 @@
+- id: automation.autolight_entrance
+  alias: Авто-включение света в прихожей
+  room: entrance
+  use_blueprint:
+    path: domovoy/presence.yaml
+    input:
+      presence_sensor: binary_sensor.presence_entrance_presence
+      light: light.light_group_entrance
+      manual_flag: input_boolean.stop_entrance
+      disable_flag: input_boolean.empty_home
+      brightness: sensor.light_brightness_entrance
+
+- id: automation.autolight_entrance_door
+  alias: Свет в прихожей при открытии двери
+  room: entrance
+  triggers:
+    - trigger: state
+      entity_id: binary_sensor.door_main
+      from: 'off'
+      to: 'on'
+  conditions:
+    - condition: state
+      entity_id: input_boolean.stop
+      state: 'off'
+    - condition: state
+      entity_id: light.light_group_entrance
+      state: 'off'
+    - alias: Не ночной режим
+      condition: state
+      entity_id: sensor.private_room_light_brightness
+      state: '100'
+  actions:
+    - action: light.turn_on
+      target:
+        entity_id: light.light_group_entrance
+      data:
+        brightness_pct: "{{ states('sensor.light_brightness_entrance') | int(100) }}"
+    - wait_template: "{{ is_state('binary_sensor.presence_entrance_presence', 'on') }}"
+      timeout: '00:01:00'
+    - if:
+        - condition: template
+          value_template: '{{ wait.completed }}'
+      then:
+        - wait_for_trigger:
+            - trigger: state
+              entity_id: binary_sensor.presence_entrance_presence
+              to: 'off'
+    - condition: state
+      entity_id: input_boolean.stop
+      state: 'off'
+    - condition: state
+      entity_id: input_boolean.stop_entrance
+      state: 'off'
+    - action: light.turn_off
+      target:
+        entity_id: light.light_group_entrance
+  mode: restart
+
 - id: automation.autolight_toiltet
   alias: Авто-включение света в туалете
   room: toilet
@@ -8,8 +66,8 @@
       light: light.light_group_toilet
       manual_flag: input_boolean.stop_toilet
       disable_flag: input_boolean.empty_home
-      color_temp: sensor.light_color_temp
-      brightness: sensor.light_brightness
+      color_temp: sensor.private_room_light_color_temp
+      brightness: sensor.private_room_light_brightness
 
 - id: automation.wall_switch_andrey
   alias: Выключатель света в кабинете Андрея
@@ -122,6 +180,7 @@
     input:
       wall_switch: d87af418922ca571025eea140767792d
       light_group: light.light_group_entrance
+      manual_flag: input_boolean.stop_entrance
 
 - id: automation.wall_switch_kate
   alias: Выключатель света в кабинете Кати
@@ -212,4 +271,4 @@
       wall_switch: 6c51f1e787e491b6a61f24ff8f18f374
       light_group: light.light_group_toilet
       manual_flag: input_boolean.stop_toilet
-      color_temp: sensor.light_color_temp
+      color_temp: sensor.private_room_light_color_temp

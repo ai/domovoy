@@ -37,8 +37,13 @@
   name: Стоп
   icon: mdi:pause-octagon
 
+- id: input_boolean.stop_entrance
+  name: Ручной режим света в прихожей
+  room: entrance
+  icon: mdi:door
+
 - id: input_boolean.stop_toilet
-  name: Блокиратор авто-включения света в туалете
+  name: Ручной режим света в туалете
   room: toilet
   icon: mdi:ideogram-cjk
 

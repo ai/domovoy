@@ -1,3 +1,80 @@
+- id: automation.autolight_bathroom
+  alias: Авто-включение света в ванной
+  room: bathroom
+  triggers:
+    - trigger: state
+      entity_id: binary_sensor.presence_bathroom_presence
+      from: 'off'
+      to: 'on'
+      id: came
+    - trigger: state
+      entity_id: binary_sensor.presence_bathroom_presence
+      from: 'on'
+      to: 'off'
+      for:
+        minutes: 1
+      id: left
+    - trigger: state
+      entity_id:
+        - switch.wall_switch_bathroom_shelly_light
+        - switch.switch_bathroom_mirror_shelly_light
+      to: 'off'
+      id: dark
+  conditions:
+    - condition: state
+      entity_id: input_boolean.stop
+      state: 'off'
+  actions:
+    - choose:
+        - conditions:
+            - condition: trigger
+              id: came
+            - condition: state
+              entity_id: input_boolean.stop_bathroom
+              state: 'off'
+            - condition: state
+              entity_id: input_boolean.cat_alone
+              state: 'off'
+            - condition: state
+              entity_id: input_boolean.empty_home
+              state: 'off'
+            - condition: state
+              entity_id:
+                - switch.wall_switch_bathroom_shelly_light
+                - switch.switch_bathroom_mirror_shelly_light
+              state: 'off'
+          sequence:
+            - action: switch.turn_on
+              target:
+                entity_id:
+                  - switch.wall_switch_bathroom_shelly_light
+                  - switch.switch_bathroom_mirror_shelly_light
+        - conditions:
+            - condition: trigger
+              id: left
+            - condition: state
+              entity_id: input_boolean.stop_bathroom
+              state: 'off'
+          sequence:
+            - action: switch.turn_off
+              target:
+                entity_id:
+                  - switch.wall_switch_bathroom_shelly_light
+                  - switch.switch_bathroom_mirror_shelly_light
+        - conditions:
+            - condition: trigger
+              id: dark
+            - condition: state
+              entity_id:
+                - switch.wall_switch_bathroom_shelly_light
+                - switch.switch_bathroom_mirror_shelly_light
+              state: 'off'
+          sequence:
+            - action: input_boolean.turn_off
+              target:
+                entity_id: input_boolean.stop_bathroom
+  mode: restart
+
 - id: automation.autolight_entrance
   alias: Авто-включение света в прихожей
   room: entrance
@@ -103,6 +180,8 @@
       entity_id: input_boolean.stop
       state: 'off'
   actions:
+    - variables:
+        manual: "{% set ceiling = is_state('switch.wall_switch_bathroom_shelly_light', 'on') %}{% set mirror = is_state('switch.switch_bathroom_mirror_shelly_light', 'on') %}{{ (ceiling or not mirror) if trigger.id == 'hold' else (not ceiling and not mirror) }}"
     - if:
         - condition: trigger
           id: hold
@@ -136,6 +215,9 @@
                 entity_id:
                   - switch.wall_switch_bathroom_shelly_light
                   - switch.switch_bathroom_mirror_shelly_light
+    - action: input_boolean.turn_{{ 'on' if manual else 'off' }}
+      target:
+        entity_id: input_boolean.stop_bathroom
   mode: single
 
 - id: automation.wall_switch_bedroom

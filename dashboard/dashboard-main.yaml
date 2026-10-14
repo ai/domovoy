@@ -1436,6 +1436,16 @@ views:
             features:
               - type: toggle
             features_position: bottom
+          - type: tile
+            entity: binary_sensor.presence_bathroom_presence
+            name: Датчик присутствия
+            icon: mdi:motion-sensor
+            vertical: false
+            features_position: bottom
+          - type: tile
+            entity: input_boolean.stop_bathroom
+            name: Ручной режим света
+            icon: mdi:light-switch
       - type: grid
         cards:
           - type: heading

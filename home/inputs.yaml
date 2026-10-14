@@ -37,6 +37,11 @@
   name: Стоп
   icon: mdi:pause-octagon
 
+- id: input_boolean.stop_bathroom
+  name: Ручной режим света в ванной
+  room: bathroom
+  icon: mdi:shower-head
+
 - id: input_boolean.stop_entrance
   name: Ручной режим света в прихожей
   room: entrance

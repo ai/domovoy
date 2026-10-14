@@ -108,6 +108,7 @@
           - switch.switch_bathroom_mirror_l2
           - switch.floor_bathroom
           - switch.floor_lounge
+          - switch.floor_kitchen
           - switch.floor_toilet
           - switch.wall_switch_bedroom
       data: {}

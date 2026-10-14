@@ -320,5 +320,15 @@ views:
             icon_tap_action:
               action: none
             features_position: bottom
+          - type: tile
+            entity: switch.switch_towel_warmer
+            name: Полотенцесушитель
+            icon: mdi:rug
+            vertical: false
+            tap_action:
+              action: toggle
+            icon_tap_action:
+              action: none
+            features_position: bottom
     max_columns: 3
     cards: []

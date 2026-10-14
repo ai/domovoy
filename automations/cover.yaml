@@ -14,6 +14,15 @@
       attribute: elevation
       below: 13
       id: low_sun
+    - trigger: time
+      at: '01:00:00'
+      id: heating_close
+    - trigger: state
+      entity_id: light.light_group_andrey
+      to: 'off'
+      for:
+        minutes: 5
+      id: heating_close
   conditions:
     - condition: state
       entity_id: input_boolean.stop
@@ -41,8 +50,29 @@
         - conditions:
             - condition: trigger
               id: low_sun
+            - condition: state
+              entity_id: input_boolean.cooling
+              state: 'on'
           sequence:
             - action: cover.open_cover
+              target:
+                entity_id: cover.shutter_andrey
+        - conditions:
+            - condition: trigger
+              id: heating_close
+            - condition: state
+              entity_id: input_boolean.heating
+              state: 'on'
+            - condition: time
+              after: '01:00:00'
+              before: input_datetime.night_end
+            - condition: state
+              entity_id: light.light_group_andrey
+              state: 'off'
+              for:
+                minutes: 5
+          sequence:
+            - action: cover.close_cover
               target:
                 entity_id: cover.shutter_andrey
   mode: single
@@ -61,6 +91,9 @@
         entity_id: input_datetime.night_end
         offset: '02:00:00'
       id: close
+    - trigger: sun
+      event: sunset
+      id: heating_close
   conditions:
     - condition: state
       entity_id: input_boolean.stop
@@ -99,6 +132,16 @@
                 entity_id: cover.shutter_bedroom
               data:
                 position: 10
+        - conditions:
+            - condition: trigger
+              id: heating_close
+            - condition: state
+              entity_id: input_boolean.heating
+              state: 'on'
+          sequence:
+            - action: cover.close_cover
+              target:
+                entity_id: cover.shutter_bedroom
   mode: single
 
 - id: automation.lounge_shutter
@@ -178,6 +221,9 @@
         - conditions:
             - condition: trigger
               id: low_sun
+            - condition: state
+              entity_id: input_boolean.cooling
+              state: 'on'
           sequence:
             - action: cover.open_cover
               target:

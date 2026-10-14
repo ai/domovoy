@@ -158,11 +158,6 @@ views:
               perform_action: script.empty_home
               target: {}
             features_position: bottom
-          - type: tile
-            entity: vacuum.vacuum_q7_max
-            name: Пылесос
-            vertical: false
-            features_position: bottom
       - type: grid
         cards:
           - type: heading

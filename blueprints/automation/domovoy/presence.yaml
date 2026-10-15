@@ -16,12 +16,21 @@ blueprint:
               domain: binary_sensor
             - device_class: presence
               domain: binary_sensor
-    light:
-      name: Light
+    lights:
+      name: Lights
+      default: []
       selector:
         entity:
+          multiple: true
           filter:
             - domain: light
+    off_delay:
+      name: Turn off delay
+      description: How long the room must stay empty before turning off
+      default:
+        seconds: 0
+      selector:
+        duration: {}
     before_on:
       name: Extra action on turn on
       default: []
@@ -71,7 +80,7 @@ blueprint:
             - domain: sensor
 
 variables:
-  light_entity: !input light
+  lights: !input lights
   disable_flag: !input disable_flag
   color_temp: !input color_temp
   brightness: !input brightness
@@ -99,22 +108,26 @@ conditions:
 
 actions:
   - variables:
-      turning_on: "{{ is_state(light_entity, 'off') }}"
+      off_lights: "{{ lights | select('is_state', 'off') | list }}"
   - sequence: !input before_on
-  - action: light.turn_on
-    target:
-      entity_id: !input light
-    data: >-
-      {{ {} if not turning_on else
-         (({} if color_temp == '' else
-           { 'color_temp_kelvin': states(color_temp) | int(2700) })
-          | combine({} if brightness == '' else
-                    { 'brightness_pct': states(brightness) | int(100) })) }}
+  - if:
+      - condition: template
+        value_template: "{{ off_lights | count > 0 }}"
+    then:
+      - action: light.turn_on
+        target:
+          entity_id: "{{ off_lights }}"
+        data: >-
+          {{ ({} if color_temp == '' else
+              { 'color_temp_kelvin': states(color_temp) | int(2700) })
+             | combine({} if brightness == '' else
+                       { 'brightness_pct': states(brightness) | int(100) }) }}
   - wait_for_trigger:
       trigger: state
       entity_id: !input presence_sensor
       from: 'on'
       to: 'off'
+      for: !input off_delay
   - if:
       - condition: state
         entity_id: input_boolean.stop
@@ -123,7 +136,11 @@ actions:
         entity_id: !input manual_flag
         state: 'off'
     then:
-      - action: light.turn_off
-        target:
-          entity_id: !input light
+      - if:
+          - condition: template
+            value_template: "{{ lights | count > 0 }}"
+        then:
+          - action: light.turn_off
+            target:
+              entity_id: "{{ lights }}"
       - sequence: !input after_off

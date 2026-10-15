@@ -9,7 +9,12 @@
   actions:
     - action: switch.turn_on
       target:
-        entity_id: switch.wall_switch_bathroom_l1
+        entity_id:
+          - switch.wall_switch_bathroom_shelly_light
+          - switch.switch_bathroom_mirror_shelly_light
+    - action: input_boolean.turn_on
+      target:
+        entity_id: input_boolean.stop_bathroom
     - action: notify.notify
       data:
         title: Ванная

@@ -1,79 +1,36 @@
 - id: automation.autolight_bathroom
   alias: Авто-включение света в ванной
   room: bathroom
-  triggers:
-    - trigger: state
-      entity_id: binary_sensor.presence_bathroom_presence
-      from: 'off'
-      to: 'on'
-      id: came
-    - trigger: state
-      entity_id: binary_sensor.presence_bathroom_presence
-      from: 'on'
-      to: 'off'
-      for:
+  use_blueprint:
+    path: domovoy/presence.yaml
+    input:
+      presence_sensor: binary_sensor.presence_bathroom_presence
+      lights: []
+      manual_flag: input_boolean.stop_bathroom
+      disable_flag: input_boolean.empty_home
+      off_delay:
+        hours: 0
         minutes: 1
-      id: left
-    - trigger: state
-      entity_id:
-        - switch.wall_switch_bathroom_shelly_light
-        - switch.switch_bathroom_mirror_shelly_light
-      to: 'off'
-      id: dark
-  conditions:
-    - condition: state
-      entity_id: input_boolean.stop
-      state: 'off'
-  actions:
-    - choose:
-        - conditions:
-            - condition: trigger
-              id: came
-            - condition: state
-              entity_id: input_boolean.stop_bathroom
-              state: 'off'
-            - condition: state
-              entity_id: input_boolean.cat_alone
-              state: 'off'
-            - condition: state
-              entity_id: input_boolean.empty_home
-              state: 'off'
+        seconds: 0
+      before_on:
+        - if:
             - condition: state
               entity_id:
                 - switch.wall_switch_bathroom_shelly_light
                 - switch.switch_bathroom_mirror_shelly_light
               state: 'off'
-          sequence:
+          then:
             - action: switch.turn_on
               target:
                 entity_id:
                   - switch.wall_switch_bathroom_shelly_light
                   - switch.switch_bathroom_mirror_shelly_light
-        - conditions:
-            - condition: trigger
-              id: left
-            - condition: state
-              entity_id: input_boolean.stop_bathroom
-              state: 'off'
-          sequence:
-            - action: switch.turn_off
-              target:
-                entity_id:
-                  - switch.wall_switch_bathroom_shelly_light
-                  - switch.switch_bathroom_mirror_shelly_light
-        - conditions:
-            - condition: trigger
-              id: dark
-            - condition: state
-              entity_id:
-                - switch.wall_switch_bathroom_shelly_light
-                - switch.switch_bathroom_mirror_shelly_light
-              state: 'off'
-          sequence:
-            - action: input_boolean.turn_off
-              target:
-                entity_id: input_boolean.stop_bathroom
-  mode: restart
+      after_off:
+        - action: switch.turn_off
+          target:
+            entity_id:
+              - switch.wall_switch_bathroom_shelly_light
+              - switch.switch_bathroom_mirror_shelly_light
 
 - id: automation.autolight_entrance
   alias: Авто-включение света в прихожей
@@ -82,10 +39,11 @@
     path: domovoy/presence.yaml
     input:
       presence_sensor: binary_sensor.presence_entrance_presence
-      light: light.light_group_entrance
       manual_flag: input_boolean.stop_entrance
       disable_flag: input_boolean.empty_home
       brightness: sensor.light_brightness_entrance
+      lights:
+        - light.light_group_entrance
 
 - id: automation.autolight_entrance_door
   alias: Свет в прихожей при открытии двери
@@ -133,18 +91,19 @@
         entity_id: light.light_group_entrance
   mode: restart
 
-- id: automation.autolight_toiltet
+- id: automation.autolight_toilet
   alias: Авто-включение света в туалете
   room: toilet
   use_blueprint:
     path: domovoy/presence.yaml
     input:
       presence_sensor: binary_sensor.presence_toilet_presence
-      light: light.light_group_toilet
       manual_flag: input_boolean.stop_toilet
       disable_flag: input_boolean.empty_home
       color_temp: sensor.private_room_light_color_temp
       brightness: sensor.private_room_light_brightness
+      lights:
+        - light.light_group_toilet
 
 - id: automation.wall_switch_andrey
   alias: Выключатель света в кабинете Андрея
@@ -180,8 +139,6 @@
       entity_id: input_boolean.stop
       state: 'off'
   actions:
-    - variables:
-        manual: "{% set ceiling = is_state('switch.wall_switch_bathroom_shelly_light', 'on') %}{% set mirror = is_state('switch.switch_bathroom_mirror_shelly_light', 'on') %}{{ (ceiling or not mirror) if trigger.id == 'hold' else (not ceiling and not mirror) }}"
     - if:
         - condition: trigger
           id: hold
@@ -215,9 +172,6 @@
                 entity_id:
                   - switch.wall_switch_bathroom_shelly_light
                   - switch.switch_bathroom_mirror_shelly_light
-    - action: input_boolean.turn_{{ 'on' if manual else 'off' }}
-      target:
-        entity_id: input_boolean.stop_bathroom
   mode: single
 
 - id: automation.wall_switch_bedroom
@@ -352,5 +306,4 @@
     input:
       wall_switch: 6c51f1e787e491b6a61f24ff8f18f374
       light_group: light.light_group_toilet
-      manual_flag: input_boolean.stop_toilet
       color_temp: sensor.private_room_light_color_temp

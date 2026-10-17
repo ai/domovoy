@@ -274,6 +274,16 @@ views:
             name: Персиана
             vertical: false
             features_position: bottom
+          - type: tile
+            entity: switch.plug_bed_heater
+            name: Грелка ног
+            icon: mdi:heat-wave
+            vertical: false
+            features_position: bottom
+            visibility:
+              - condition: state
+                entity: input_boolean.heating
+                state: 'on'
       - type: grid
         cards:
           - type: heading
@@ -856,6 +866,16 @@ views:
             vertical: false
             features:
               - type: cover-position
+            features_position: bottom
+          - type: tile
+            entity: switch.plug_bed_heater
+            name: Грелка ног
+            icon: mdi:heat-wave
+            vertical: false
+            icon_tap_action:
+              action: none
+            features:
+              - type: toggle
             features_position: bottom
       - type: grid
         cards:

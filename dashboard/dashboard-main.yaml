@@ -442,14 +442,8 @@ views:
                 entity: sensor.air_kate_co2
           - type: tile
             entity: light.light_group_kate
-            name: Напольная лампа
-            icon: mdi:floor-lamp
-            vertical: false
-            features_position: bottom
-          - type: tile
-            entity: light.light_group_kate_ceiling
-            name: Лампа на потолке
-            icon: mdi:wall-sconce-flat
+            name: Свет
+            icon: ''
             vertical: false
             features_position: bottom
       - type: grid
@@ -1062,26 +1056,6 @@ views:
                 state_content: state
                 color: state
           - type: tile
-            entity: light.light_gray_floor_lamp_1
-            name: Напольная лампа 1
-            icon: mdi:floor-lamp-dual
-            vertical: false
-            features:
-              - type: toggle
-              - type: light-brightness
-              - type: light-color-temp
-            features_position: bottom
-          - type: tile
-            entity: light.light_gray_floor_lamp_2
-            name: Напольная лампа 2
-            icon: mdi:floor-lamp-dual
-            vertical: false
-            features:
-              - type: toggle
-              - type: light-brightness
-              - type: light-color-temp
-            features_position: bottom
-          - type: tile
             entity: light.light_kate_ceiling_1
             name: На потолке 1
             icon: mdi:wall-sconce-flat
@@ -1384,6 +1358,26 @@ views:
               - type: toggle
               - type: light-color-temp
               - type: light-brightness
+            features_position: bottom
+          - type: tile
+            entity: light.light_gray_floor_lamp_1
+            name: Напольная лампа 1
+            icon: mdi:floor-lamp
+            vertical: false
+            features:
+              - type: toggle
+              - type: light-brightness
+              - type: light-color-temp
+            features_position: bottom
+          - type: tile
+            entity: light.light_gray_floor_lamp_2
+            name: Напольная лампа 2
+            icon: mdi:floor-lamp
+            vertical: false
+            features:
+              - type: toggle
+              - type: light-brightness
+              - type: light-color-temp
             features_position: bottom
       - type: grid
         cards:

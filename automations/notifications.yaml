@@ -39,10 +39,9 @@
       entity_id: sensor.fountain_dockstream_2_remaining_filter_day
       below: 1
       id: notify
-    - trigger: event
-      event_type: mobile_app_notification_action
-      event_data:
-        action: FOUNTAIN_WASHED
+    - trigger: numeric_state
+      entity_id: sensor.fountain_dockstream_2_remaining_filter_day
+      above: 1
       id: washed
   conditions:
     - condition: state
@@ -60,16 +59,10 @@
                 message: Нужно помыть
                 data:
                   tag: fountain_clean
-                  actions:
-                    - action: FOUNTAIN_WASHED
-                      title: Помыто
         - conditions:
             - condition: trigger
               id: washed
           sequence:
-            - action: script.turn_on
-              target:
-                entity_id: script.clean_cat_fountain
             - action: notify.mobile_app_phone_bedoll
               data:
                 message: clear_notification

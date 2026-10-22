@@ -180,20 +180,10 @@
   use_blueprint:
     path: domovoy/wall-switch.yaml
     input:
-      wall_switch: 99c1a100b8881fff10f026b7a073b75c
+      wall_switch: 63d3b49bad4ac357011b107b85136d0e
       light_group: light.light_group_bedroom
-      before_on:
-        - action: switch.turn_on
-          metadata: {}
-          target:
-            entity_id: switch.wall_switch_bedroom
-          data: {}
-      after_off:
-        - action: switch.turn_off
-          metadata: {}
-          target:
-            entity_id: switch.wall_switch_bedroom
-          data: {}
+      before_on: []
+      after_off: []
 
 - id: automation.wall_switch_children
   alias: Выключатель света в детской

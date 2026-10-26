@@ -219,7 +219,7 @@
     path: domovoy/wall-switch.yaml
     input:
       wall_switch: 1fdc24a1edacd09bb06e9da1242834c7
-      light_group: light.light_group_kate_ceiling
+      light_group: light.light_group_kate
 
 - id: automation.wall_switch_kitchen
   alias: Выключатель света на кухне

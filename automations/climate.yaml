@@ -264,6 +264,58 @@
         entity_id: switch.plug_bed_heater
   mode: single
 
+- id: automation.heated_floors_morning
+  alias: Тёплые полы утром по будням
+  triggers:
+    - trigger: time
+      at:
+        entity_id: input_datetime.night_end
+        offset: '-00:30:00'
+      id: 'on'
+    - trigger: time
+      at: '08:30:00'
+      id: 'off'
+  conditions:
+    - condition: state
+      entity_id: input_boolean.stop
+      state: 'off'
+    - condition: state
+      entity_id: input_boolean.heating
+      state: 'on'
+    - condition: state
+      entity_id: input_boolean.cat_alone
+      state: 'off'
+  actions:
+    - choose:
+        - conditions:
+            - condition: trigger
+              id: 'on'
+            - condition: time
+              weekday:
+                - mon
+                - tue
+                - wed
+                - thu
+                - fri
+          sequence:
+            - action: switch.turn_on
+              target:
+                entity_id:
+                  - switch.floor_kitchen
+                  - switch.floor_toilet
+                  - switch.floor_bathroom
+        - conditions:
+            - condition: trigger
+              id: 'off'
+          sequence:
+            - action: switch.turn_off
+              target:
+                entity_id:
+                  - switch.floor_kitchen
+                  - switch.floor_toilet
+                  - switch.floor_bathroom
+  mode: single
+
 - id: automation.heating_cooling_interlock
   alias: Взаимоблокировка обогрева и охлаждения
   triggers:

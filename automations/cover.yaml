@@ -23,6 +23,9 @@
       for:
         minutes: 5
       id: heating_close
+    - trigger: time
+      at: '10:00:00'
+      id: heating_open
   conditions:
     - condition: state
       entity_id: input_boolean.stop
@@ -73,6 +76,16 @@
                 minutes: 5
           sequence:
             - action: cover.close_cover
+              target:
+                entity_id: cover.shutter_andrey
+        - conditions:
+            - condition: trigger
+              id: heating_open
+            - condition: state
+              entity_id: input_boolean.heating
+              state: 'on'
+          sequence:
+            - action: cover.open_cover
               target:
                 entity_id: cover.shutter_andrey
   mode: single

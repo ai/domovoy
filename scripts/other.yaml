@@ -92,6 +92,14 @@
         - condition: state
           entity_id: input_boolean.cooling
           state: 'off'
+        - condition: not
+          conditions:
+            - condition: state
+              entity_id: input_boolean.heating
+              state: 'on'
+            - condition: state
+              entity_id: sun.sun
+              state: below_horizon
       then:
         - action: cover.open_cover
           target:

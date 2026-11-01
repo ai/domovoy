@@ -240,6 +240,48 @@
           importance: low
   mode: single
 
+- id: automation.high_co2_notification_children
+  alias: Высокий уровень CO² в детской
+  room: children
+  triggers:
+    - trigger: numeric_state
+      entity_id: sensor.air_children_co2
+      above: 1000
+  conditions:
+    - condition: state
+      entity_id:
+        - person.andrey
+        - person.kate
+      match: any
+      state: home
+    - condition: state
+      entity_id: input_boolean.stop
+      state: 'off'
+  actions:
+    - if:
+        - condition: state
+          entity_id: person.andrey
+          state: home
+      then:
+        - action: notify.mobile_app_phone_bedoll
+          data:
+            title: Детская
+            message: "Высокий уровень CO²: {{ states('sensor.air_children_co2') }}"
+            data:
+              tag: co2_children
+    - if:
+        - condition: state
+          entity_id: person.kate
+          state: home
+      then:
+        - action: notify.mobile_app_phone_pixel_9
+          data:
+            title: Детская
+            message: "Высокий уровень CO²: {{ states('sensor.air_children_co2') }}"
+            data:
+              tag: co2_children
+  mode: single
+
 - id: automation.high_co2_notification_kate
   alias: Высокий уровень CO² у Кати
   room: kate

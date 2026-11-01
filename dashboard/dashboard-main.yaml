@@ -1135,16 +1135,6 @@ views:
               - type: light-color-temp
             features_position: bottom
           - type: tile
-            entity: light.light_black_lamp
-            name: Чёрная лампа
-            icon: mdi:lamp
-            vertical: false
-            features:
-              - type: toggle
-              - type: light-brightness
-              - type: light-color-temp
-            features_position: bottom
-          - type: tile
             entity: light.light_children_ceiling_1
             name: На потолке 1
             icon: mdi:weather-sunny

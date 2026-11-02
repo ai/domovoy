@@ -264,32 +264,37 @@
         entity_id: switch.plug_bed_heater
   mode: single
 
-- id: automation.heated_floors_morning
-  alias: Тёплые полы утром по будням
+- id: automation.heated_floors
+  alias: Тёплые полы
   triggers:
     - trigger: time
       at:
         entity_id: input_datetime.night_end
         offset: '-00:30:00'
-      id: 'on'
+      id: morning
+    - trigger: time
+      at: input_datetime.night_end
+      id: day_start
     - trigger: time
       at: '08:30:00'
-      id: 'off'
+      id: kitchen_off
+    - trigger: state
+      entity_id: input_boolean.empty_home
+      from: 'on'
+      to: 'off'
+      id: arrived
+    - trigger: time
+      at: input_datetime.night_start
+      id: night
   conditions:
     - condition: state
       entity_id: input_boolean.stop
-      state: 'off'
-    - condition: state
-      entity_id: input_boolean.heating
-      state: 'on'
-    - condition: state
-      entity_id: input_boolean.cat_alone
       state: 'off'
   actions:
     - choose:
         - conditions:
             - condition: trigger
-              id: 'on'
+              id: morning
             - condition: time
               weekday:
                 - mon
@@ -297,6 +302,12 @@
                 - wed
                 - thu
                 - fri
+            - condition: state
+              entity_id: input_boolean.heating
+              state: 'on'
+            - condition: state
+              entity_id: input_boolean.cat_alone
+              state: 'off'
           sequence:
             - action: switch.turn_on
               target:
@@ -306,15 +317,58 @@
                   - switch.floor_bathroom
         - conditions:
             - condition: trigger
-              id: 'off'
+              id: day_start
+            - condition: time
+              weekday:
+                - sat
+                - sun
+            - condition: state
+              entity_id: input_boolean.heating
+              state: 'on'
+            - condition: state
+              entity_id: input_boolean.cat_alone
+              state: 'off'
+          sequence:
+            - action: switch.turn_on
+              target:
+                entity_id:
+                  - switch.floor_toilet
+                  - switch.floor_bathroom
+        - conditions:
+            - condition: trigger
+              id: kitchen_off
+          sequence:
+            - action: switch.turn_off
+              target:
+                entity_id: switch.floor_kitchen
+        - conditions:
+            - condition: trigger
+              id: arrived
+            - condition: time
+              after: input_datetime.night_end
+              before: input_datetime.night_start
+            - condition: state
+              entity_id: input_boolean.heating
+              state: 'on'
+            - condition: state
+              entity_id: input_boolean.cat_alone
+              state: 'off'
+          sequence:
+            - action: switch.turn_on
+              target:
+                entity_id:
+                  - switch.floor_toilet
+                  - switch.floor_bathroom
+        - conditions:
+            - condition: trigger
+              id: night
           sequence:
             - action: switch.turn_off
               target:
                 entity_id:
-                  - switch.floor_kitchen
                   - switch.floor_toilet
                   - switch.floor_bathroom
-  mode: single
+  mode: queued
 
 - id: automation.heating_cooling_interlock
   alias: Взаимоблокировка обогрева и охлаждения

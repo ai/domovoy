@@ -307,6 +307,20 @@ views:
             name: Персиана
             vertical: false
             features_position: bottom
+          - type: tile
+            entity: switch.floor_lounge
+            name: Тёплый пол
+            icon: mdi:waves-arrow-up
+            vertical: false
+            tap_action:
+              action: toggle
+            icon_tap_action:
+              action: none
+            features_position: bottom
+            visibility:
+              - condition: state
+                entity: input_boolean.heating
+                state: 'on'
           - type: conditional
             conditions:
               - condition: state
@@ -375,6 +389,9 @@ views:
                 entity: climate.ac_lounge
                 attribute: fan_mode
                 state: '5'
+              - condition: state
+                entity: input_boolean.cooling
+                state: 'on'
             card:
               type: tile
               entity: climate.ac_lounge
@@ -402,6 +419,9 @@ views:
                 entity: climate.ac_lounge
                 attribute: fan_mode
                 state_not: '5'
+              - condition: state
+                entity: input_boolean.cooling
+                state: 'on'
             card:
               type: tile
               entity: climate.ac_lounge
@@ -500,6 +520,20 @@ views:
             icon_tap_action:
               action: none
             features_position: bottom
+          - type: tile
+            entity: switch.floor_kitchen
+            name: Тёплый пол
+            icon: mdi:waves-arrow-up
+            vertical: false
+            tap_action:
+              action: toggle
+            icon_tap_action:
+              action: none
+            features_position: bottom
+            visibility:
+              - condition: state
+                entity: input_boolean.heating
+                state: 'on'
       - type: grid
         cards:
           - type: heading
@@ -533,6 +567,20 @@ views:
             icon_tap_action:
               action: none
             features_position: bottom
+          - type: tile
+            entity: switch.floor_bathroom
+            name: Тёплый пол
+            icon: mdi:waves-arrow-up
+            vertical: false
+            tap_action:
+              action: toggle
+            icon_tap_action:
+              action: none
+            features_position: bottom
+            visibility:
+              - condition: state
+                entity: input_boolean.heating
+                state: 'on'
       - type: grid
         cards:
           - type: heading
@@ -555,6 +603,20 @@ views:
             name: Свет
             vertical: false
             features_position: bottom
+          - type: tile
+            entity: switch.floor_toilet
+            name: Тёплый пол
+            icon: mdi:waves-arrow-up
+            vertical: false
+            tap_action:
+              action: toggle
+            icon_tap_action:
+              action: none
+            features_position: bottom
+            visibility:
+              - condition: state
+                entity: input_boolean.heating
+                state: 'on'
       - type: grid
         cards:
           - type: heading

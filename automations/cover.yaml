@@ -24,7 +24,9 @@
         minutes: 5
       id: heating_close
     - trigger: time
-      at: '10:00:00'
+      at:
+        entity_id: input_datetime.night_end
+        offset: '-01:00:00'
       id: heating_open
   conditions:
     - condition: state
@@ -66,9 +68,8 @@
             - condition: state
               entity_id: input_boolean.heating
               state: 'on'
-            - condition: time
-              after: '01:00:00'
-              before: input_datetime.night_end
+            - condition: template
+              value_template: "{{ today_at('01:00') <= now() < today_at(states('input_datetime.night_end')) - timedelta(hours=1) }}"
             - condition: state
               entity_id: light.light_group_andrey
               state: 'off'

@@ -153,9 +153,11 @@
               entity_id: input_boolean.heating
               state: 'on'
           sequence:
-            - action: cover.close_cover
+            - action: cover.set_cover_position
               target:
                 entity_id: cover.shutter_bedroom
+              data:
+                position: 10
   mode: single
 
 - id: automation.lounge_shutter

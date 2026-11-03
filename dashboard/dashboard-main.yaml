@@ -488,6 +488,18 @@ views:
             name: Свет
             vertical: false
             features_position: bottom
+          - type: tile
+            entity: script.children_sleep_light
+            name: Медленно затушить
+            vertical: false
+            tap_action:
+              action: perform-action
+              perform_action: script.turn_on
+              target:
+                entity_id: script.children_sleep_light
+            icon_tap_action:
+              action: none
+            features_position: bottom
       - type: grid
         cards:
           - type: heading
@@ -1041,6 +1053,35 @@ views:
       - type: grid
         cards:
           - type: heading
+            heading: Сцены
+            heading_style: title
+          - type: tile
+            entity: scene.andrey_normal_light
+            hide_state: true
+            vertical: false
+            tap_action:
+              action: perform-action
+              perform_action: scene.turn_on
+              target:
+                entity_id: scene.andrey_normal_light
+            icon_tap_action:
+              action: none
+            features_position: bottom
+          - type: tile
+            entity: scene.andrey_night_light
+            hide_state: true
+            vertical: false
+            tap_action:
+              action: perform-action
+              perform_action: scene.turn_on
+              target:
+                entity_id: scene.andrey_night_light
+            icon_tap_action:
+              action: none
+            features_position: bottom
+      - type: grid
+        cards:
+          - type: heading
             heading: Другое
             heading_style: title
           - type: tile
@@ -1215,6 +1256,35 @@ views:
               - type: toggle
               - type: light-brightness
               - type: light-color-temp
+            features_position: bottom
+      - type: grid
+        cards:
+          - type: heading
+            heading: Сцены
+            heading_style: title
+          - type: tile
+            entity: scene.children_normal_light
+            hide_state: true
+            vertical: false
+            tap_action:
+              action: perform-action
+              perform_action: scene.turn_on
+              target:
+                entity_id: scene.children_normal_light
+            icon_tap_action:
+              action: none
+            features_position: bottom
+          - type: tile
+            entity: script.children_sleep_light
+            name: Медленно затушить свет
+            vertical: false
+            tap_action:
+              action: perform-action
+              perform_action: script.turn_on
+              target:
+                entity_id: script.children_sleep_light
+            icon_tap_action:
+              action: none
             features_position: bottom
       - type: grid
         cards:

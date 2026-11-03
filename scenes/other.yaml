@@ -1,0 +1,63 @@
+- id: scene.andrey_night_light
+  room: andrey
+  name: Ночной свет
+  entities:
+    light.light_andrey_floor_lamp_1_2:
+      state: 'on'
+      brightness: 255
+      color_mode: color_temp
+      color_temp_kelvin: 2500
+    light.light_andrey_floor_lamp_2_2:
+      state: 'off'
+    light.light_andrey_bookcase:
+      state: 'off'
+    light.light_andrey_desk:
+      state: 'off'
+  icon: mdi:weather-night
+
+- id: scene.andrey_normal_light
+  room: andrey
+  name: Обычный свет
+  entities:
+    light.light_andrey_floor_lamp_1_2:
+      state: 'on'
+      brightness: 255
+      color_mode: color_temp
+      color_temp_kelvin: 2500
+    light.light_andrey_floor_lamp_2_2:
+      state: 'on'
+      brightness: 255
+      color_mode: color_temp
+      color_temp_kelvin: 2500
+    light.light_andrey_bookcase:
+      state: 'on'
+      brightness: 255
+      color_mode: color_temp
+      color_temp_kelvin: 2500
+    light.light_andrey_desk:
+      state: 'on'
+      brightness: 255
+      color_mode: color_temp
+      color_temp_kelvin: 2500
+  icon: mdi:lightbulb-on
+
+- id: scene.children_normal_light
+  room: children
+  name: Обычный свет
+  entities:
+    light.light_children_ceiling_1:
+      state: 'on'
+      brightness: 255
+      color_mode: color_temp
+      color_temp_kelvin: 2500
+    light.light_children_ceiling_2:
+      state: 'on'
+      brightness: 255
+      color_mode: color_temp
+      color_temp_kelvin: 2500
+    light.light_children_shelving:
+      state: 'on'
+      brightness: 255
+      color_mode: color_temp
+      color_temp_kelvin: 2500
+  icon: mdi:lightbulb-on

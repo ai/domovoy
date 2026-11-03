@@ -105,6 +105,28 @@
       lights:
         - light.light_group_toilet
 
+- id: automation.children_sleep_light_stop_on_scene
+  alias: Остановить затухание света в детской при смене сцены
+  room: children
+  triggers:
+    - trigger: state
+      entity_id:
+        - scene.children_normal_light
+      not_from:
+        - unavailable
+  conditions:
+    - condition: state
+      entity_id: input_boolean.stop
+      state: 'off'
+    - condition: state
+      entity_id: script.children_sleep_light
+      state: 'on'
+  actions:
+    - action: script.turn_off
+      target:
+        entity_id: script.children_sleep_light
+  mode: single
+
 - id: automation.wall_switch_andrey
   alias: Выключатель света в кабинете Андрея
   room: andrey

@@ -38,6 +38,12 @@ const DOMAINS: Domain[] = [
     outputDir: 'scripts',
     scope: 'script',
     configPath: id => `config/script/config/${id}`
+  },
+  {
+    prefix: 'scene.',
+    outputDir: 'scenes',
+    scope: 'scene',
+    configPath: id => `config/scene/config/${id}`
   }
 ]
 

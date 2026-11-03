@@ -430,7 +430,7 @@
           channel: Maintenance
           importance: low
   variables:
-    missing: "{% set ns = namespace(names=[]) %}{% for s in states | selectattr('state', '==', 'unavailable') | rejectattr('domain', 'in', ['group', 'scene', 'script', 'automation', 'button', 'input_button', 'update']) %}{% if (now() - s.last_changed).total_seconds() > 30 * 60 %}{% set did = device_id(s.entity_id) %}{% set name = (device_attr(did, 'name_by_user') or device_attr(did, 'name')) if did else s.name %}{% if name and name not in ns.names %}{% set ns.names = ns.names + [name] %}{% endif %}{% endif %}{% endfor %}{{ ns.names | join(', ') }}"
+    missing: "{% set ns = namespace(names=[]) %}{% for s in states | selectattr('state', '==', 'unavailable') | rejectattr('domain', 'in', ['group', 'scene', 'script', 'automation', 'button', 'input_button', 'update']) %}{% if (now() - s.last_changed).total_seconds() > 30 * 60 %}{% set did = device_id(s.entity_id) %}{% set name = (device_attr(did, 'name_by_user') or device_attr(did, 'name')) if did else s.name %}{% if name and not name.startswith('Weather / ') and name not in ns.names %}{% set ns.names = ns.names + [name] %}{% endif %}{% endif %}{% endfor %}{{ ns.names | join(', ') }}"
   mode: single
 
 - id: automation.notify_door_open_too_long

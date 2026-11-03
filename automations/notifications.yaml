@@ -351,6 +351,63 @@
   mode: single
   max_exceeded: silent
 
+- id: automation.holidays_reminder
+  alias: Напоминание о каникулах
+  triggers:
+    - trigger: time
+      at: '11:00:00'
+      id: remind
+    - trigger: event
+      event_type: mobile_app_notification_action
+      event_data:
+        action: HOLIDAYS_OFF
+      id: turn_off
+    - trigger: state
+      entity_id: input_boolean.holidays
+      to: 'off'
+      id: cleared
+  conditions:
+    - condition: state
+      entity_id: input_boolean.stop
+      state: 'off'
+  actions:
+    - choose:
+        - conditions:
+            - condition: trigger
+              id: remind
+            - condition: state
+              entity_id: input_boolean.holidays
+              state: 'on'
+            - condition: template
+              value_template: '{{ now().month != 8 }}'
+          sequence:
+            - action: notify.mobile_app_phone_bedoll
+              data:
+                title: Каникулы
+                message: Каникулы ещё нужны?
+                data:
+                  tag: holidays
+                  actions:
+                    - action: HOLIDAYS_OFF
+                      title: Выключить
+        - conditions:
+            - condition: trigger
+              id: turn_off
+          sequence:
+            - action: input_boolean.turn_off
+              target:
+                entity_id: input_boolean.holidays
+        - conditions:
+            - condition: trigger
+              id: cleared
+          sequence:
+            - action: notify.mobile_app_phone_bedoll
+              data:
+                message: clear_notification
+                data:
+                  tag: holidays
+  mode: queued
+
 - id: automation.kitchen_water_leak
   alias: Протечка воды на кухне
   room: kitchen

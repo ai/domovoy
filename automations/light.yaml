@@ -112,6 +112,7 @@
     - trigger: state
       entity_id:
         - scene.children_normal_light
+        - scene.children_night_light
       not_from:
         - unavailable
   conditions:
@@ -139,6 +140,11 @@
     input:
       wall_switch: 0c1bea69e1a9aaea0f33bc6636979be4
       light_group: light.light_group_andrey
+      night_scene: scene.andrey_night_light
+      scenes:
+        - scene.andrey_normal_light
+        - scene.andrey_night_light
+      normal_color_temp: 2500
 
 - id: automation.wall_switch_bathroom_mirror
   alias: Свет зеркала по выключателю в ванной
@@ -199,22 +205,44 @@
 - id: automation.wall_switch_bedroom
   alias: Выключатель света в спальне
   room: bedroom
+  conditions:
+    - condition: state
+      entity_id: input_boolean.stop
+      state: 'off'
   use_blueprint:
     path: domovoy/wall-switch.yaml
     input:
       wall_switch: 63d3b49bad4ac357011b107b85136d0e
       light_group: light.light_group_bedroom
       before_on: []
-      after_off: []
+      after_off:
+        - action: switch.turn_off
+          target:
+            entity_id: switch.wall_switch_bedroom
+      night_scene: scene.bedroom_night_light
+      scenes:
+        - scene.bedroom_normal_light
+        - scene.bedroom_ceiling_light
+        - scene.bedroom_night_light
+      normal_color_temp: 2202
 
 - id: automation.wall_switch_children
   alias: Выключатель света в детской
   room: children
+  conditions:
+    - condition: state
+      entity_id: input_boolean.stop
+      state: 'off'
   use_blueprint:
     path: domovoy/wall-switch.yaml
     input:
       wall_switch: ebf2a7b410a6ad849a215ae01515451a
       light_group: light.light_group_children
+      night_scene: scene.children_night_light
+      scenes:
+        - scene.children_normal_light
+        - scene.children_night_light
+      normal_color_temp: 2500
 
 - id: automation.wall_switch_entrance
   alias: Выключатель света в прихожей
@@ -229,6 +257,11 @@
       wall_switch: d87af418922ca571025eea140767792d
       light_group: light.light_group_entrance
       manual_flag: input_boolean.stop_entrance
+      night_scene: scene.entrance_night_light
+      scenes:
+        - scene.entrance_normal_light
+        - scene.entrance_night_light
+      normal_color_temp: 2202
 
 - id: automation.wall_switch_kate
   alias: Выключатель света в кабинете Кати
@@ -242,6 +275,11 @@
     input:
       wall_switch: 1fdc24a1edacd09bb06e9da1242834c7
       light_group: light.light_group_kate
+      night_scene: scene.kate_night_light
+      scenes:
+        - scene.kate_normal_light
+        - scene.kate_night_light
+      normal_color_temp: 2202
 
 - id: automation.wall_switch_kitchen
   alias: Выключатель света на кухне
@@ -255,6 +293,10 @@
     input:
       wall_switch: 8965cf602f114e165de712f80179523e
       light_group: light.light_group_kitchen
+      night_scene: scene.kitchen_night_light
+      scenes:
+        - scene.kitchen_normal_light
+        - scene.kitchen_night_light
 
 - id: automation.wall_switch_lounge_extra
   alias: Дополнительный выключатель света в зале
@@ -271,40 +313,40 @@
           metadata: {}
           target:
             entity_id: light.light_chandelier
-      before_on:
-        - action: light.turn_on
-          data:
-            brightness_pct: 75
-            color_temp_kelvin: 2513
-          metadata: {}
-          target:
-            device_id: e99ab7283456288ab6c9d50cbf84d6b5
+      before_on: []
       light_group: light.light_group_lounge
       wall_switch: 1ea952a14899eaa04451a3126f8b3196
+      night_scene: scene.lounge_night_light
+      scenes:
+        - scene.lounge_normal_light
+        - scene.lounge_night_light
+      normal_color_temp: 2202
     path: domovoy/wall-switch.yaml
 
 - id: automation.wall_switch_lounge_real
   alias: Настоящий выключатель света в зале
   room: lounge
+  conditions:
+    - condition: state
+      entity_id: input_boolean.stop
+      state: 'off'
   use_blueprint:
     path: domovoy/wall-switch.yaml
     input:
       wall_switch: af88ab836a83c91e4db5e0c13d5290d1
       light_group: light.light_group_lounge
-      before_on:
-        - action: light.turn_on
-          metadata: {}
-          target:
-            device_id: e99ab7283456288ab6c9d50cbf84d6b5
-          data:
-            brightness_pct: 75
-            color_temp_kelvin: 2513
+      before_on: []
       after_off:
         - action: light.turn_off
           metadata: {}
           target:
             entity_id: light.light_chandelier
           data: {}
+      night_scene: scene.lounge_night_light
+      scenes:
+        - scene.lounge_normal_light
+        - scene.lounge_night_light
+      normal_color_temp: 2202
 
 - id: automation.wall_switch_toilet
   alias: Выключатель в туалете
@@ -319,3 +361,7 @@
       wall_switch: 6c51f1e787e491b6a61f24ff8f18f374
       light_group: light.light_group_toilet
       color_temp: sensor.private_room_light_color_temp
+      night_scene: scene.toilet_night_light
+      scenes:
+        - scene.toilet_normal_light
+        - scene.toilet_night_light

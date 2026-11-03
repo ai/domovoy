@@ -926,6 +926,47 @@ views:
       - type: grid
         cards:
           - type: heading
+            heading: Сцены
+            heading_style: title
+          - type: tile
+            entity: scene.bedroom_normal_light
+            hide_state: true
+            vertical: false
+            tap_action:
+              action: perform-action
+              perform_action: scene.turn_on
+              target:
+                entity_id: scene.bedroom_normal_light
+            icon_tap_action:
+              action: none
+            features_position: bottom
+          - type: tile
+            entity: scene.bedroom_ceiling_light
+            hide_state: true
+            vertical: false
+            tap_action:
+              action: perform-action
+              perform_action: scene.turn_on
+              target:
+                entity_id: scene.bedroom_ceiling_light
+            icon_tap_action:
+              action: none
+            features_position: bottom
+          - type: tile
+            entity: scene.bedroom_night_light
+            hide_state: true
+            vertical: false
+            tap_action:
+              action: perform-action
+              perform_action: scene.turn_on
+              target:
+                entity_id: scene.bedroom_night_light
+            icon_tap_action:
+              action: none
+            features_position: bottom
+      - type: grid
+        cards:
+          - type: heading
             heading: Другое
             heading_style: title
           - type: tile
@@ -1181,6 +1222,35 @@ views:
       - type: grid
         cards:
           - type: heading
+            heading: Сцены
+            heading_style: title
+          - type: tile
+            entity: scene.kate_normal_light
+            hide_state: true
+            vertical: false
+            tap_action:
+              action: perform-action
+              perform_action: scene.turn_on
+              target:
+                entity_id: scene.kate_normal_light
+            icon_tap_action:
+              action: none
+            features_position: bottom
+          - type: tile
+            entity: scene.kate_night_light
+            hide_state: true
+            vertical: false
+            tap_action:
+              action: perform-action
+              perform_action: scene.turn_on
+              target:
+                entity_id: scene.kate_night_light
+            icon_tap_action:
+              action: none
+            features_position: bottom
+      - type: grid
+        cards:
+          - type: heading
             heading: Статистика
             heading_style: title
           - type: statistics-graph
@@ -1275,6 +1345,18 @@ views:
               action: none
             features_position: bottom
           - type: tile
+            entity: scene.children_night_light
+            hide_state: true
+            vertical: false
+            tap_action:
+              action: perform-action
+              perform_action: scene.turn_on
+              target:
+                entity_id: scene.children_night_light
+            icon_tap_action:
+              action: none
+            features_position: bottom
+          - type: tile
             entity: script.children_sleep_light
             name: Медленно затушить свет
             vertical: false
@@ -1354,6 +1436,35 @@ views:
             features:
               - type: toggle
               - type: light-brightness
+      - type: grid
+        cards:
+          - type: heading
+            heading: Сцены
+            heading_style: title
+          - type: tile
+            entity: scene.kitchen_normal_light
+            hide_state: true
+            vertical: false
+            tap_action:
+              action: perform-action
+              perform_action: scene.turn_on
+              target:
+                entity_id: scene.kitchen_normal_light
+            icon_tap_action:
+              action: none
+            features_position: bottom
+          - type: tile
+            entity: scene.kitchen_night_light
+            hide_state: true
+            vertical: false
+            tap_action:
+              action: perform-action
+              perform_action: scene.turn_on
+              target:
+                entity_id: scene.kitchen_night_light
+            icon_tap_action:
+              action: none
+            features_position: bottom
       - type: grid
         cards:
           - type: heading
@@ -1439,6 +1550,35 @@ views:
       - type: grid
         cards:
           - type: heading
+            heading: Сцены
+            heading_style: title
+          - type: tile
+            entity: scene.toilet_normal_light
+            hide_state: true
+            vertical: false
+            tap_action:
+              action: perform-action
+              perform_action: scene.turn_on
+              target:
+                entity_id: scene.toilet_normal_light
+            icon_tap_action:
+              action: none
+            features_position: bottom
+          - type: tile
+            entity: scene.toilet_night_light
+            hide_state: true
+            vertical: false
+            tap_action:
+              action: perform-action
+              perform_action: scene.turn_on
+              target:
+                entity_id: scene.toilet_night_light
+            icon_tap_action:
+              action: none
+            features_position: bottom
+      - type: grid
+        cards:
+          - type: heading
             heading: Другое
             heading_style: title
           - type: tile
@@ -1500,6 +1640,35 @@ views:
               - type: toggle
               - type: light-brightness
               - type: light-color-temp
+            features_position: bottom
+      - type: grid
+        cards:
+          - type: heading
+            heading: Сцены
+            heading_style: title
+          - type: tile
+            entity: scene.lounge_normal_light
+            hide_state: true
+            vertical: false
+            tap_action:
+              action: perform-action
+              perform_action: scene.turn_on
+              target:
+                entity_id: scene.lounge_normal_light
+            icon_tap_action:
+              action: none
+            features_position: bottom
+          - type: tile
+            entity: scene.lounge_night_light
+            hide_state: true
+            vertical: false
+            tap_action:
+              action: perform-action
+              perform_action: scene.turn_on
+              target:
+                entity_id: scene.lounge_night_light
+            icon_tap_action:
+              action: none
             features_position: bottom
       - type: grid
         cards:
@@ -1705,6 +1874,35 @@ views:
             entity: input_boolean.stop_entrance
             name: Ручной режим света
             icon: mdi:light-switch
+      - type: grid
+        cards:
+          - type: heading
+            heading: Сцены
+            heading_style: title
+          - type: tile
+            entity: scene.entrance_normal_light
+            hide_state: true
+            vertical: false
+            tap_action:
+              action: perform-action
+              perform_action: scene.turn_on
+              target:
+                entity_id: scene.entrance_normal_light
+            icon_tap_action:
+              action: none
+            features_position: bottom
+          - type: tile
+            entity: scene.entrance_night_light
+            hide_state: true
+            vertical: false
+            tap_action:
+              action: perform-action
+              perform_action: scene.turn_on
+              target:
+                entity_id: scene.entrance_night_light
+            icon_tap_action:
+              action: none
+            features_position: bottom
       - type: grid
         cards:
           - type: heading

@@ -54,6 +54,18 @@ blueprint:
         entity:
           filter:
             - domain: sensor
+    normal_color_temp:
+      name: Normal color temperature
+      description: >-
+        Fixed color temperature in K to turn the light on with if the sensor
+        is not set, otherwise the bulbs keep the last one. Copy it from
+        the first scene.
+      default: 0
+      selector:
+        number:
+          min: 0
+          max: 6535
+          unit_of_measurement: K
     night_brightness:
       name: Night mode brightness
       description: >-
@@ -63,15 +75,40 @@ blueprint:
         number:
           min: 1
           max: 50
+    night_scene:
+      name: Night scene
+      description: >-
+        Scene for a hold when the light is off, instead of the night mode
+      default: ''
+      selector:
+        entity:
+          filter:
+            - domain: scene
+    scenes:
+      name: Scenes
+      description: >-
+        Scenes for a hold when the light is on to cycle through, in order,
+        instead of toggling the night mode. The first one should match
+        the single press light.
+      default: []
+      selector:
+        entity:
+          multiple: true
+          filter:
+            - domain: scene
 
 variables:
   light_group: !input light_group
   manual_flag: !input manual_flag
   color_temp: !input color_temp
+  normal_color_temp: !input normal_color_temp
   night_brightness: !input night_brightness
+  night_scene: !input night_scene
+  scenes: !input scenes
+  set_color_temp: "{{ color_temp != '' or normal_color_temp | int(0) > 0 }}"
   # Clamped to the group, as its lamps may not share the same range
   color_temp_kelvin: >-
-    {{ [[states(color_temp) | int(0),
+    {{ [[(states(color_temp) if color_temp != '' else normal_color_temp) | int(0),
          state_attr(light_group, 'min_color_temp_kelvin') | int(2202)] | max,
         state_attr(light_group, 'max_color_temp_kelvin') | int(6535)] | min }}
 
@@ -112,8 +149,8 @@ actions:
             target:
               entity_id: !input light_group
             data: >-
-              {{ { 'brightness': 255 } if color_temp == '' else
-                 { 'brightness': 255, 'color_temp_kelvin': color_temp_kelvin } }}
+              {{ { 'brightness': 255, 'color_temp_kelvin': color_temp_kelvin }
+                 if set_color_temp else { 'brightness': 255 } }}
           - if:
               - condition: template
                 value_template: "{{ manual_flag != '' }}"
@@ -136,31 +173,65 @@ actions:
                   entity_id: '{{ manual_flag }}'
           - sequence: !input after_off
     else:
-      - if:
-          - condition: state
-            entity_id: !input light_group
-            state: 'off'
-        then:
-          - sequence: !input before_on
+      - variables:
+          was_off: "{{ is_state(light_group, 'off') }}"
       - if:
           - condition: template
-            value_template: >-
-              {{ is_state(light_group, 'on') and
-                 state_attr(light_group, 'brightness') | int(0) <= night_brightness }}
+            value_template: '{{ was_off }}'
         then:
-          # Leave night mode at full brightness
-          - action: light.turn_on
-            target:
-              entity_id: !input light_group
-            data:
-              brightness: 255
-        else:
-          - action: light.turn_on
-            target:
-              entity_id: !input light_group
-            data:
-              brightness: "{{ night_brightness }}"
-              color_temp_kelvin: "{{ state_attr(light_group, 'min_color_temp_kelvin') | int(2202) }}"
+          - sequence: !input before_on
+      - choose:
+          - conditions:
+              - condition: template
+                value_template: "{{ was_off and night_scene != '' }}"
+            sequence:
+              - action: scene.turn_on
+                target:
+                  entity_id: '{{ night_scene }}'
+          - conditions:
+              - condition: template
+                value_template: '{{ not was_off and scenes | length > 0 }}'
+            sequence:
+              - variables:
+                  # A scene time is its last activation. Scenes activated
+                  # before the light was turned on do not count, so the light
+                  # is treated as the first scene. The scene that turned
+                  # the light on fires slightly earlier than the group state
+                  # changes, hence the margin.
+                  next_scene: >-
+                    {% set ns = namespace(index=0,
+                         time=states[light_group].last_changed - timedelta(seconds=5)) %}
+                    {% for scene in scenes %}
+                      {% set time = states(scene) | as_datetime(none) %}
+                      {% if time is not none and time > ns.time %}
+                        {% set ns.index = loop.index0 %}
+                        {% set ns.time = time %}
+                      {% endif %}
+                    {% endfor %}
+                    {{ scenes[(ns.index + 1) % (scenes | length)] }}
+              - action: scene.turn_on
+                target:
+                  entity_id: '{{ next_scene }}'
+        default:
+          - if:
+              - condition: template
+                value_template: >-
+                  {{ is_state(light_group, 'on') and
+                     state_attr(light_group, 'brightness') | int(0) <= night_brightness }}
+            then:
+              # Leave night mode at full brightness
+              - action: light.turn_on
+                target:
+                  entity_id: !input light_group
+                data:
+                  brightness: 255
+            else:
+              - action: light.turn_on
+                target:
+                  entity_id: !input light_group
+                data:
+                  brightness: "{{ night_brightness }}"
+                  color_temp_kelvin: "{{ state_attr(light_group, 'min_color_temp_kelvin') | int(2202) }}"
       - if:
           - condition: template
             value_template: "{{ manual_flag != '' }}"

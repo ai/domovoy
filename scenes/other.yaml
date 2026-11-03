@@ -41,6 +41,80 @@
       color_temp_kelvin: 2500
   icon: mdi:lightbulb-on
 
+- id: scene.bedroom_ceiling_light
+  room: bedroom
+  name: Верхний свет
+  entities:
+    switch.wall_switch_bedroom:
+      state: 'on'
+    light.light_yellow_lamp_1:
+      state: 'on'
+      brightness: 255
+      color_mode: color_temp
+      color_temp_kelvin: 4000
+    light.light_yellow_lamp_2:
+      state: 'on'
+      brightness: 255
+      color_mode: color_temp
+      color_temp_kelvin: 4000
+    light.light_bedroom_ceiling:
+      state: 'on'
+      brightness: 255
+      color_mode: color_temp
+      color_temp_kelvin: 4000
+  icon: mdi:ceiling-light
+
+- id: scene.bedroom_night_light
+  room: bedroom
+  name: Ночной свет
+  entities:
+    light.light_yellow_lamp_1:
+      state: 'on'
+      brightness: 5
+      color_mode: color_temp
+      color_temp_kelvin: 2202
+    light.light_yellow_lamp_2:
+      state: 'on'
+      brightness: 5
+      color_mode: color_temp
+      color_temp_kelvin: 2202
+    switch.wall_switch_bedroom:
+      state: 'off'
+  icon: mdi:weather-night
+
+- id: scene.bedroom_normal_light
+  room: bedroom
+  name: Обычный свет
+  entities:
+    light.light_yellow_lamp_1:
+      state: 'on'
+      brightness: 255
+      color_mode: color_temp
+      color_temp_kelvin: 2202
+    light.light_yellow_lamp_2:
+      state: 'on'
+      brightness: 255
+      color_mode: color_temp
+      color_temp_kelvin: 2202
+    switch.wall_switch_bedroom:
+      state: 'off'
+  icon: mdi:lightbulb-on
+
+- id: scene.children_night_light
+  room: children
+  name: Ночной свет
+  entities:
+    light.light_children_shelving:
+      state: 'on'
+      brightness: 5
+      color_mode: color_temp
+      color_temp_kelvin: 2202
+    light.light_children_ceiling_1:
+      state: 'off'
+    light.light_children_ceiling_2:
+      state: 'off'
+  icon: mdi:weather-night
+
 - id: scene.children_normal_light
   room: children
   name: Обычный свет
@@ -60,4 +134,183 @@
       brightness: 255
       color_mode: color_temp
       color_temp_kelvin: 2500
+  icon: mdi:lightbulb-on
+
+- id: scene.entrance_night_light
+  room: entrance
+  name: Ночной свет
+  entities:
+    light.light_entrance_ceiling_1:
+      state: 'on'
+      brightness: 5
+      color_mode: color_temp
+      color_temp_kelvin: 2202
+    light.light_entrance_ceiling_2:
+      state: 'on'
+      brightness: 5
+      color_mode: color_temp
+      color_temp_kelvin: 2202
+    light.light_entrance_ceiling_3:
+      state: 'on'
+      brightness: 5
+      color_mode: color_temp
+      color_temp_kelvin: 2202
+  icon: mdi:weather-night
+
+- id: scene.entrance_normal_light
+  room: entrance
+  name: Обычный свет
+  entities:
+    light.light_entrance_ceiling_1:
+      state: 'on'
+      brightness: 255
+      color_mode: color_temp
+      color_temp_kelvin: 2202
+    light.light_entrance_ceiling_2:
+      state: 'on'
+      brightness: 255
+      color_mode: color_temp
+      color_temp_kelvin: 2202
+    light.light_entrance_ceiling_3:
+      state: 'on'
+      brightness: 255
+      color_mode: color_temp
+      color_temp_kelvin: 2202
+  icon: mdi:lightbulb-on
+
+- id: scene.kate_night_light
+  room: kate
+  name: Ночной свет
+  entities:
+    light.light_kate_ceiling_1:
+      state: 'on'
+      brightness: 5
+      color_mode: color_temp
+      color_temp_kelvin: 2202
+    light.light_kate_ceiling_2:
+      state: 'on'
+      brightness: 5
+      color_mode: color_temp
+      color_temp_kelvin: 2202
+  icon: mdi:weather-night
+
+- id: scene.kate_normal_light
+  room: kate
+  name: Обычный свет
+  entities:
+    light.light_kate_ceiling_1:
+      state: 'on'
+      brightness: 255
+      color_mode: color_temp
+      color_temp_kelvin: 2202
+    light.light_kate_ceiling_2:
+      state: 'on'
+      brightness: 255
+      color_mode: color_temp
+      color_temp_kelvin: 2202
+  icon: mdi:lightbulb-on
+
+- id: scene.kitchen_night_light
+  room: kitchen
+  name: Ночной свет
+  entities:
+    light.light_kitchen_worktop_1:
+      state: 'on'
+      brightness: 5
+    light.light_kitchen_worktop_2:
+      state: 'on'
+      brightness: 5
+  icon: mdi:weather-night
+
+- id: scene.kitchen_normal_light
+  room: kitchen
+  name: Обычный свет
+  entities:
+    light.light_kitchen_worktop_1:
+      state: 'on'
+      brightness: 255
+    light.light_kitchen_worktop_2:
+      state: 'on'
+      brightness: 255
+  icon: mdi:lightbulb-on
+
+- id: scene.lounge_night_light
+  room: lounge
+  name: Ночной свет
+  entities:
+    light.light_chandelier:
+      state: 'off'
+    light.light_mushroom_yellow_2:
+      state: 'on'
+      brightness: 5
+      color_mode: color_temp
+      color_temp_kelvin: 2202
+    light.light_gray_floor_lamp_1:
+      state: 'on'
+      brightness: 5
+      color_mode: color_temp
+      color_temp_kelvin: 2202
+    light.light_gray_floor_lamp_2:
+      state: 'on'
+      brightness: 5
+      color_mode: color_temp
+      color_temp_kelvin: 2202
+  icon: mdi:weather-night
+
+- id: scene.lounge_normal_light
+  room: lounge
+  name: Обычный свет
+  entities:
+    light.light_chandelier:
+      state: 'on'
+      brightness: 255
+      color_mode: color_temp
+      color_temp_kelvin: 2202
+    light.light_mushroom_yellow_2:
+      state: 'on'
+      brightness: 255
+      color_mode: color_temp
+      color_temp_kelvin: 2202
+    light.light_gray_floor_lamp_1:
+      state: 'on'
+      brightness: 255
+      color_mode: color_temp
+      color_temp_kelvin: 2202
+    light.light_gray_floor_lamp_2:
+      state: 'on'
+      brightness: 255
+      color_mode: color_temp
+      color_temp_kelvin: 2202
+  icon: mdi:lightbulb-on
+
+- id: scene.toilet_night_light
+  room: toilet
+  name: Ночной свет
+  entities:
+    light.light_toilet_1:
+      state: 'on'
+      brightness: 5
+      color_mode: color_temp
+      color_temp_kelvin: 2202
+    light.light_toilet_2:
+      state: 'on'
+      brightness: 5
+      color_mode: color_temp
+      color_temp_kelvin: 2202
+  icon: mdi:weather-night
+
+- id: scene.toilet_normal_light
+  room: toilet
+  name: Обычный свет
+  entities:
+    light.light_toilet_1:
+      state: 'on'
+      brightness: 255
+      color_mode: color_temp
+      color_temp_kelvin: 2202
+    light.light_toilet_2:
+      state: 'on'
+      brightness: 255
+      color_mode: color_temp
+      color_temp_kelvin: 2202
   icon: mdi:lightbulb-on

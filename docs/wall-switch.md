@@ -4,8 +4,9 @@
 
 The Shelly uses Wi-Fi for Home Assistant and its own Zigbee radio as a backup. The button is in detached mode: pressing it sends an event instead of cutting power to the smart bulbs, so they stay available for automations.
 
-- **Single press:** toggles the lights. With HA, turning them on sets full brightness and optionally the configured color temperature.
+- **Single press:** toggles the lights. With HA, turning them on sets full brightness and optionally the color temperature from a sensor or a fixed one, so a white scene is not remembered by the bulbs.
 - **Hold:** switches between warm, dim night mode and full brightness. This needs HA, as do extra actions and the optional flag that prevents motion automations from turning the lights off.
+- **Scenes:** optionally, a hold on turned-off lights activates the night scene, and a hold on turned-on lights cycles through the room scenes. The next scene is the one after the last activated; scenes activated before the light was turned on are ignored, so the first hold after a single press goes to the second scene.
 - **Works during outages:** basic single-press control still works without HA, Zigbee2MQTT, Wi-Fi, or the MQTT broker, provided the Shelly and bulbs have power and can communicate over Zigbee. No internet or cloud service is needed.
 - **Low latency:** normal presses go straight through HA → Z2M → bulbs, without waiting for the backup timer or requesting a brightness transition. If MQTT is disconnected, the backup acts as soon as the Shelly recognizes a single press. If MQTT is connected but Z2M stays silent, fallback takes about one second. Backup commands go to each bulb 120 ms apart.
 

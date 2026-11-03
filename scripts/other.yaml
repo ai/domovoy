@@ -4,6 +4,14 @@
   icon: mdi:weather-night
   mode: restart
   sequence:
+    - action: light.turn_off
+      target:
+        entity_id: light.light_group_lounge
+    - action: scene.turn_on
+      target:
+        entity_id:
+          - scene.kitchen_night_light
+          - scene.andrey_night_light
     - action: light.turn_on
       target:
         entity_id:
@@ -12,6 +20,7 @@
           - light.light_children_shelving
       data:
         brightness_pct: 50
+        color_temp_kelvin: 2202
         transition: 10
     - delay:
         minutes: 1

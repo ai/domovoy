@@ -1,3 +1,80 @@
+- id: automation.andrey_foot_heater
+  alias: Грелка ног Андрея при работе за столом
+  room: andrey
+  triggers:
+    - trigger: state
+      entity_id: binary_sensor.presence_apollo_msr_2_radar_target
+      to: 'on'
+      id: 'on'
+    - trigger: numeric_state
+      entity_id: sensor.plug_andrey_desk_moshchnost
+      above: 10
+      id: 'on'
+    - trigger: state
+      entity_id: person.andrey
+      to: home
+      id: 'on'
+    - trigger: state
+      entity_id: binary_sensor.presence_apollo_msr_2_radar_target
+      to: 'off'
+      for:
+        minutes: 2
+      id: 'off'
+    - trigger: numeric_state
+      entity_id: sensor.plug_andrey_desk_moshchnost
+      below: 10
+      for:
+        minutes: 2
+      id: 'off'
+    - trigger: state
+      entity_id: person.andrey
+      from: home
+      id: 'off'
+    - trigger: state
+      entity_id: input_boolean.cat_alone
+      to: 'on'
+      id: 'off'
+    - trigger: state
+      entity_id: input_boolean.empty_home
+      to: 'on'
+      id: 'off'
+  conditions:
+    - condition: state
+      entity_id: input_boolean.stop
+      state: 'off'
+  actions:
+    - choose:
+        - conditions:
+            - condition: trigger
+              id: 'on'
+            - condition: state
+              entity_id: person.andrey
+              state: home
+            - condition: state
+              entity_id: binary_sensor.presence_apollo_msr_2_radar_target
+              state: 'on'
+            - condition: numeric_state
+              entity_id: sensor.plug_andrey_desk_moshchnost
+              above: 10
+            - condition: state
+              entity_id: input_boolean.cat_alone
+              state: 'off'
+            - condition: state
+              entity_id: input_boolean.empty_home
+              state: 'off'
+          sequence:
+            - action: switch.turn_on
+              target:
+                entity_id: switch.plug_andrey_heater
+        - conditions:
+            - condition: trigger
+              id: 'off'
+          sequence:
+            - action: switch.turn_off
+              target:
+                entity_id: switch.plug_andrey_heater
+  mode: queued
+
 - id: automation.lock_screen_on_andrey_leaving
   alias: Блокировка ноутбука Андрея при его уходе
   room: andrey

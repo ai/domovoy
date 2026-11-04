@@ -200,6 +200,8 @@
           - switch.floor_kitchen
           - switch.floor_toilet
           - switch.wall_switch_bedroom
+          - switch.plug_bed_heater
+          - switch.plug_andrey_heater
       data: {}
 
 - id: script.zigbee_reset

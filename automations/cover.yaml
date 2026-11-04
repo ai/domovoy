@@ -161,7 +161,7 @@
   mode: single
 
 - id: automation.lounge_shutter
-  alias: Штора гостиной
+  alias: Штора зала
   room: lounge
   triggers:
     - trigger: numeric_state

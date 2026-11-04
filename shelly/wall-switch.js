@@ -15,6 +15,9 @@ let GROUP_TOPIC = 'zigbee2mqtt/Light Group / Andrey'
 let INPUT = 'input:0'
 
 let HA_WAIT_MS = 1000
+// Z2M reports a turn on with brightness and color temperature only after
+// the coordinator confirms both group commands, which takes up to ~3s
+let Z2M_WAIT_MS = 4000
 let SEND_GAP_MS = 120
 
 function debug(message) {
@@ -51,18 +54,25 @@ function toggleBulb(light) {
   )
 }
 
+let sendTimers = []
+
 function toggleAll() {
   for (let i = 0; i < LIGHTS.length; i++) {
     if (i === 0) {
       toggleBulb(LIGHTS[0])
     } else {
-      Timer.set(
-        i * SEND_GAP_MS,
-        false,
-        function (light) {
-          toggleBulb(light)
-        },
-        LIGHTS[i]
+      sendTimers.push(
+        Timer.set(
+          i * SEND_GAP_MS,
+          false,
+          function (index) {
+            toggleBulb(LIGHTS[index])
+            if (index === LIGHTS.length - 1) {
+              sendTimers = []
+            }
+          },
+          i
+        )
       )
     }
   }
@@ -70,11 +80,13 @@ function toggleAll() {
 
 let pressCount = 0
 let waitTimer = null
+let haAnswered = false
 
 function stopWaiting() {
   Timer.clear(waitTimer)
   waitTimer = null
   pressCount = 0
+  haAnswered = false
 }
 
 function onWaitOver() {
@@ -83,16 +95,36 @@ function onWaitOver() {
   debug('Z2M stayed silent after ' + pressCount + ' press(es)')
   waitTimer = null
   pressCount = 0
+  haAnswered = false
   if (odd) {
+    sendTimers = []
     toggleAll()
   }
 }
 
-// The window only asks whether Z2M answers at all, so any message closes it
+// HA sent its command, so only Z2M is left to wait for
+MQTT.subscribe(GROUP_TOPIC + '/set', function () {
+  if (waitTimer !== null && !haAnswered) {
+    debug('HA sent the command, waiting for Z2M')
+    haAnswered = true
+    Timer.clear(waitTimer)
+    waitTimer = Timer.set(Z2M_WAIT_MS, false, onWaitOver)
+  }
+})
+
+// The window only asks whether Z2M answers at all, so any message closes it.
+// A late answer also stops the rest of an already started fallback.
 MQTT.subscribe(GROUP_TOPIC, function () {
   if (waitTimer !== null) {
     debug('Z2M reported the change, the press was handled')
     stopWaiting()
+  }
+  if (sendTimers.length > 0) {
+    debug('Z2M answered late, the rest of the fallback is cancelled')
+    for (let i = 0; i < sendTimers.length; i++) {
+      Timer.clear(sendTimers[i])
+    }
+    sendTimers = []
   }
 })
 

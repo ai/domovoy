@@ -38,6 +38,12 @@
       entity_id: input_boolean.empty_home
       to: 'on'
       id: 'off'
+    - trigger: numeric_state
+      entity_id: sensor.plug_andrey_heater_moshchnost
+      below: 5
+      for:
+        minutes: 1
+      id: reset
   conditions:
     - condition: state
       entity_id: input_boolean.stop
@@ -73,7 +79,40 @@
             - action: switch.turn_off
               target:
                 entity_id: switch.plug_andrey_heater
+        - conditions:
+            - condition: trigger
+              id: reset
+            - condition: state
+              entity_id: switch.plug_andrey_heater
+              state: 'on'
+          sequence:
+            - action: switch.turn_off
+              target:
+                entity_id: switch.plug_andrey_heater
+            - delay:
+                minutes: 3
+            - if:
+                - condition: state
+                  entity_id: person.andrey
+                  state: home
+                - condition: state
+                  entity_id: binary_sensor.presence_apollo_msr_2_radar_target
+                  state: 'on'
+                - condition: numeric_state
+                  entity_id: sensor.plug_andrey_desk_moshchnost
+                  above: 10
+                - condition: state
+                  entity_id: input_boolean.cat_alone
+                  state: 'off'
+                - condition: state
+                  entity_id: input_boolean.empty_home
+                  state: 'off'
+              then:
+                - action: switch.turn_on
+                  target:
+                    entity_id: switch.plug_andrey_heater
   mode: queued
+  max: 20
 
 - id: automation.lock_screen_on_andrey_leaving
   alias: Блокировка ноутбука Андрея при его уходе

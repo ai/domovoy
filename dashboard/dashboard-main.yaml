@@ -1382,16 +1382,6 @@ views:
                 state_content: state
                 color: state
           - type: tile
-            entity: light.light_children_shelving
-            name: Лампа на шкафу
-            icon: mdi:desk-lamp
-            vertical: false
-            features:
-              - type: toggle
-              - type: light-brightness
-              - type: light-color-temp
-            features_position: bottom
-          - type: tile
             entity: light.light_children_ceiling_1
             name: На потолке 1
             icon: mdi:weather-sunny
@@ -1405,6 +1395,16 @@ views:
             entity: light.light_children_ceiling_2
             name: На потолке 2
             icon: mdi:weather-sunny
+            vertical: false
+            features:
+              - type: toggle
+              - type: light-brightness
+              - type: light-color-temp
+            features_position: bottom
+          - type: tile
+            entity: light.light_children_shelving
+            name: Лампа на шкафу
+            icon: mdi:desk-lamp
             vertical: false
             features:
               - type: toggle

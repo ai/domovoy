@@ -128,6 +128,70 @@
         entity_id: script.children_sleep_light
   mode: single
 
+- id: automation.new_year_star
+  alias: Новогодняя звезда
+  room: lounge
+  triggers:
+    - trigger: sun
+      event: sunset
+      id: 'on'
+    - trigger: time
+      at: '23:00:00'
+      id: dim
+    - trigger: sun
+      event: sunrise
+      id: 'off'
+    - trigger: time_pattern
+      minutes: /15
+      id: hue
+  conditions:
+    - condition: state
+      entity_id: input_boolean.stop
+      state: 'off'
+  actions:
+    - choose:
+        - conditions:
+            - condition: trigger
+              id: 'on'
+          sequence:
+            - action: light.turn_on
+              target:
+                entity_id: light.light_star
+              data:
+                brightness_pct: 100
+        - conditions:
+            - condition: trigger
+              id: dim
+            - condition: state
+              entity_id: light.light_star
+              state: 'on'
+          sequence:
+            - action: light.turn_on
+              target:
+                entity_id: light.light_star
+              data:
+                brightness_pct: 50
+        - conditions:
+            - condition: trigger
+              id: 'off'
+          sequence:
+            - action: light.turn_off
+              target:
+                entity_id: light.light_star
+        - conditions:
+            - condition: trigger
+              id: hue
+            - condition: state
+              entity_id: light.light_star
+              state: 'on'
+          sequence:
+            - action: light.turn_on
+              target:
+                entity_id: light.light_star
+              data:
+                hs_color: '{{ [range(360) | random, 100] }}'
+  mode: single
+
 - id: automation.wall_switch_andrey
   alias: Выключатель света в кабинете Андрея
   room: andrey

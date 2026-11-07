@@ -1725,6 +1725,12 @@ views:
               - type: light-brightness
               - type: light-color-temp
             features_position: bottom
+          - type: tile
+            entity: light.light_star
+            features:
+              - type: toggle
+              - type: light-brightness
+              - type: light-color
       - type: grid
         cards:
           - type: heading

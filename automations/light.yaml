@@ -138,6 +138,10 @@
     - trigger: time
       at: '23:00:00'
       id: dim
+    - trigger: state
+      entity_id: script.children_sleep_light
+      to: 'on'
+      id: dim
     - trigger: sun
       event: sunrise
       id: 'off'

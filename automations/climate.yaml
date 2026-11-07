@@ -278,6 +278,13 @@
     - trigger: time
       at: '08:30:00'
       id: kitchen_off
+    - trigger: time
+      at: '11:00:00'
+      id: day_off
+    - trigger: sun
+      event: sunset
+      offset: '-00:03:00'
+      id: evening
     - trigger: state
       entity_id: input_boolean.empty_home
       from: 'on'
@@ -343,6 +350,33 @@
                 entity_id: switch.floor_kitchen
         - conditions:
             - condition: trigger
+              id: day_off
+          sequence:
+            - action: switch.turn_off
+              target:
+                entity_id:
+                  - switch.floor_kitchen
+                  - switch.floor_bathroom
+        - conditions:
+            - condition: trigger
+              id: evening
+            - condition: time
+              before: input_datetime.night_start
+            - condition: state
+              entity_id: input_boolean.empty_home
+              state: 'off'
+            - condition: state
+              entity_id: input_boolean.heating
+              state: 'on'
+            - condition: state
+              entity_id: input_boolean.cat_alone
+              state: 'off'
+          sequence:
+            - action: switch.turn_on
+              target:
+                entity_id: switch.floor_bathroom
+        - conditions:
+            - condition: trigger
               id: arrived
             - condition: time
               after: input_datetime.night_end
@@ -356,9 +390,21 @@
           sequence:
             - action: switch.turn_on
               target:
-                entity_id:
-                  - switch.floor_toilet
-                  - switch.floor_bathroom
+                entity_id: switch.floor_toilet
+            - if:
+                - condition: not
+                  conditions:
+                    - condition: and
+                      conditions:
+                        - condition: time
+                          after: '11:00:00'
+                        - condition: sun
+                          before: sunset
+                          before_offset: '-00:03:00'
+              then:
+                - action: switch.turn_on
+                  target:
+                    entity_id: switch.floor_bathroom
         - conditions:
             - condition: trigger
               id: night

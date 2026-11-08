@@ -144,7 +144,7 @@
       id: dim
     - trigger: sun
       event: sunrise
-      id: 'off'
+      id: 'on'
     - trigger: time_pattern
       minutes: /15
       id: hue
@@ -175,13 +175,6 @@
                 entity_id: light.light_star
               data:
                 brightness_pct: 50
-        - conditions:
-            - condition: trigger
-              id: 'off'
-          sequence:
-            - action: light.turn_off
-              target:
-                entity_id: light.light_star
         - conditions:
             - condition: trigger
               id: hue

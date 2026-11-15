@@ -35,9 +35,8 @@
   alias: Чистка поилки кошки
   room: kitchen
   triggers:
-    - trigger: numeric_state
-      entity_id: sensor.fountain_dockstream_2_remaining_filter_day
-      below: 1
+    - trigger: time
+      at: '11:00:00'
       id: notify
     - trigger: numeric_state
       entity_id: sensor.fountain_dockstream_2_remaining_filter_day
@@ -52,6 +51,9 @@
         - conditions:
             - condition: trigger
               id: notify
+            - condition: numeric_state
+              entity_id: sensor.fountain_dockstream_2_remaining_filter_day
+              below: 1
           sequence:
             - action: notify.mobile_app_phone_bedoll
               data:

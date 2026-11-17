@@ -504,19 +504,19 @@ views:
               columns: 6
               rows: auto
           - type: tile
+            visibility:
+              - condition: state
+                entity: input_boolean.heating
+                state: 'on'
             entity: switch.floor_lounge
             name: Тёплый пол
-            icon: mdi:waves-arrow-up
+            icon: domovoy:heat-floor
             vertical: false
             tap_action:
               action: toggle
             icon_tap_action:
               action: none
             features_position: bottom
-            visibility:
-              - condition: state
-                entity: input_boolean.heating
-                state: 'on'
       - type: grid
         cards:
           - type: heading
@@ -541,19 +541,19 @@ views:
             vertical: false
             features_position: bottom
           - type: tile
+            visibility:
+              - condition: state
+                entity: input_boolean.heating
+                state: 'on'
             entity: switch.floor_bathroom
             name: Тёплый пол
-            icon: mdi:waves-arrow-up
+            icon: domovoy:heat-floor
             vertical: false
             tap_action:
               action: toggle
             icon_tap_action:
               action: none
             features_position: bottom
-            visibility:
-              - condition: state
-                entity: input_boolean.heating
-                state: 'on'
           - type: tile
             entity: switch.wall_switch_bathroom_l2
             name: Вытяжка
@@ -658,19 +658,19 @@ views:
             vertical: false
             features_position: bottom
           - type: tile
+            visibility:
+              - condition: state
+                entity: input_boolean.heating
+                state: 'on'
             entity: switch.floor_kitchen
             name: Тёплый пол
-            icon: mdi:waves-arrow-up
+            icon: domovoy:heat-floor
             vertical: false
             tap_action:
               action: toggle
             icon_tap_action:
               action: none
             features_position: bottom
-            visibility:
-              - condition: state
-                entity: input_boolean.heating
-                state: 'on'
       - type: grid
         cards:
           - type: heading
@@ -694,19 +694,19 @@ views:
             vertical: false
             features_position: bottom
           - type: tile
+            visibility:
+              - condition: state
+                entity: input_boolean.heating
+                state: 'on'
             entity: switch.floor_toilet
             name: Тёплый пол
-            icon: mdi:waves-arrow-up
+            icon: domovoy:heat-floor
             vertical: false
             tap_action:
               action: toggle
             icon_tap_action:
               action: none
             features_position: bottom
-            visibility:
-              - condition: state
-                entity: input_boolean.heating
-                state: 'on'
       - type: grid
         cards:
           - type: heading
@@ -1562,6 +1562,14 @@ views:
             features:
               - type: toggle
             features_position: bottom
+          - type: tile
+            entity: switch.floor_kitchen
+            name: Тёплый пол
+            icon: domovoy:heat-floor
+            vertical: false
+            features:
+              - type: toggle
+            features_position: bottom
       - type: grid
         cards:
           - type: heading
@@ -1668,7 +1676,7 @@ views:
           - type: tile
             entity: switch.floor_toilet
             name: Тёплый пол
-            icon: mdi:waves-arrow-up
+            icon: domovoy:heat-floor
             vertical: false
             features:
               - type: toggle
@@ -1780,7 +1788,7 @@ views:
           - type: tile
             entity: switch.floor_lounge
             name: Тёплый пол
-            icon: mdi:waves-arrow-up
+            icon: domovoy:heat-floor
             vertical: false
             features:
               - type: toggle
@@ -1857,7 +1865,7 @@ views:
           - type: tile
             entity: switch.floor_bathroom
             name: Тёплый пол
-            icon: mdi:waves-arrow-up
+            icon: domovoy:heat-floor
             vertical: false
             features:
               - type: toggle

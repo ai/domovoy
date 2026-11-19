@@ -119,9 +119,6 @@
   alias: Новогодняя звезда
   room: lounge
   triggers:
-    - trigger: sun
-      event: sunset
-      id: 'on'
     - trigger: time
       at: '23:00:00'
       id: dim

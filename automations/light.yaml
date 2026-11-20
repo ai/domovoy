@@ -92,6 +92,38 @@
       lights:
         - light.light_group_toilet
 
+- id: automation.children_morning_light
+  alias: Утреннее включение света в детской
+  room: children
+  triggers:
+    - trigger: time
+      at: input_datetime.night_end
+  conditions:
+    - condition: state
+      entity_id: input_boolean.stop
+      state: 'off'
+    - condition: time
+      weekday:
+        - mon
+        - tue
+        - wed
+        - thu
+        - fri
+    - condition: state
+      entity_id: input_boolean.holidays
+      state: 'off'
+    - condition: state
+      entity_id: input_boolean.cat_alone
+      state: 'off'
+    - condition: state
+      entity_id: light.light_group_children
+      state: 'off'
+  actions:
+    - action: script.turn_on
+      target:
+        entity_id: script.children_morning_light
+  mode: single
+
 - id: automation.children_sleep_light_stop_on_scene
   alias: Остановить затухание света в детской при смене сцены
   room: children

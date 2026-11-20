@@ -1,3 +1,54 @@
+- id: script.children_morning_light
+  alias: Медленно включить свет в детской
+  room: children
+  icon: mdi:weather-sunset-up
+  mode: single
+  sequence:
+    - repeat:
+        for_each:
+          - light.light_children_shelving
+          - light.light_children_ceiling_1
+          - light.light_children_ceiling_2
+        sequence:
+          - variables:
+              light: '{{ repeat.item }}'
+          - action: light.turn_on
+            target:
+              entity_id: '{{ light }}'
+            data:
+              brightness_pct: 1
+              color_temp_kelvin: 2500
+          - repeat:
+              for_each:
+                - 5
+                - 15
+                - 25
+              sequence:
+                - action: light.turn_on
+                  target:
+                    entity_id: '{{ light }}'
+                  data:
+                    brightness_pct: '{{ repeat.item }}'
+                    transition: 33
+                - wait_for_trigger:
+                    - trigger: state
+                      entity_id: light.light_group_children
+                      to: 'off'
+                    - trigger: state
+                      entity_id:
+                        - scene.children_normal_light
+                        - scene.children_night_light
+                      not_from:
+                        - unavailable
+                  timeout:
+                    seconds: 33
+                  continue_on_timeout: true
+                - if:
+                    - condition: template
+                      value_template: '{{ wait.trigger is not none }}'
+                  then:
+                    - stop: Свет переключили вручную
+
 - id: script.children_sleep_light
   alias: Медленно затушить свет в детской
   room: children

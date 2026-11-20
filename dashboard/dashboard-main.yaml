@@ -1452,6 +1452,18 @@ views:
             icon_tap_action:
               action: none
             features_position: bottom
+          - type: tile
+            entity: script.children_morning_light
+            name: Медленно включить свет
+            vertical: false
+            tap_action:
+              action: perform-action
+              perform_action: script.turn_on
+              target:
+                entity_id: script.children_morning_light
+            icon_tap_action:
+              action: none
+            features_position: bottom
       - type: grid
         cards:
           - type: heading
